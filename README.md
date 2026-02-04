@@ -5,6 +5,7 @@
 3. `repositories/` para la capa de persistencia.
 4. `lib/` para la conexión a base de datos.
 5. `database/` para archivos de la base de datos o levantamiento local de la misma.
+6. `tests/` para las pruebas.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
