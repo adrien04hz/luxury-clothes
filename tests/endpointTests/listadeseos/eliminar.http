@@ -1,0 +1,7 @@
+DELETE http://localhost:3000/api/listadeseos
+Content-Type: application/json
+
+{
+  "clientId": 1,
+  "productId": 12
+}
