@@ -9,6 +9,9 @@ import { Carrito } from '@/repositories/Carrito';
 export class CarritoCompras {
 
     static async addProduct(customerId: number, productId: number, quantity: number) {
+        if (quantity <= 0) {
+            throw new Error('La cantidad debe ser mayor a cero');
+        }
         await Carrito.addProduct(customerId, productId, quantity);
     }
 
@@ -17,18 +20,22 @@ export class CarritoCompras {
     }
 
     static async increaseQuantityProduct(customerId: number, productId: number) {
-        Carrito.increaseQuantity(customerId, productId);
+        await Carrito.increaseQuantity(customerId, productId);
     }
 
     static async decreaseQuantityProduct(customerId: number, productId: number) {
-        Carrito.decreaseQuantity(customerId, productId);
+        await Carrito.decreaseQuantity(customerId, productId);
     }
 
     static async getCart(customerId: number) {
-        return Carrito.getCartByCustomerId(customerId);
+        return await Carrito.getCartByCustomerId(customerId);
     }
 
     static async dropCart(customerId: number) {
         await Carrito.clearCart(customerId);
+    }
+
+    static async isProductInCart(customerId: number, productId: number) {
+        return await Carrito.getProductInCart(customerId, productId);
     }
 }

@@ -81,4 +81,18 @@ export class Carrito {
       [customerId]
     );
   }
+
+  // Obtener id de un producto en el carrito
+  static async getProductInCart(customerId: number, productId: number) {
+    const { rows } = await pool.query(
+      `
+      SELECT id_producto
+      FROM "CarritoCompras"
+      WHERE id_cliente = $1 AND id_producto = $2
+      `,
+      [customerId, productId]
+    );
+
+    return rows[0];
+  }
 }
