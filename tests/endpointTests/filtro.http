@@ -1,0 +1,2 @@
+### Obtener filtro
+GET http://localhost:3000/api/filtro?q=tenis&categoria=2&precioMax=2000&stock=true
