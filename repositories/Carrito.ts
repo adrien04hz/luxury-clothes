@@ -47,29 +47,22 @@ export class Carrito {
     );
   }
 
-  // Aumentar cantidad de un producto en el carrito
-  static async increaseQuantity(customerId: number, productId: number) {
+  // Actualizar la cantidad de productos en el carrito
+  static async setQuantity(
+    clienteId: number,
+    productoId: number,
+    cantidad: number
+  ) {
     await pool.query(
       `
-      UPDATE "CarritoCompras"
-      SET cantidad = cantidad + 1
+      UPDATE "CarritoProducto"
+      SET cantidad = $3
       WHERE id_cliente = $1 AND id_producto = $2
       `,
-      [customerId, productId]
+      [clienteId, productoId, cantidad]
     );
   }
-
-  // Disminuir cantidad de un producto en el carrito
-  static async decreaseQuantity(customerId: number, productId: number) {
-    await pool.query(
-      `
-      UPDATE "CarritoCompras"
-      SET cantidad = cantidad - 1
-      WHERE id_cliente = $1 AND id_producto = $2 AND cantidad > 1
-      `,
-      [customerId, productId]
-    );
-  }
+  
 
   // Vaciar el carrito de un cliente
   static async clearCart(customerId: number) {

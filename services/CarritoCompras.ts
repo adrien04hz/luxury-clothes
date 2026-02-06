@@ -19,12 +19,32 @@ export class CarritoCompras {
         await Carrito.removeProduct(customerId, productId);
     }
 
-    static async increaseQuantityProduct(customerId: number, productId: number) {
-        await Carrito.increaseQuantity(customerId, productId);
+    static async increaseQuantityProduct(customerId: number, productId: number, quantity: number) {
+        if (quantity <= 0) {
+            throw new Error('La cantidad debe ser mayor a cero');
+        }
+
+        if (!await Carrito.getProductInCart(customerId, productId)) {
+            throw new Error('El producto no está en el carrito');
+        }
+
+        if (quantity > 0) {
+            await Carrito.setQuantity(customerId, productId, quantity);
+        }
     }
 
-    static async decreaseQuantityProduct(customerId: number, productId: number) {
-        await Carrito.decreaseQuantity(customerId, productId);
+    static async decreaseQuantityProduct(customerId: number, productId: number, quantity: number) {
+        if (quantity <= 0) {
+            throw new Error('La cantidad debe ser mayor a cero');
+        }
+
+        if (!await Carrito.getProductInCart(customerId, productId)) {
+            throw new Error('El producto no está en el carrito');
+        }
+
+        if (quantity === 0) {
+            await Carrito.removeProduct(customerId, productId);
+        }
     }
 
     static async getCart(customerId: number) {
