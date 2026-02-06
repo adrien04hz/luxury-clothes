@@ -7,8 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "jest"
-    "lint": "eslint",
     "test": "jest --runInBand --verbose"
   },
   "dependencies": {
