@@ -5,11 +5,11 @@
 # Endpoint: Aumentar cantidad de articulo
 # en el carrito de compras
 #--------------------------------------------------
-PUT http://localhost:3000/api/carrito/12
+PUT http://localhost:3000/api/carrito/10
 Content-Type: application/json
 
 {
   "clienteId": 1,
-  "cantidad": 2,
+  "cantidad": 5,
   "flag": "increase"
 }
