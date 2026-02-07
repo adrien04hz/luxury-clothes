@@ -1,0 +1,1 @@
+GET http://localhost:3000/api/listadeseos?clientId=5
