@@ -1,4 +1,8 @@
-### REGISTER
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Fecha: 06/02/2026 */
+//**********/
 POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
@@ -19,7 +23,11 @@ Content-Type: application/json
   "correo": "abdielcer@test.com",
   "contrasena": "NuevaClave789!"
 }
-
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 06/02/2026 */
+//**********/
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiY29ycmVvIjoiYWJkaWVsY2VyQHRlc3QuY29tIiwiaWF0IjoxNzcwNDM0MDU4LCJleHAiOjE3NzA0NDEyNTh9.eR3AcDRc4YYRD5v9aFaYVxlcNfjZ-2Yc5e03-Dl4e6Q
 
 ### Perfil del cliente

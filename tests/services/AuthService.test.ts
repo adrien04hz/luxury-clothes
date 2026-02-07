@@ -1,9 +1,8 @@
-/**
- * Pruebas unitarias para AuthService
- * Equipo: ---
- * Autor: Abdiel
- * Fecha: 2026
- */
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Fecha: 06/02/2026 */
+//**********/
 
 import { AuthService } from "@/services/AuthService";
 import { ClienteRepository } from "@/repositories/ClienteRepository";
@@ -104,7 +103,11 @@ describe("AuthService", () => {
       );
     });
   });
-
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 06/02/2026 */
+//**********/
   // ======================================
   // OBTENER PERFIL
   // ======================================

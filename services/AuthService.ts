@@ -1,9 +1,8 @@
-/**
- * AuthService
- * Equipo: ---
- * Autor: Abdiel
- * Fecha: 2026
- */
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Fecha: 06/02/2026 */
+//**********/
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ClienteRepository } from "@/repositories/ClienteRepository";
@@ -47,7 +46,11 @@ export class AuthService {
     );
     return token;
   }
-
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 06/02/2026 */
+//**********/
   /* =====================
      OBTENER PERFIL
   ===================== */
