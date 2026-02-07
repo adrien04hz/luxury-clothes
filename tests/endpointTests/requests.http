@@ -1,0 +1,21 @@
+### REGISTER
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "nombre": "Checo",
+  "apellidos": "Perez",
+  "correo": "abdielcer@test.com",
+  "contrasena": "123456",
+  "telefono": "1299999996",
+  "foto_perfil": "default.png"
+}
+
+### LOGIN
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "correo": "abdiel6@test.com",
+  "contrasena": "123456"
+}
