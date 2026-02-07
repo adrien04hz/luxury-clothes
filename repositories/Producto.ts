@@ -27,4 +27,27 @@ export class Producto {
 
     return rows;
   }
+
+    static async productDetails(productId: number){
+    const { rows } = await pool.query(
+      `
+      SELECT
+        P.id AS id,
+        P.nombre AS nombre,
+        P.precio AS precio,
+        P.stock AS stock,
+        M.nombre AS marca,
+        array_agg(I.url) AS imagenes
+      FROM "Producto" P
+      LEFT JOIN "ImagenProducto" I ON P.id = I.id_producto
+      LEFT JOIN "Marca" M ON P.id_marca = M.id
+      WHERE P.id = $1
+      GROUP BY P.id, P.nombre, P.precio, P.stock, M.nombre;
+
+      `,
+      [productId]
+    );
+
+    return rows[0];
+  }
 }
