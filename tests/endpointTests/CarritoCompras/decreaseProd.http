@@ -1,8 +1,8 @@
-PUT http://localhost:3000/api/carrito/90
+PUT http://localhost:3000/api/carrito/99
 Content-Type: application/json
 
 {
   "clienteId": 2,
-  "cantidad": 3,
+  "cantidad": 1,
   "flag": "decrease"
 }

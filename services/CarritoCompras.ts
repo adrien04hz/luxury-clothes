@@ -35,21 +35,22 @@ export class CarritoCompras {
     }
 
     static async decreaseQuantityProduct(customerId: number, productId: number, quantity: number) {
-        if (quantity <= 0) {
-            throw new Error('La cantidad debe ser mayor a cero');
-        }
-
+        quantity = quantity - 1;
         if (!await Carrito.getProductInCart(customerId, productId)) {
             throw new Error('El producto no está en el carrito');
         }
 
         if (quantity === 0) {
-            await Carrito.removeProduct(customerId, productId);
+            return await Carrito.removeProduct(customerId, productId);
         }
 
         if (quantity > 0) {
 
-            await Carrito.setQuantity(customerId, productId, quantity - 1);
+            return await Carrito.setQuantity(customerId, productId, quantity);
+        }
+
+        if (quantity <= 0) {
+            throw new Error('La cantidad debe ser mayor a cero');
         }
     }
 

@@ -1,1 +1,1 @@
-GET http://localhost:3000/api/carrito
+GET http://localhost:3000/api/carrito?clienteId=1

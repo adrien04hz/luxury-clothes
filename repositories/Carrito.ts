@@ -25,7 +25,7 @@ export class Carrito {
       `
       SELECT DISTINCT ON (P.id) 
       P.id, P.nombre, P.precio, C.cantidad, I.url as imagen
-      FROM "Carrito" C,
+      FROM "CarritoCompras" C 
       INNER JOIN "Producto" P ON C.id_producto = P.id
       INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
       WHERE C.id_cliente = $1
@@ -55,7 +55,7 @@ export class Carrito {
   ) {
     await pool.query(
       `
-      UPDATE "CarritoProducto"
+      UPDATE "CarritoCompras"
       SET cantidad = $3
       WHERE id_cliente = $1 AND id_producto = $2
       `,
