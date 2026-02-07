@@ -9,16 +9,17 @@ import { CarritoCompras } from "@/services/CarritoCompras";
 
 export async function PUT(
   req: Request,
-  { params }: { params: { productoId: string } }
+  context: { params: Promise<{ productoId: string }> }
 ) {
   try {
     const { clienteId, cantidad, flag } = await req.json();
-    const productoId = Number(params.productoId);
+    const { productoId } = await context.params;
+    const productId = Number(productoId);
 
     if (flag === 'increase') {
-        await CarritoCompras.increaseQuantityProduct(clienteId, productoId, cantidad);
+        await CarritoCompras.increaseQuantityProduct(clienteId, productId, cantidad);
     } else if (flag === 'decrease') {
-        await CarritoCompras.decreaseQuantityProduct(clienteId, productoId, cantidad);
+        await CarritoCompras.decreaseQuantityProduct(clienteId, productId, cantidad);
     } else {
         throw new Error('Flag inválida. Debe ser "increase" o "decrease".');
     }
@@ -44,13 +45,14 @@ export async function PUT(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { productoId: string } }
+  context: { params: Promise<{ productoId: string }> }
 ) {
   try {
     const { clienteId } = await req.json();
-    const productoId = Number(params.productoId);
+    const { productoId } = await context.params;
+    const productId = Number(productoId);
 
-    await CarritoCompras.deleteProduct(clienteId, productoId);
+    await CarritoCompras.deleteProduct(clienteId, productId);
 
     return NextResponse.json({
       ok: true,
