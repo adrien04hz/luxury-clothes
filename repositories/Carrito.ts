@@ -10,12 +10,12 @@ export class Carrito {
   static async addProduct(customerId: number, productId: number, quantity: number) {
     await pool.query(
       `
-      INSERT INTO "CarritoCompras" (id_producto, id_cliente, cantidad)
+      INSERT INTO "CarritoCompras" (id_cliente, id_producto, cantidad)
       VALUES ($1, $2, $3)
-      ON CONFLICT (id_producto, id_cliente)
+      ON CONFLICT (id_cliente, id_producto)
       DO UPDATE SET cantidad = "CarritoCompras".cantidad + $3
       `,
-      [productId, customerId, quantity]
+      [customerId, productId, quantity]
     );
   }
 
