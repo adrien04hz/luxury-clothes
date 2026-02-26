@@ -3,56 +3,37 @@
 //* Autor de la clase: Ramos Bello Jose Luis */
 //* Fecha: 23/02/2026 */
 //**********/
-import { pool } from "@/lib/db";
+import { pool } from '@/lib/db';
+import { QueryResult } from 'pg';
 
-export class pedido_repositories {
+export class PedidoRepository {
 
-//************************************/
-// Cancelar pedido
-//************************************/
+  //************************************/
+  // Cancelacion de pedido
+  //************************************/
 
-  static async cancelarPedido(id: number) {
-  const result = await pool.query(
-    `UPDATE "Pedido"
-     SET estado = 'cancelado',
-     WHERE id = $1 
-       AND estado NOT IN ('cancelado', 'entregado', 'en proceso')
-     RETURNING id, estado`,
-    [id]
-  );
-  if (result.rowCount === 0) {
-    return {
-      success: false,
-      message: "El pedido no existe o no se puede cancelar en su estado actual"
-    };
-  }
-  return {
-    success: true,
-    pedidoId: result.rows[0].id,
-    nuevoEstado: result.rows[0].estado
-  };
-}
-
-//************************************/
-// Estado de pedido
-//************************************/
-
-  static async estadoPedido(id: number) {
+  static async cancelarPedido(id: number): Promise<QueryResult> {
     return pool.query(
-      `SELECT estado FROM "Pedido"
-       WHERE id = $1`,
+      `UPDATE "Pedido"
+       SET estado = 'cancelado',
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1 
+         AND estado NOT IN ('cancelado', 'entregado', 'en proceso')
+       RETURNING id, estado, updated_at`,
       [id]
     );
   }
 
-//************************************/
-// Proceso de compra de pedido
-//************************************/
+  //************************************/
+  // Estado de pedido
+  //************************************/
 
-
-
-
-
-
-
+  static async estadoPedido(id: number): Promise<QueryResult> {
+    return pool.query(
+      `SELECT id, estado, fecha_pedido, total, updated_at
+       FROM "Pedido"
+       WHERE id = $1`,
+      [id]
+    );
+  }
 }
