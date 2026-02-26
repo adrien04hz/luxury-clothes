@@ -4,7 +4,7 @@
  * 6 de febrero de 2026
  */
 import { NextResponse } from 'next/server';
-import { CarritoCompras } from "@/services/CarritoCompras";
+import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.service";
 
 
 export async function PUT(

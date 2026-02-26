@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { ListaDeseos } from "@/services/ListaDeseos";
+import { ListaDeseos } from "@/services/listadedeseo/listadedeseo.service";
 
 //endpoint que permite obtener los productos de la lista de deseos de un cliente, recibe el id del cliente como query parameter
 export async function GET(req: Request) {

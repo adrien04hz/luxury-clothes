@@ -4,7 +4,7 @@
 //* Fecha: 06/02/2026 */
 //**********/
 import { NextResponse } from "next/server";
-import { ClienteRepository } from "@/repositories/ClienteRepository";
+import { ClienteRepository } from "@/repositories/cliente/cliente.repository";
 import { getUserFromToken } from "@/lib/auth";
 
 export async function GET(req: Request) {

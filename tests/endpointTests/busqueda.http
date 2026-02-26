@@ -1,2 +1,0 @@
-### Obtener busqueda
-GET http://localhost:3000/api/busqueda?q=adidas

@@ -5,7 +5,7 @@
 //**********/
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { ClienteRepository } from "@/repositories/ClienteRepository";
+import { ClienteRepository } from "@/repositories/cliente/cliente.repository";
 import { getUserFromToken } from "@/lib/auth";
 
 export async function PATCH(req: Request) {

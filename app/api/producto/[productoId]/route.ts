@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { Producto } from '@/services/Producto';
+import { Producto } from '@/services/producto/producto.service';
 
 export async function GET(
   req: Request,
