@@ -1,0 +1,6 @@
+# /**
+#  * Equipo #1
+#  * Diaz Antonio Luis Pedro
+#  * 24 de febrero de 2026
+#  */
+GET http://localhost:3000/api/metodosdepago/tipos

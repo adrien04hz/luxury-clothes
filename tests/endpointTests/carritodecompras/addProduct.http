@@ -1,0 +1,14 @@
+#--------------------------------------------------
+# Equipo #1
+# Adrien Hernández Sánchez
+# 06 de febrero de 2026
+# Endpoint: Agregar producto al carrito de compras
+#--------------------------------------------------
+POST http://localhost:3000/api/carrito
+Content-Type: application/json
+
+{
+  "clienteId": 1,
+  "productoId": 120,
+  "cantidad": 5
+}

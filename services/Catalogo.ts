@@ -4,7 +4,7 @@
  * 6 de febrero de 2026
  */
 
-import { Producto } from '@/repositories/Producto';
+import { Producto } from '@/repositories/producto/producto.repository';
 
 export class Catalogo {
 

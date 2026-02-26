@@ -1,0 +1,49 @@
+
+info de revision 
+
+Buenas noches compañeros, pase a  revisión con David sobre la arquitectura, en general  esta bien solo que dio la sugerencia de agregar mapper e interfaces, los mapper serían donde se defines los atributos de las tablas y seguiría una estructura asi:
+├── repositories/               # CAPA DE PERSISTENCIA
+|   ├── mapper/                                # caso de usos implementados 
+|   |   ├── producto.entity.ts                 # representacion de la tabla en base de datos
+|   |   ├── clases.entity.ts  
+|   |   ├── clases.entity.ts  
+|   |   ├── clases.entity.ts  
+|   |   ├── clases.entity.ts           
+│   │   └── clases.entity.ts 
+|   |
+ 
+Ejemplo dentro de producto contendria esto:
+
+@Entity
+class Producto {
+   int id;
+   String nombre;
+}
+
+Las interfaces son mostrar todos los métodos o servicio que pueden proporcionar se colocarían dentro del módulo:
+
+|   ├── motordebusqueda/                        # caso de usos implementados 
+|   |   ├── motordebusqueda.interface.ts      
+│   │   └── motordebusqueda.repository.ts
+
+
+Ejemplo de contenido de motorbusqueda.interface. ts
+
+public interface MotorDeBusquedaService {
+
+    // método para buscar productos
+    List<Producto> buscarArticulo(String palabra);
+
+    // método para filtrar productos
+    List<Producto> filtrarArticulo(
+        String palabra,
+        Integer idCategoria,
+        Integer idMarca,
+        Double precioMin,
+        Double precioMax,
+        Boolean soloActivos,
+        Boolean conStock
+    );
+}
+
+en mi opinion es mas trabajo y no es necesario por que todo funciona correctamenyte hasta el momento y es mas una formalidad arquitectonica, o ustedes como lo ven 
