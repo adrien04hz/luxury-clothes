@@ -81,7 +81,7 @@ describe("ProductoService", () => {
             expect(AdministradorRepository.crearProducto).toHaveBeenCalledWith(datos);
         });
 
-        test("lanza error si faltan campos obligatorios (precio undefined)", async () => {
+        test("lanza error si faltan campos obligatorios", async () => {
             await expect(
                 ProductoService.agregarProducto({ nombre: "Solo nombre", stock: 10 })
             ).rejects.toThrow("Faltan campos obligatorios: nombre, precio y stock");
@@ -95,7 +95,7 @@ describe("ProductoService", () => {
 
         // precio == 0
         
-        /*    test("lanza error si precio es negativo o cero", async () => {
+        test("lanza error si precio es negativo o cero", async () => {
              await expect(
                ProductoService.agregarProducto({
                  nombre: "Sudaddera",
@@ -127,7 +127,7 @@ describe("ProductoService", () => {
                  stock: -5,
                })
              ).rejects.toThrow("El stock no puede ser negativo");
-           }); */
+           });
     });
 
     //************************************/

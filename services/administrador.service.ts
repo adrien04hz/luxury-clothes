@@ -22,14 +22,19 @@ export class ProductoService {
     //************************************/
 
     static async agregarProducto(data: any) {
-        if (!data.nombre || !data.precio || data.stock == null) {
+        if (data.nombre == null || data.precio == null || data.stock == null) {
             throw new Error("Faltan campos obligatorios: nombre, precio y stock");
         }
-        if (data.precio <= 0) throw new Error("El precio debe ser mayor a 0");
-        if (data.stock < 0) throw new Error("El stock no puede ser negativo");
 
-        const result: QueryResult = await AdministradorRepository.crearProducto(data);
+        if (data.precio <= 0) {
+            throw new Error("El precio debe ser mayor a 0");
+        }
 
+        if (data.stock < 0) {
+            throw new Error("El stock no puede ser negativo");
+        }
+
+        const result = await AdministradorRepository.crearProducto(data);
         if (result.rowCount === 0) {
             throw new Error("No se pudo crear el producto");
         }
@@ -37,6 +42,9 @@ export class ProductoService {
         return result.rows[0];
     }
 
+    //************************************/
+    // Modificar producto
+    //************************************/
     static async actualizarProducto(id: number, data: any) {
         if (Object.keys(data).length === 0) {
             throw new Error("No se proporcionaron campos para actualizar");
@@ -70,9 +78,4 @@ export class ProductoService {
 
         return { mensaje: "Producto desactivado correctamente", id };
     }
-
-    //************************************/
-    // Modificar producto
-    //************************************/
-
 }
