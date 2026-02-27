@@ -1,0 +1,7 @@
+#-----------------------------------------
+# Equipo #1
+# Valeriano López Magali Natividad
+# 23 de febrero de 2026
+# Visualizar lista de deseos
+#-----------------------------------------
+GET http://localhost:3000/api/direcciondeenvio?clientId=1

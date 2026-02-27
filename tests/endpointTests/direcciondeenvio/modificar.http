@@ -1,0 +1,16 @@
+PUT http://localhost:3000/api/direcciondeenvio
+Content-Type: application/json
+
+{
+  "clientId": 1,
+  "addressId": 16,
+  "data": {
+    "ciudad": "Guadalajara",
+    "estado": "Jalisco",
+    "codigo_postal": "44100",
+    "colonia": "Centro",
+    "calle": "Av. Juárez",
+    "numero_externo": "123",
+    "numero_interno": "2A"
+  }
+}

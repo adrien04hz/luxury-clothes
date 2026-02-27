@@ -1,0 +1,21 @@
+#-----------------------------------------
+# Equipo #1
+# Valeriano López Magali Natividad
+# 19 de febrero de 2026
+# Agregar direccion de un cliente
+#-----------------------------------------
+POST http://localhost:3000/api/direcciondeenvio
+Content-Type: application/json
+
+{
+  "clientId": 1,
+  "data": {
+    "ciudad": "Zapopan",
+    "estado": "Jalisco1",
+    "codigo_postal": "45100",
+    "calle": "Av. Patria",
+    "numero_externo": "250",
+    "numero_interno": "3B",
+    "colonia": "Chapalita"
+  }
+}
