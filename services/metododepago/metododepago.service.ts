@@ -14,6 +14,12 @@ export class MetodoDePagoService {
         return metodos;
     }
 
+    // ver los detalles del metodo
+    static async detallesmetodo(id_cliente: number, id_metodo: number) {
+        const detallemetodo = await MetodoDePagoRepository.obtenermetodo(id_cliente, id_metodo);
+        return detallemetodo;
+    }
+
     //Ver los tipos de metodos de pago
     static async verTipos() {
         return await MetodoDePagoRepository.obtenerTipos();
@@ -49,8 +55,6 @@ export class MetodoDePagoService {
         if (limite >= 5)
             throw new Error("El cliente ya tiene el máximo de 5 métodos de pago");
 
-        // validar todos los parametros
-
         // evitar duplicar el mismo metodo de pago
         const duplicado = metodos.some(m =>
             (numero_cuenta && m.numero_cuenta === numero_cuenta) ||
@@ -59,6 +63,9 @@ export class MetodoDePagoService {
 
         if (duplicado)
             throw new Error("Este método de pago ya está registrado");
+
+        // validar todos los parametros
+        this.validarMetodo(id_tipo, numero_cuenta, correo);
 
         // realizar insercion si pasa los filtros
         const metodo = await MetodoDePagoRepository.agregarMetodo(
@@ -74,6 +81,73 @@ export class MetodoDePagoService {
         return metodo;
     }
 
+    // se tiene que verificar en fronted que vengas los datos necesarios
+    static async modificarMetodo(
+        id_cliente: number,
+        id_tipo: number,
+        id_metodo: number,
+        numero_cuenta: string | null,
+        nombre_titular: string | null,
+        fecha_vencimiento: string | null,
+        banco: string | null,
+        correo: string | null,
+        proveedor: string | null) {
+
+        const datos = [id_cliente, id_tipo, id_metodo, numero_cuenta, nombre_titular, fecha_vencimiento, banco, correo, proveedor]
+
+        if (!id_cliente)
+            throw new Error("Cliente requerido");
+
+        if (!id_metodo)
+            throw new Error("Metodo requerido");
+
+        // consultar los metodos de pago del cliente
+        const metodoActual = await this.detallesmetodo(id_cliente, id_metodo);
+
+
+        if (!metodoActual)
+            throw new Error("Método no encontrado");
+
+        const normalizar = (valor: any): string | null => {
+            if (valor === undefined || valor === null) return null;
+
+            const limpio = String(valor).trim();
+            return limpio === "" ? null : limpio;
+        };
+
+        const normalizarFecha = (valor: any): string | null => {
+            if (!valor) return null;
+
+            const fecha = new Date(valor);
+            return fecha.toISOString().split("T")[0];
+        };
+
+        const sinCambios =
+            normalizar(numero_cuenta) === normalizar(metodoActual.numero_cuenta) &&
+            normalizar(nombre_titular) === normalizar(metodoActual.nombre_titular) &&
+            normalizarFecha(fecha_vencimiento) === normalizarFecha(metodoActual.fecha_vencimiento) &&
+            normalizar(banco) === normalizar(metodoActual.banco) &&
+            normalizar(correo) === normalizar(metodoActual.correo) &&
+            normalizar(proveedor) === normalizar(metodoActual.proveedor);
+        
+        if(sinCambios)
+            throw new Error("No hay cambios");
+
+        this.validarMetodo(id_tipo, numero_cuenta, correo);
+
+        const metodo = await MetodoDePagoRepository.modificarMetodo(
+            id_cliente,
+            id_metodo,
+            numero_cuenta,
+            nombre_titular,
+            fecha_vencimiento,
+            banco,
+            correo,
+            proveedor
+        );
+
+        return metodo;
+    }
 
     static async eliminarMetodo(
         id_cliente: number,
@@ -92,4 +166,30 @@ export class MetodoDePagoService {
 
         return metodo;
     }
+
+    private static validarMetodo(
+        id_tipo: number,
+        numero_cuenta: string | null,
+        correo: string | null
+    ) {
+        switch (id_tipo) {
+
+            case 1:
+            case 2:
+                if (!numero_cuenta || !/^\d{16}$/.test(numero_cuenta))
+                    throw new Error("La tarjeta debe tener 16 dígitos");
+                break;
+
+            case 3:
+                if (!numero_cuenta || !/^\d{18}$/.test(numero_cuenta))
+                    throw new Error("La CLABE debe tener 18 dígitos");
+                break;
+            case 4:
+            case 5:
+                if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo))
+                    throw new Error("Correo inválido");
+                break;
+        }
+    }
+
 }
