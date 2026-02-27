@@ -3,5 +3,5 @@ Content-Type: application/json
 
 {
   "id_cliente": 1,
-  "id_metodo": 8
+  "id_metodo": 11
 }

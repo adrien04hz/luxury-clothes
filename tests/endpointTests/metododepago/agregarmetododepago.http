@@ -4,7 +4,7 @@ Content-Type: application/json
 {
   "id_cliente": 1,
   "id_tipo": 1,
-  "numero_cuenta": "4441021111111111",
+  "numero_cuenta": "1234567891234567",
   "nombre_titular": "Luis Diaz",
   "fecha_vencimiento": "2029-12-01",
   "banco": null,
