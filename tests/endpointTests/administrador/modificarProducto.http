@@ -1,0 +1,17 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+@producto-id = 15
+
+### Modificar producto (PATCH)
+PATCH http://localhost:3000/api/administrador/modificar_producto?id={{producto-id}}
+Content-Type: application/json
+
+{
+  "precio": 799.00,
+  "stock": 28,
+  "nombre": "Chamarra Gucci"
+}

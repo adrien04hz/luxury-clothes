@@ -1,0 +1,8 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+### Historial de ventas
+GET http://localhost:3000/api/administrador/historial_venta

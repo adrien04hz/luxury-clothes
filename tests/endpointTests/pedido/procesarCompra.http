@@ -1,0 +1,24 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+
+### Procesar compra (crear pedido desde carrito)
+POST http://localhost:3000/api/pedido/procesar_compra
+Content-Type: application/json
+
+{
+  "id_metodo_pago": 1,
+  "id_direccion": 3,
+  "notas": "Entregar después de las 15:00 - prueba sin auth"
+}
+
+### Prueba negativa: procesar sin datos requeridos
+POST http://localhost:3000/api/pedido/procesar_compra
+Content-Type: application/json
+
+{
+  "notas": "Prueba fallida - sin método de pago ni dirección"
+}

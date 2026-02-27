@@ -1,0 +1,17 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+### Agregar producto
+POST http://localhost:3000/api/administrador/agregar_producto
+Content-Type: application/json
+
+{
+  "nombre": "Chamarra",
+  "precio": 899.00,
+  "stock": 35,
+  "marca": "Adidas",
+  "categorias": ["audio", "tecnologia"]
+}

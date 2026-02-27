@@ -1,0 +1,19 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+@pedido-id = 42
+
+### Cancelar pedido
+PATCH http://localhost:3000/api/pedido/{{pedido-id}}/cancelar
+Content-Type: application/json
+
+{}
+
+### Prueba negativa: intentar cancelar un ID inexistente
+PATCH http://localhost:3000/api/pedido/999999/cancelar
+Content-Type: application/json
+
+{}

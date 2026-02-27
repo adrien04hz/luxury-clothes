@@ -1,0 +1,18 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+@producto-id = 15
+
+### Eliminar / desactivar producto
+DELETE http://localhost:3000/api/administrador/eliminar_producto?id={{producto-id}}
+
+### Prueba negativa: agregar producto incompleto
+POST http://localhost:3000/api/administrador/agregar_producto
+Content-Type: application/json
+
+{
+  "nombre": "Solo nombre - incompleto"
+}

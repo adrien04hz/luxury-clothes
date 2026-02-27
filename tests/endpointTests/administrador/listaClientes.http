@@ -1,0 +1,9 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 27/02/2026 */
+//**********/
+
+### Lista de clientes activos
+GET http://localhost:3000/api/administrador/lista_cliente
+
