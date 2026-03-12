@@ -1,3 +1,9 @@
+INSERT INTO "Categoria" ("id", "nombre") VALUES 
+(1, 'Ropa'),
+(2, 'Calzado'),
+(3, 'Accesorios');
+
+
 INSERT INTO "Talla" ("id", "nombre", "id_categoria") VALUES 
 (1, 'XS', 1),
 (2, 'S', 1),
@@ -62,12 +68,6 @@ INSERT INTO "Subcategoria" ("id", "nombre", "id_categoria") VALUES
 (16, 'Bolso', 3),
 (17, 'Reloj', 3),
 (18, 'Lentes', 3);
-
-
-INSERT INTO "Categoria" ("id", "nombre") VALUES 
-(1, 'Ropa'),
-(2, 'Calzado'),
-(3, 'Accesorios');
 
 
 INSERT INTO "Marca" ("id", "nombre", "imagen_url", "activo") VALUES 
