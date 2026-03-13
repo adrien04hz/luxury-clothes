@@ -63,8 +63,8 @@ export class DetalleListaDeseos {
       AND  id_producto = $2
     `;
 
-    await pool.query(query, [listId, productId]);
-
+    const result = await pool.query(query, [listId, productId]);
+    return result.rowCount ?? 0;
   }
 
 
@@ -87,7 +87,19 @@ export class DetalleListaDeseos {
       RETURNING id
     `;
     const { rows } = await pool.query(query, [clientId]);
-    return rows[0];
+    return rows[0].id;
   
   }
+
+  static async productExists(productId: number): Promise<boolean> {
+  const query = `
+    SELECT 1
+    FROM "Producto"
+    WHERE id = $1
+  `;
+
+  const { rows } = await pool.query(query, [productId]);
+
+  return rows.length > 0;
+}
 }

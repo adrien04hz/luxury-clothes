@@ -19,6 +19,11 @@ export class ListaDeseos {
         if (!clientId || !productId) {
             throw new Error("Client ID and Product ID are required");
         }
+        const exists = await DetalleListaDeseos.productExists(productId);
+
+        if (!exists) {
+            throw new Error("El producto no existe");
+        }
         //Encontrar el id del cliente
         let wishlist = await DetalleListaDeseos.findWishlistIdByClientId(clientId);
 
@@ -29,20 +34,22 @@ export class ListaDeseos {
         }
 
         //Si todo marcha bien, agregamos el producto a la lista de deseos
-        await DetalleListaDeseos.addProductToWishlist(wishlist.id, productId);
+        await DetalleListaDeseos.addProductToWishlist(wishlist, productId);
 
     }
 
     static async deleteProduct(clientId: number, productId: number){
-        const list = await DetalleListaDeseos.findWishlistIdByClientId(clientId);
+        const listId = await DetalleListaDeseos.findWishlistIdByClientId(clientId);
 
-        if(!list){
-            throw new Error("Client ID is required");
+        if(!listId){
+            throw new Error("Client does not have a wishlist");
         }
+        
+        const deleted = await DetalleListaDeseos.deleteProductToWishList(listId, productId);
 
-        //Si todo marcha bien, eliminamos el producto de la lista
-        await DetalleListaDeseos.deleteProductToWishList(list.id, productId);
-
+        if(deleted === 0){
+            throw new Error("El producto no existe en la lista de deseos del usuario");
+        }
 
     }
 }
