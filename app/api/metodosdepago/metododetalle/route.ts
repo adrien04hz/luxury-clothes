@@ -26,10 +26,10 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const id_cliente = Number(clienteId);
+        const id_usuario = Number(clienteId);
         const id_metodo = Number(metodoId);
 
-        if (Number.isNaN(id_cliente)) {
+        if (Number.isNaN(id_usuario)) {
             return NextResponse.json(
                 { ok: false, error: "clienteId inválido" },
                 { status: 400 }
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const detallemetodos = await MetodoDePagoService.detallesmetodo(id_cliente, id_metodo);
+        const detallemetodos = await MetodoDePagoService.detallesmetodo(id_usuario, id_metodo);
 
         return NextResponse.json({
             ok: true,
