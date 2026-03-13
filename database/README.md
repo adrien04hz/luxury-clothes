@@ -29,9 +29,12 @@
 5. La salida debería verse algo así:
 
     ```
+    NOTICE:  drop cascades to 27 other objects
+    DETAIL:  drop cascades to table "Producto"
+    drop cascades to table "Talla"
+    ...                                         <-- Solo es para abreviar
     DROP SCHEMA
     CREATE SCHEMA
-    CREATE TABLE
     CREATE TABLE
     CREATE TABLE
     CREATE TABLE

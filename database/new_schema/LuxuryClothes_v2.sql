@@ -25,8 +25,8 @@ CREATE TABLE "Talla" (
     "id_categoria" INT NOT NULL
 );
 
--- StockPorTallas
-CREATE TABLE "StockPorTallas" (
+-- StockPorTalla
+CREATE TABLE "StockPorTalla" (
     "id_producto" INT NOT NULL,
     "id_talla" INT NOT NULL,
     "stock" INT NOT NULL check (stock >= 0),
@@ -237,7 +237,7 @@ ADD FOREIGN KEY ("id_genero") REFERENCES "Genero"("id"),
 ADD FOREIGN KEY ("id_subcategoria") REFERENCES "Subcategoria"("id"),
 ADD FOREIGN KEY ("id_marca") REFERENCES "Marca"("id");
 
-ALTER TABLE "StockPorTallas"
+ALTER TABLE "StockPorTalla"
 ADD FOREIGN KEY ("id_producto") REFERENCES "Producto"("id"),
 ADD FOREIGN KEY ("id_talla") REFERENCES "Talla"("id");
 
@@ -289,7 +289,7 @@ ADD FOREIGN KEY ("id_usuario") REFERENCES "Usuario"("id");
 
 ALTER TABLE "DetallePedido"
 ADD FOREIGN KEY ("id_producto","id_talla")
-REFERENCES "StockPorTallas"("id_producto","id_talla");
+REFERENCES "StockPorTalla"("id_producto","id_talla");
 
 CREATE INDEX idx_historial_pedido
 ON "HistorialEstadoPedido"(id_pedido);
@@ -303,13 +303,13 @@ ON "Pedido"(id_usuario);
 CREATE INDEX idx_producto_marca ON "Producto"(id_marca);
 CREATE INDEX idx_producto_genero ON "Producto"(id_genero);
 CREATE INDEX idx_producto_color ON "Producto"(id_color);
-CREATE INDEX idx_stock_producto ON "StockPorTallas"(id_producto);
+CREATE INDEX idx_stock_producto ON "StockPorTalla"(id_producto);
 CREATE INDEX idx_producto_filtros ON "Producto"(id_subcategoria, id_marca, id_genero);
 CREATE INDEX idx_producto_activo ON "Producto"(id_subcategoria) WHERE activo = TRUE;
-CREATE INDEX idx_stock_talla ON "StockPorTallas"(id_talla);
+CREATE INDEX idx_stock_talla ON "StockPorTalla"(id_talla);
 
 CREATE INDEX idx_stock_disponible
-ON "StockPorTallas"(id_producto)
+ON "StockPorTalla"(id_producto)
 WHERE stock > 0;
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
