@@ -1,10 +1,15 @@
-
 #  Equipo #1
 #  Diaz Antonio Luis Pedro
-#  6 de febrero de 2026
+#  13 de marzo de 2026
 
-### Obtener busqueda
-GET http://localhost:3000/api/motordebusqueda/busqueda?q=Adidas
+### Por objeto
+GET http://localhost:3000/api/motordebusqueda/filtro?q=tenis
 
-###
-GET http://localhost:3000/api/motordebusqueda/busqueda?q=algodón
+### por categoria
+GET http://localhost:3000/api/motordebusqueda/filtro?categoria=3
+
+### por marca
+GET http://localhost:3000/api/motordebusqueda/filtro?marca=1
+
+### por precio
+GET http://localhost:3000/api/motordebusqueda/filtro?precioMax=500
