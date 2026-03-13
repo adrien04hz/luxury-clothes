@@ -1,8 +1,16 @@
 # AÑADIR NUEVA BASE DE DATOS
 
-1. En la carpeta `database/` se tiene una carpeta `new_shcema/` con el archivo `LuxuryClothes_v2.sql` que es el nuevo esquema de la base de datos.
+1. En la carpeta `database/` se tiene una carpeta `new_schema/` con el archivo `LuxuryClothes_v2.sql` que es el nuevo esquema de la base de datos.
 
-2. Para añadir nueva base de datos, posicionarse en la carpeta `project/` y cambiar el archivo `init.sql` por el contenido de `LuxuryClothes_v2.sql`.
+
+2. En la terminal, posicionados en la carpeta `project/` levantar el servicio de la base de datos (Si no lo tienen levantado).
+
+    ```bash
+    docker compose up -d
+    ```
+
+
+3. Para añadir nueva base de datos, posicionarse en la carpeta `project/` y cambiar el archivo `init.sql` por el contenido de `LuxuryClothes_v2.sql`.
 
     ```bash
     project/
@@ -12,13 +20,7 @@
         └── data.sql    <-- PUEDEN BORRARLO
     ```
 
-3. En la terminal, posicionados en la carpeta `project/` levantar el servicio de la base de datos.
-
-    ```bash
-    docker compose up -d
-    ```
-
-4. Una vez levantado, estando en la misma carpeta `project/` ejecutar el archivo `init.sql` ya modificado:
+4. Estando en la misma carpeta `project/` ejecutar el archivo `init.sql` ya modificado:
 
     ```bash
     docker exec -i postgres_local psql -U postgres -d luxuryclothes < db/init.sql
@@ -47,7 +49,13 @@
 
 1. En la carpeta `database/` se tiene una carpeta `new_data/` con el archivo `data.sql` que son los nuevos datos de la base de datos.
 
-2. Para añadir nueva información, posicionarse en la carpeta `project/` y cambiar el archivo `data.sql` por el contenido de `database/new_data/data.sql`.
+2. En la terminal, posicionados en la carpeta `project/` levantar el servicio de la base de datos si fuera el caso (Si no lo tienen levantado).
+
+    ```bash
+    docker compose up -d
+    ```
+
+3. Para añadir nueva información, posicionarse en la carpeta `project/` y cambiar el archivo `data.sql` por el contenido de `database/new_data/data.sql`.
 
     ```bash
     project/
@@ -57,13 +65,8 @@
         └── data.sql    <-- MODIFICAR ESTE
     ```
 
-3. En la terminal, posicionados en la carpeta `project/` levantar el servicio de la base de datos si fuera el caso.
 
-    ```bash
-    docker compose up -d
-    ```
-
-4. Una vez levantado, estando en la misma carpeta `project/` ejecutar el archivo `data.sql` ya modificado:
+4. Estando en la misma carpeta `project/` ejecutar el archivo `data.sql` ya modificado:
 
     ```bash
     docker exec -i postgres_local psql -U postgres -d luxuryclothes < db/data.sql
@@ -88,6 +91,10 @@
     Verificar igualmente en `TablePlus` la inserción de las nuevos datos.
 
     <br><br><br>
+
+---
+# La sección de abajo ya se hizo, esto ya no, a menos que hagan todo desde cero.
+---
 # SOLO EJECUTAR CUANDO SE LEVANTA POR PRIMERA VEZ
 
 Para poder levantar la base de datos localmente seguir los siguientes pasos.
