@@ -11,11 +11,11 @@ export async function POST(req: Request) {
     try {
 
         const body = await req.json();
-        const { id_cliente, id_tipo, id_metodo, numero_cuenta, nombre_titular, fecha_vencimiento, banco, correo, proveedor } = body;
+        const { id_usuario, id_tipo_metodo, id_metodo, numero_cuenta, nombre_titular, fecha_vencimiento, banco, correo, id_proveedor } = body;
 
-        if (!id_cliente) {
+        if (!id_usuario) {
             return NextResponse.json(
-                { ok: false, error: "id_cliente requerido" },
+                { ok: false, error: "id_usuario requerido" },
                 { status: 400 }
             );
         }
@@ -27,15 +27,15 @@ export async function POST(req: Request) {
         }
 
         const nuevoMetodo = await MetodoDePagoService.modificarMetodo(
-            Number(id_cliente),
-            Number(id_tipo),
+            Number(id_usuario),
+            Number(id_tipo_metodo),
             Number(id_metodo),
             numero_cuenta ?? null,
             nombre_titular ?? null,
             fecha_vencimiento ?? null,
             banco ?? null,
             correo ?? null,
-            proveedor ?? null
+            id_proveedor ?? null
         );
 
         return NextResponse.json(

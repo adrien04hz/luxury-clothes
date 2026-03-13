@@ -8,47 +8,56 @@ import { MetodoDePagoRepository } from "@/repositories/metododepago/metododepago
 // clase principal de metodos de pago
 export class MetodoDePagoService {
 
-    // ver los metodos de pago disponibles
-    static async VerMetodos(id_cliente: number) {
-        const metodos = await MetodoDePagoRepository.Ver(id_cliente);
-        return metodos;
-    }
-
-    // ver los detalles del metodo
-    static async detallesmetodo(id_cliente: number, id_metodo: number) {
-        const detallemetodo = await MetodoDePagoRepository.obtenermetodo(id_cliente, id_metodo);
-        return detallemetodo;
-    }
-
     //Ver los tipos de metodos de pago
     static async verTipos() {
         return await MetodoDePagoRepository.obtenerTipos();
     }
 
+    // ver los tipos de proveedores
+    static async verProveedor() {
+        return await MetodoDePagoRepository.obtenerProveedor();
+    }
+
+    // ver los metodos de pago disponibles
+    static async VerMetodos(id_usuario: number) {
+        const metodos = await MetodoDePagoRepository.Ver(id_usuario);
+        return metodos;
+    }
+
+    // ver los detalles del metodo
+    static async detallesmetodo(id_usuario: number, id_metodo: number) {
+        const detallemetodo = await MetodoDePagoRepository.obtenermetodo(id_usuario, id_metodo);
+        return detallemetodo;
+    }
+
     //Agregar nuevos metodos de pago
     static async agregarMetodo(
-        id_cliente: number,
-        id_tipo: number,
+        id_usuario: number,
+        id_tipo_metodo: number,
         numero_cuenta: string | null,
         nombre_titular: string | null,
         fecha_vencimiento: string | null,
         banco: string | null,
         correo: string | null,
-        proveedor: string | null) {
+        id_proveedor: number) {
 
         // validar que cliente
-        if (!id_cliente)
+        if (!id_usuario)
             throw new Error("Cliente requerido");
 
         //validar tipo de pago
 
-        const validos = [1, 2, 3, 4, 5, 6, 7];
-
-        if (!validos.includes(id_tipo))
+        const tiposvalidos = [1, 2, 3, 4, 5, 6, 7];
+        if (!tiposvalidos.includes(id_tipo_metodo))
             throw new Error("Tipo requerido");
 
+        // validar proveedor bancario
+        const proveedoresvalidos = [1, 2, 3, 4, 5, 6];
+        if (!proveedoresvalidos.includes(id_proveedor))
+            throw new Error("Proveedor requerido");
+
         // consultar los metodos de pago del cliente
-        const metodos = await this.VerMetodos(id_cliente);
+        const metodos = await this.VerMetodos(id_usuario);
         const limite = metodos?.length ?? 0;
 
         // limitar a solo 5 metodos de pago
@@ -65,44 +74,44 @@ export class MetodoDePagoService {
             throw new Error("Este método de pago ya está registrado");
 
         // validar todos los parametros
-        this.validarMetodo(id_tipo, numero_cuenta, correo);
+        this.validarMetodo(id_tipo_metodo, numero_cuenta, correo);
 
         // realizar insercion si pasa los filtros
         const metodo = await MetodoDePagoRepository.agregarMetodo(
-            id_cliente,
-            id_tipo,
+            id_usuario,
+            id_tipo_metodo,
             numero_cuenta,
             nombre_titular,
             fecha_vencimiento,
             banco,
             correo,
-            proveedor
+            id_proveedor
         );
         return metodo;
     }
 
     // se tiene que verificar en fronted que vengas los datos necesarios
     static async modificarMetodo(
-        id_cliente: number,
-        id_tipo: number,
+        id_usuario: number,
+        id_tipo_metodo: number,
         id_metodo: number,
         numero_cuenta: string | null,
         nombre_titular: string | null,
         fecha_vencimiento: string | null,
         banco: string | null,
         correo: string | null,
-        proveedor: string | null) {
+        id_proveedor: number) {
 
-        const datos = [id_cliente, id_tipo, id_metodo, numero_cuenta, nombre_titular, fecha_vencimiento, banco, correo, proveedor]
+        const datos = [id_usuario, id_tipo_metodo, id_metodo, numero_cuenta, nombre_titular, fecha_vencimiento, banco, correo, id_proveedor]
 
-        if (!id_cliente)
+        if (!id_usuario)
             throw new Error("Cliente requerido");
 
         if (!id_metodo)
             throw new Error("Metodo requerido");
 
         // consultar los metodos de pago del cliente
-        const metodoActual = await this.detallesmetodo(id_cliente, id_metodo);
+        const metodoActual = await this.detallesmetodo(id_usuario, id_metodo);
 
 
         if (!metodoActual)
@@ -128,38 +137,38 @@ export class MetodoDePagoService {
             normalizarFecha(fecha_vencimiento) === normalizarFecha(metodoActual.fecha_vencimiento) &&
             normalizar(banco) === normalizar(metodoActual.banco) &&
             normalizar(correo) === normalizar(metodoActual.correo) &&
-            normalizar(proveedor) === normalizar(metodoActual.proveedor);
-        
-        if(sinCambios)
+            normalizar(id_proveedor) === normalizar(metodoActual.id_proveedor);
+
+        if (sinCambios)
             throw new Error("No hay cambios");
 
-        this.validarMetodo(id_tipo, numero_cuenta, correo);
+        this.validarMetodo(id_tipo_metodo, numero_cuenta, correo);
 
         const metodo = await MetodoDePagoRepository.modificarMetodo(
-            id_cliente,
+            id_usuario,
             id_metodo,
             numero_cuenta,
             nombre_titular,
             fecha_vencimiento,
             banco,
             correo,
-            proveedor
+            id_proveedor
         );
 
         return metodo;
     }
 
     static async eliminarMetodo(
-        id_cliente: number,
+        id_usuario: number,
         id_metodo: number) {
 
-        if (!id_cliente)
+        if (!id_usuario)
             throw new Error("Cliente requerido");
 
         if (!id_metodo)
             throw new Error("Metodo requerido");
 
-        const metodo = await MetodoDePagoRepository.eliminarMetodo(id_cliente, id_metodo);
+        const metodo = await MetodoDePagoRepository.eliminarMetodo(id_usuario, id_metodo);
 
         if (!metodo)
             throw new Error("Metodo de pago no encontrado");

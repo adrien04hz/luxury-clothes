@@ -6,10 +6,10 @@ export async function DELETE(req: Request) {
 
         const body = await req.json();
 
-        const { id_cliente, id_metodo } = body;
+        const { id_usuario, id_metodo } = body;
 
         const metodo = await MetodoDePagoService.eliminarMetodo(
-            id_cliente,
+            id_usuario,
             id_metodo
         );
 

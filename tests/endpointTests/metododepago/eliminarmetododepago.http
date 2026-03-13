@@ -2,6 +2,6 @@ DELETE http://localhost:3000/api/metodosdepago/eliminar
 Content-Type: application/json
 
 {
-  "id_cliente": 1,
-  "id_metodo": 11
+  "id_usuario": 1,
+  "id_metodo": 2
 }

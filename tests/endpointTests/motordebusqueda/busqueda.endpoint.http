@@ -1,0 +1,15 @@
+#  Equipo #1
+#  Diaz Antonio Luis Pedro
+#  13 de marzo de 2026
+
+### Por objeto
+GET http://localhost:3000/api/motordebusqueda/filtro?q=tenis
+
+### por categoria
+GET http://localhost:3000/api/motordebusqueda/filtro?categoria=3
+
+### por marca
+GET http://localhost:3000/api/motordebusqueda/filtro?marca=1
+
+### por precio
+GET http://localhost:3000/api/motordebusqueda/filtro?precioMax=500

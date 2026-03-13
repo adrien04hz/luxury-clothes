@@ -1,0 +1,10 @@
+
+#  Equipo #1
+#  Diaz Antonio Luis Pedro
+#  6 de febrero de 2026
+
+### Obtener busqueda
+GET http://localhost:3000/api/motordebusqueda/busqueda?q=Adidas
+
+###
+GET http://localhost:3000/api/motordebusqueda/busqueda?q=algodón

@@ -19,16 +19,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const id_cliente = Number(clienteId);
+    const id_usuario = Number(clienteId);
 
-    if (Number.isNaN(id_cliente)) {
+    if (Number.isNaN(id_usuario)) {
       return NextResponse.json(
         { ok: false, error: "clienteId inválido" },
         { status: 400 }
       );
     }
 
-    const metodos = await MetodoDePagoService.VerMetodos(id_cliente);
+    const metodos = await MetodoDePagoService.VerMetodos(id_usuario);
 
     return NextResponse.json({
       ok: true,

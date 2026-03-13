@@ -2,6 +2,7 @@
  * Equipo #1
  * Diaz Antonio Luis Pedro
  * 6 de febrero de 2026
+ * 12 de marzo de 2026
  */
 
 import { pool } from '@/lib/db';
@@ -12,20 +13,30 @@ export class BusquedaArticulo {
   static async buscar(palabra: string) {
     const { rows } = await pool.query(
       `
-      SELECT DISTINCT ON (P.id)
-        P.id,
-        P.nombre,
-        P.precio,
-        P.stock,
-        M.nombre AS marca,
-        I.url AS imagen_url
-      FROM "Producto" P
-      INNER JOIN "Marca" M ON P.id_marca = M.id
-      INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
+      SELECT DISTINCT ON (p.id)
+        p.id,
+        p.nombre,
+        p.descripcion,
+        p.precio,
+        c.nombre AS color,
+        g.nombre AS genero,
+        s.nombre AS subcategoria,
+        m.nombre AS marca,
+        i.url AS imagen_url
+      FROM "Producto" p
+      INNER JOIN "Color" c ON p.id_color = c.id
+      INNER JOIN "Genero" g ON p.id_genero = g.id
+      INNER JOIN "Subcategoria" s ON p.id_subcategoria = s.id
+      INNER JOIN "Marca" m ON p.id_marca = m.id
+      LEFT JOIN "ImagenProducto" i ON p.id = i.id_producto
       WHERE
-        P.nombre ILIKE $1
-        OR M.nombre ILIKE $1
-      ORDER BY P.id
+      (
+        p.nombre ILIKE $1
+        OR p.descripcion ILIKE $1
+        OR m.nombre ILIKE $1
+      )
+      AND p.activo = TRUE
+      ORDER BY p.id
       `,
       [`%${palabra}%`]
     );
@@ -52,13 +63,20 @@ export class FiltroArticulo {
     let i = 1;
 
     if (palabra) {
-      condiciones.push(`(P.nombre ILIKE $${i} OR M.nombre ILIKE $${i})`);
+      condiciones.push(`
+        (
+          P.nombre ILIKE $${i}
+          OR P.descripcion ILIKE $${i}
+          OR M.nombre ILIKE $${i}
+          OR S.nombre ILIKE $${i}
+        )
+      `);
       valores.push(`%${palabra}%`);
       i++;
     }
 
     if (idCategoria) {
-      condiciones.push(`CP.id_categoria = $${i}`);
+      condiciones.push(`C.id = $${i}`);
       valores.push(idCategoria);
       i++;
     }
@@ -82,31 +100,47 @@ export class FiltroArticulo {
     }
 
     if (soloActivos) {
-      condiciones.push(`P.activo = true`);
+      condiciones.push(`P.activo = TRUE`);
     }
 
     if (conStock) {
-      condiciones.push(`P.stock > 0`);
+      condiciones.push(`
+        EXISTS (
+          SELECT 1
+          FROM "StockPorTallas" ST
+          WHERE ST.id_producto = P.id
+          AND ST.stock > 0
+        )
+      `);
     }
 
     const where = condiciones.length
-      ? `WHERE ${condiciones.join(' AND ')}`
-      : '';
+      ? `WHERE ${condiciones.join(" AND ")}`
+      : "";
 
     const query = `
-      SELECT DISTINCT ON (P.id)
+      SELECT
         P.id,
         P.nombre,
+        P.descripcion,
         P.precio,
-        P.stock,
         M.nombre AS marca,
-        I.url AS imagen_url
+        S.nombre AS subcategoria,
+        C.nombre AS categoria,
+        (
+          SELECT I.url
+          FROM "ImagenProducto" I
+          WHERE I.id_producto = P.id
+          ORDER BY I.id
+          LIMIT 1
+        ) AS imagen_url
       FROM "Producto" P
       INNER JOIN "Marca" M ON P.id_marca = M.id
-      INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
-      LEFT JOIN "CategoriaProducto" CP ON CP.id_producto = P.id
+      INNER JOIN "Subcategoria" S ON P.id_subcategoria = S.id
+      INNER JOIN "Categoria" C ON S.id_categoria = C.id
       ${where}
-      ORDER BY P.id
+      ORDER BY P.id DESC
+      LIMIT 50
     `;
 
     const { rows } = await pool.query(query, valores);

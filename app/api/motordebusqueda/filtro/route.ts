@@ -9,31 +9,35 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
+
     const { searchParams } = new URL(req.url);
 
+    const palabra = searchParams.get("q");
+    const idCategoria = searchParams.get("categoria");
+    const idMarca = searchParams.get("marca");
+    const precioMin = searchParams.get("precioMin");
+    const precioMax = searchParams.get("precioMax");
+    const stock = searchParams.get("stock");
+
     const data = await FiltroArticuloService.filtrar({
-      palabra: searchParams.get('q') || undefined,
-      idCategoria: searchParams.get('categoria')
-        ? Number(searchParams.get('categoria'))
-        : undefined,
-      idMarca: searchParams.get('marca')
-        ? Number(searchParams.get('marca'))
-        : undefined,
-      precioMin: searchParams.get('precioMin')
-        ? Number(searchParams.get('precioMin'))
-        : undefined,
-      precioMax: searchParams.get('precioMax')
-        ? Number(searchParams.get('precioMax'))
-        : undefined,
-      conStock: searchParams.get('stock') === 'true'
+      palabra: palabra || undefined,
+      idCategoria: idCategoria ? Number(idCategoria) : undefined,
+      idMarca: idMarca ? Number(idMarca) : undefined,
+      precioMin: precioMin ? Number(precioMin) : undefined,
+      precioMax: precioMax ? Number(precioMax) : undefined,
+      soloActivos: true,
+      conStock: stock === "true"
     });
 
     return NextResponse.json(data);
 
   } catch (error: any) {
+
+    console.error("ERROR EN /api/motordebusqueda/filtro:", error);
+
     return NextResponse.json(
       { error: error.message },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }
