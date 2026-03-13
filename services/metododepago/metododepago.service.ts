@@ -14,7 +14,7 @@ export class MetodoDePagoService {
     }
 
     // ver los tipos de proveedores
-    static async verProveedor(){
+    static async verProveedor() {
         return await MetodoDePagoRepository.obtenerProveedor();
     }
 
@@ -52,7 +52,7 @@ export class MetodoDePagoService {
             throw new Error("Tipo requerido");
 
         // validar proveedor bancario
-        const proveedoresvalidos = [1,2,3,4,5,6];
+        const proveedoresvalidos = [1, 2, 3, 4, 5, 6];
         if (!proveedoresvalidos.includes(id_proveedor))
             throw new Error("Proveedor requerido");
 
@@ -138,8 +138,8 @@ export class MetodoDePagoService {
             normalizar(banco) === normalizar(metodoActual.banco) &&
             normalizar(correo) === normalizar(metodoActual.correo) &&
             normalizar(id_proveedor) === normalizar(metodoActual.id_proveedor);
-        
-        if(sinCambios)
+
+        if (sinCambios)
             throw new Error("No hay cambios");
 
         this.validarMetodo(id_tipo_metodo, numero_cuenta, correo);
