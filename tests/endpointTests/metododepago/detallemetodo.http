@@ -3,4 +3,4 @@
 #  * Diaz Antonio Luis Pedro
 #  * 27 de febrero de 2026
 #  */
-GET http://localhost:3000//api/metodosdepago/metododetalle?clienteId=1&metodoId=1
+GET http://localhost:3000//api/metodosdepago/metododetalle?clienteId=3&metodoId=4

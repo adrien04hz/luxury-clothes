@@ -41,6 +41,15 @@ export class MetodoDePagoRepository {
         return rows;
     }
 
+    static async obtenerRolUsuario(id_usuario: number){
+        const {rows} = await pool.query(
+            `SELECT "id_rol" FROM "Usuario"
+                WHERE "id" = $1`,
+            [id_usuario]
+        );
+        return rows[0]?.id_rol ?? null;
+    }
+
     // Obtener el metodo segun id y id_cliente
     static async obtenermetodo(id_usuario: number, id_metodo: number) {
         const { rows } = await pool.query(
