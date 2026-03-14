@@ -8,8 +8,17 @@ import { NextResponse } from "next/server";
 import { AuthService } from "@/services/cliente/cliente.service";
 
 export async function POST(req: Request) {
+
   try {
+
     const { correo, contrasena } = await req.json();
+
+    if (!correo || !contrasena) {
+      return NextResponse.json(
+        { error: "Correo y contraseña son obligatorios" },
+        { status: 400 }
+      );
+    }
 
     const token = await AuthService.login(correo, contrasena);
 
@@ -21,5 +30,7 @@ export async function POST(req: Request) {
       { error: error.message },
       { status: 401 }
     );
+
   }
+
 }
