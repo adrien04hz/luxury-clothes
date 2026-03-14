@@ -4,4 +4,4 @@
 # 06 de febrero de 2026
 # Endpoint: Obtener catálogo de productos
 #--------------------------------------------------
-GET http://localhost:3000/api/catalogo
+GET http://localhost:3000/api/catalogo?id_genero=1&id_subcategoria=2
