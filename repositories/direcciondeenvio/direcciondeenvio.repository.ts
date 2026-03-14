@@ -12,7 +12,7 @@ export class DireccionEnvio {
     static async findByUserId(clientId: number){
         //Consulta para obtener la lista de direcciones
         const query = `
-            SELECT id, id_usuario, ciudad, estado, codigo_postal, calle, numero_externo, numero_interno, colonia
+            SELECT id, id_usuario, ciudad, estado, codigo_postal, calle, numero_exterior, numero_interior, colonia
             FROM "DireccionEnvio"
             WHERE id_usuario = $1
             ORDER BY id;
@@ -30,7 +30,7 @@ export class DireccionEnvio {
 
         const query = `
             SELECT id, id_usuario, ciudad, estado, codigo_postal,
-                calle, numero_externo, numero_interno, colonia
+                calle, numero_exterior, numero_interior, colonia
             FROM "DireccionEnvio"
             WHERE id = $1 AND id_usuario = $2;
         `;
@@ -49,8 +49,8 @@ export class DireccionEnvio {
             AND codigo_postal = $4
             AND colonia = $5
             AND calle = $6
-            AND numero_externo = $7
-            AND numero_interno IS NOT DISTINCT FROM $8
+            AND numero_exterior = $7
+            AND numero_interior IS NOT DISTINCT FROM $8
             LIMIT 1;
         `;
 
@@ -61,8 +61,8 @@ export class DireccionEnvio {
             data.codigo_postal,
             data.colonia,
             data.calle,
-            data.numero_externo,
-            data.numero_interno ?? null
+            data.numero_exterior,
+            data.numero_interior ?? null
         ];
 
         const { rows } = await pool.query(query, values);
@@ -79,8 +79,8 @@ export class DireccionEnvio {
             AND codigo_postal = $4
             AND colonia = $5
             AND calle = $6
-            AND numero_externo = $7
-            AND numero_interno is NOT DISTINCT FROM $8 AND id <> $9
+            AND numero_exterior = $7
+            AND numero_interior is NOT DISTINCT FROM $8 AND id <> $9
         LIMIT 1;
         `;
         const values = [
@@ -90,8 +90,8 @@ export class DireccionEnvio {
             data.codigo_postal,
             data.colonia,
             data.calle,
-            data.numero_externo,
-            data.numero_interno ?? null,
+            data.numero_exterior,
+            data.numero_interior ?? null,
             addressId
         ];
         const { rows } = await pool.query(query, values);
@@ -102,7 +102,7 @@ export class DireccionEnvio {
     static async addShippingAddress(clientId: number, data: any){
         //Consulta para insertar una direccion nueva
         const query = `
-            INSERT INTO "DireccionEnvio" (id_usuario, ciudad, estado, codigo_postal, calle, numero_externo, numero_interno, colonia) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+            INSERT INTO "DireccionEnvio" (id_usuario, ciudad, estado, codigo_postal, calle, numero_exterior, numero_interior, colonia) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *;
         `;
 
@@ -112,8 +112,8 @@ export class DireccionEnvio {
             data.estado,
             data.codigo_postal,
             data.calle,
-            data.numero_externo,
-            data.numero_interno,
+            data.numero_exterior,
+            data.numero_interior,
             data.colonia
         ]
         
@@ -132,8 +132,8 @@ export class DireccionEnvio {
                 codigo_postal=$3,
                 colonia=$4,
                 calle=$5,
-                numero_externo=$6,
-                numero_interno=$7
+                numero_exterior=$6,
+                numero_interior=$7
             WHERE id=$8
             RETURNING *;
         `;
@@ -144,8 +144,8 @@ export class DireccionEnvio {
             data.codigo_postal,
             data.colonia,
             data.calle,
-            data.numero_externo,
-            data.numero_interno ?? null,
+            data.numero_exterior,
+            data.numero_interior ?? null,
             id_direccion
         ]
 

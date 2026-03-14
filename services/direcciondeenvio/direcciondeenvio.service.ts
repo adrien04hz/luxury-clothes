@@ -64,22 +64,22 @@ export class DireccionesEnvio{
         //Si no se encuentra nada, mandamos vacio
         if (rows.length === 0) {
             return {
-            id_cliente: clientId,
+            id_usuario: clientId,
             direcciones: []
             };
         }
 
         //Reestructuramos la informacion que se mando
         return{
-            id_cliente: rows[0].id_cliente,
+            id_cliente: rows[0].id_usuario,
             direcciones: rows.map((row: any) => ({
-            ciudad: row.ciudad,
-            estado: row.estado,
-            codigo_postal: row.codigo_postal,
-            calle: row.calle,
-            numero_externo: row.numero_externo,
-            numero_interno: row.numero_interno,
-            colonia: row.colonia
+                ciudad: row.ciudad,
+                estado: row.estado,
+                codigo_postal: row.codigo_postal,
+                calle: row.calle,
+                numero_exterior: row.numero_exterior,
+                numero_interior: row.numero_interior,
+                colonia: row.colonia
             }))
         };
     }

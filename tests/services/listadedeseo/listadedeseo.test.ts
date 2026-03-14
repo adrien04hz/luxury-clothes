@@ -6,11 +6,15 @@ jest.mock('@/repositories/listadedeseo/listadedeseo.repository');
 describe('ListaDeseosService', () => {
 
   it('debe crear lista si no existe y agregar producto', async () => {
+
+    (DetalleListaDeseos.productExists as jest.Mock)
+      .mockResolvedValue(true);
+
     (DetalleListaDeseos.findWishlistIdByClientId as jest.Mock)
       .mockResolvedValue(null);
 
     (DetalleListaDeseos.createWishlistForClient as jest.Mock)
-      .mockResolvedValue({ id: 10 });
+      .mockResolvedValue(10);
 
     (DetalleListaDeseos.addProductToWishlist as jest.Mock)
       .mockResolvedValue(undefined);
@@ -37,11 +41,12 @@ describe('ListaDeseosService', () => {
   });
 
   it('debe eliminar un producto de la lista de deseos', async () => {
+
     (DetalleListaDeseos.findWishlistIdByClientId as jest.Mock)
-      .mockResolvedValue({ id: 10 });
+      .mockResolvedValue(10);
 
     (DetalleListaDeseos.deleteProductToWishList as jest.Mock)
-      .mockResolvedValue(undefined);
+      .mockResolvedValue(1);
 
     await ListaDeseos.deleteProduct(1, 5);
 
