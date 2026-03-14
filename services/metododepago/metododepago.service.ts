@@ -209,7 +209,8 @@ export class MetodoDePagoService {
                 break;
         }
     }
-
+    
+    //validar rol de usuario
     private static async validarCliente(id_usuario: number) {
 
         const idRol = await MetodoDePagoRepository.obtenerRolUsuario(id_usuario);
