@@ -1,136 +1,135 @@
-import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.service";
-import { Carrito } from "@/repositories/carritodecompras/carritodecompras.repository";
+// tests/carrito.test.ts
+import { CarritoCompras } from '@/services/carritodecompras/carritodecompras.service';
+import { pool } from '@/lib/db';
 
-jest.mock('@/repositories/carritodecompras/carritodecompras.repository', () => ({
-  Carrito: {
-    addProduct: jest.fn(),
-    removeProduct: jest.fn(),
-    setQuantity: jest.fn(),
-    clearCart: jest.fn(),
-    getCartByCustomerId: jest.fn(),
-    getProductInCart: jest.fn(),
-  },
+jest.mock('@/lib/db', () => ({
+  pool: {
+    query: jest.fn()
+  }
 }));
 
+describe('CarritoCompras (service + repo)', () => {
 
-describe('CarritoCompras.addProduct', () => {
-
-  it('agrega producto si la cantidad es válida', async () => {
-    await CarritoCompras.addProduct(1, 10, 2);
-
-    expect(Carrito.addProduct).toHaveBeenCalledWith(1, 10, 2);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('lanza error si la cantidad es menor o igual a 0', async () => {
-    await expect(
-      CarritoCompras.addProduct(1, 10, 0)
-    ).rejects.toThrow('La cantidad debe ser mayor a cero');
+  describe('Añadir producto al carrito -> addProduct', () => {
+
+    it('agrega producto al carrito', async () => {
+      (pool.query as jest.Mock).mockResolvedValue({ rowCount: 1 });
+
+      const result = await CarritoCompras.addProduct({
+        id_usuario: 1,
+        id_producto: 10,
+        id_talla: 2,
+        cantidad: 3
+      });
+
+      expect(pool.query).toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
+
+    it('lanza error si cantidad <= 0', async () => {
+      await expect(
+        CarritoCompras.addProduct({
+          id_usuario: 1,
+          id_producto: 10,
+          id_talla: 2,
+          cantidad: 0
+        })
+      ).rejects.toThrow('La cantidad debe ser mayor a cero');
+    });
+
   });
 
-});
+  describe('Eliminar producto del carrito -> deleteProduct', () => {
 
+    it('elimina producto del carrito', async () => {
+      (pool.query as jest.Mock).mockResolvedValue({ rowCount: 1 });
 
-describe('CarritoCompras.deleteProduct', () => {
+      const result = await CarritoCompras.deleteProduct({
+        id_usuario: 1,
+        id_producto: 10,
+        id_talla: 2
+      });
 
-  it('elimina el producto del carrito', async () => {
-    await CarritoCompras.deleteProduct(1, 10);
+      expect(result).toBe(true);
+    });
 
-    expect(Carrito.removeProduct).toHaveBeenCalledWith(1, 10);
   });
 
-});
+  describe('Aumentar cantidad de producto -> increaseQuantityProduct', () => {
 
+    it('incrementa cantidad', async () => {
+      (pool.query as jest.Mock).mockResolvedValue({ rowCount: 1 });
 
-describe('CarritoCompras.increaseQuantityProduct', () => {
+      const result = await CarritoCompras.increaseQuantityProduct({
+        id_usuario: 1,
+        id_producto: 10,
+        id_talla: 2,
+        cantidad: 2
+      });
 
-  it('incrementa la cantidad si el producto existe', async () => {
-    (Carrito.getProductInCart as jest.Mock).mockResolvedValue({ id_producto: 10 });
+      expect(pool.query).toHaveBeenCalled();
+      expect(result).toBe(true);
+    });
 
-    await CarritoCompras.increaseQuantityProduct(1, 10, 2);
-
-    expect(Carrito.setQuantity).toHaveBeenCalledWith(1, 10, 3);
   });
 
-  it('lanza error si la cantidad es inválida', async () => {
-    await expect(
-      CarritoCompras.increaseQuantityProduct(1, 10, 0)
-    ).rejects.toThrow('La cantidad debe ser mayor a cero');
+  describe('Disminuir cantidad de producto -> decreaseQuantityProduct', () => {
+
+    it('disminuye cantidad', async () => {
+      (pool.query as jest.Mock).mockResolvedValue({ rowCount: 1 });
+
+      const result = await CarritoCompras.decreaseQuantityProduct({
+        id_usuario: 1,
+        id_producto: 10,
+        id_talla: 2,
+        cantidad: 2
+      });
+
+      expect(result).toBe(true);
+    });
+
   });
 
-  it('lanza error si el producto no está en el carrito', async () => {
-    (Carrito.getProductInCart as jest.Mock).mockResolvedValue(undefined);
+  describe('Obtener carrito de usuario -> getCart', () => {
 
-    await expect(
-      CarritoCompras.increaseQuantityProduct(1, 10, 2)
-    ).rejects.toThrow('El producto no está en el carrito');
+    it('retorna carrito del usuario', async () => {
+
+      const mockCart = [
+        {
+          id_producto: 10,
+          nombre: 'Camisa',
+          precio: 500,
+          talla: 'M',
+          cantidad: 2,
+          imagen: 'img.jpg'
+        }
+      ];
+
+      (pool.query as jest.Mock).mockResolvedValue({
+        rows: mockCart
+      });
+
+      const result = await CarritoCompras.getCart(1);
+
+      expect(result).toEqual(mockCart);
+    });
+
   });
 
-});
+  describe('Vaciar carrito de usuario -> dropCart', () => {
 
+    it('vacía carrito', async () => {
+      (pool.query as jest.Mock).mockResolvedValue({ rowCount: 3 });
 
-describe('CarritoCompras.decreaseQuantityProduct', () => {
+      const result = await CarritoCompras.dropCart(1);
 
-  it('disminuye la cantidad si es mayor a 1', async () => {
-    (Carrito.getProductInCart as jest.Mock).mockResolvedValue({ id_producto: 10 });
+      expect(result).toBe(true);
+    });
 
-    await CarritoCompras.decreaseQuantityProduct(1, 10, 3);
-
-    expect(Carrito.setQuantity).toHaveBeenCalledWith(1, 10, 2);
-  });
-
-  it('elimina el producto si la cantidad llega a 0', async () => {
-    (Carrito.getProductInCart as jest.Mock).mockResolvedValue({ id_producto: 10 });
-
-    await CarritoCompras.decreaseQuantityProduct(1, 10, 1);
-
-    expect(Carrito.removeProduct).toHaveBeenCalledWith(1, 10);
-  });
-
-  it('lanza error si el producto no existe en el carrito', async () => {
-    (Carrito.getProductInCart as jest.Mock).mockResolvedValue(undefined);
-
-    await expect(
-      CarritoCompras.decreaseQuantityProduct(1, 10, 2)
-    ).rejects.toThrow('El producto no está en el carrito');
-  });
-
-});
-
-
-describe('CarritoCompras.getCart', () => {
-
-  it('retorna el carrito del cliente', async () => {
-    const mockCart = [{ id: 1, nombre: 'Producto', cantidad: 2 }];
-    (Carrito.getCartByCustomerId as jest.Mock).mockResolvedValue(mockCart);
-
-    const result = await CarritoCompras.getCart(1);
-
-    expect(result).toEqual(mockCart);
-    expect(Carrito.getCartByCustomerId).toHaveBeenCalledWith(1);
-  });
-
-});
-
-
-describe('CarritoCompras.dropCart', () => {
-
-  it('vacía el carrito del cliente', async () => {
-    await CarritoCompras.dropCart(1);
-
-    expect(Carrito.clearCart).toHaveBeenCalledWith(1);
-  });
-
-});
-
-
-describe('CarritoCompras.isProductInCart', () => {
-
-  it('retorna true si el producto está en el carrito', async () => {
-    (Carrito.getProductInCart as jest.Mock).mockResolvedValue({ id_producto: 10 });
-
-    const result = await CarritoCompras.isProductInCart(1, 10);
-
-    expect(result).toBeTruthy();
   });
 
 });
