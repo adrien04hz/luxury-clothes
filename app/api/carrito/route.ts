@@ -6,19 +6,21 @@
 import { NextResponse } from 'next/server';
 import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.service";
 
-
+/**
+ * 
+ * Obtener carrito de compras de un cliente por su ID.|
+ */
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const clienteId = Number(searchParams.get('clienteId'));
+    const id_usuario = Number(searchParams.get('id_usuario'));
   
-    const carrito = await CarritoCompras.getCart(clienteId);
+    const carrito = await CarritoCompras.getCart(id_usuario);
   
     return NextResponse.json({
-        ok: true,
-        code: 200,
-        count: carrito.length,
-        data: carrito
+      ok: true,
+      count: carrito.length,
+      data: carrito
     });
 
   } catch (error: any ) {
