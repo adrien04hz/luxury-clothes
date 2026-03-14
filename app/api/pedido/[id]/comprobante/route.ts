@@ -9,13 +9,13 @@ import { PedidoService } from "@/services/pedido/pedido.service";
 
 export async function GET(
   req: Request,
-  context: any
+  context: { params: Promise<{ id: string }> }
 ) {
 
   try {
 
-    const params = await context.params;
-    const idPedido = Number(params.id);
+    const { id } = await context.params;
+    const idPedido = Number(id);
 
     if (isNaN(idPedido)) {
       return NextResponse.json(
@@ -33,8 +33,9 @@ export async function GET(
 
     return NextResponse.json(
       { error: error.message },
-      { status: 400 }
+      { status: 404 }
     );
 
   }
+
 }
