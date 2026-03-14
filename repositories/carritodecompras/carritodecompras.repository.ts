@@ -14,7 +14,7 @@ export class Carrito {
    * @param id_usuario - ID del usuario que agrega el producto
    * @param id_talla - ID de la talla del producto
    * @param cantidad - Cantidad del producto a agregar
-   * @return void
+   * @return boolean - Retorna true si el producto se agregó correctamente, false en caso contrario
    */
   static async addProduct({
     id_producto,
@@ -27,7 +27,7 @@ export class Carrito {
     id_talla: number;
     cantidad: number;
   }) {
-    await pool.query(
+    const { rowCount } = await pool.query(
       `
       INSERT INTO "CarritoCompras" (id_usuario, id_producto, id_talla, cantidad)
       VALUES ($1, $2, $3, $4)
@@ -37,6 +37,8 @@ export class Carrito {
       `,
       [id_usuario, id_producto, id_talla, cantidad]
     );
+
+    return !!rowCount && typeof rowCount === 'number' && rowCount > 0;
   }
 
   
