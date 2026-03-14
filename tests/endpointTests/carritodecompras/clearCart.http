@@ -4,9 +4,9 @@
 # 06 de febrero de 2026
 # Endpoint: Vaciar carrito de compras
 #--------------------------------------------------
-DELETE http://localhost:3000/api/carrito/
+DELETE http://localhost:3000/api/carrito/drop/
 Content-Type: application/json
 
 {
-  "clienteId": 1
+  "id_usuario": 2
 }

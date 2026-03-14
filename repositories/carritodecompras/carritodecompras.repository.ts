@@ -150,7 +150,7 @@ export class Carrito {
     const { rowCount } = await pool.query(
       `
       DELETE FROM "CarritoCompras"
-      WHERE id_cliente = $1
+      WHERE id_usuario = $1
       `,
       [id_usuario]
     );
