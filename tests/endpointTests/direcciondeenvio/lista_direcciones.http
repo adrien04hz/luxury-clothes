@@ -4,4 +4,4 @@
 # 23 de febrero de 2026
 # Visualizar lista de deseos
 #-----------------------------------------
-GET http://localhost:3000/api/direcciondeenvio?clientId=3
+GET http://localhost:3000/api/direcciondeenvio?clientId=2

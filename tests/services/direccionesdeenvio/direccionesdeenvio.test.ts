@@ -13,8 +13,8 @@ describe('DireccionesEnvioService', () => {
     codigo_postal: "45100",
     colonia: "Chapalita",
     calle: "Av. Patria",
-    numero_externo: "250",
-    numero_interno: "3B"
+    numero_exterior: "250",
+    numero_interior: "3B"
   };
 
   //agregar direccion de envio

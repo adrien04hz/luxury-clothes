@@ -159,7 +159,7 @@ export class DireccionEnvio {
 
         const query = `
             DELETE FROM "DireccionEnvio"
-            WHERE id=$1 AND id_cliente=$2
+            WHERE id=$1 AND id_usuario=$2
             RETURNING *;
         `;
         const values = [id_direccion, clienteId];
@@ -171,5 +171,5 @@ export class DireccionEnvio {
 
         return rows[0];
     }
-    
+   
 }

@@ -72,6 +72,7 @@ export class DireccionesEnvio{
         //Reestructuramos la informacion que se mando
         return{
             id_cliente: rows[0].id_usuario,
+            cantidad: rows.length,
             direcciones: rows.map((row: any) => ({
                 ciudad: row.ciudad,
                 estado: row.estado,
