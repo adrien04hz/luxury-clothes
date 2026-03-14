@@ -41,11 +41,11 @@ export class CarritoCompras {
 
 
     /**
-   * Función para eliminar un producto del carrito de compras de un cliente.
-   * @param id_usuario - ID del cliente del cual se desea eliminar el producto
-   * @param id_producto - ID del producto que se desea eliminar del carrito de compras
-   * @returns boolean - Retorna true si el producto se eliminó correctamente, false en caso contrario
-   */
+     * Función para eliminar un producto del carrito de compras de un cliente.
+     * @param id_usuario - ID del cliente del cual se desea eliminar el producto
+     * @param id_producto - ID del producto que se desea eliminar del carrito de compras
+     * @returns boolean - Retorna true si el producto se eliminó correctamente, false en caso contrario
+     */
     static async deleteProduct({ id_usuario, id_producto, id_talla }: { id_usuario: number; id_producto: number; id_talla: number }) {
         
         const result = await Carrito.removeProduct({ id_usuario, id_producto, id_talla });
@@ -53,50 +53,77 @@ export class CarritoCompras {
         return result;
     }
 
-    static async increaseQuantityProduct(customerId: number, productId: number, quantity: number) {
-        if (quantity <= 0) {
-            throw new Error('La cantidad debe ser mayor a cero');
+    /**
+     * Función para incrementar la cantidad de un producto en el carrito de compras de un cliente.
+     * @param id_usuario - ID del cliente del cual se desea actualizar la cantidad del producto
+     * @param id_producto - ID del producto del cual se desea actualizar la cantidad
+     * @param id_talla - ID de la talla del producto del cual se desea actualizar la cantidad
+     * @param cantidad - Nueva cantidad del producto en el carrito de compras
+    * @return boolean - Retorna true si la cantidad se actualizó correctamente, false en caso contrario 
+    */
+    static async increaseQuantityProduct(
+        {
+            id_usuario,
+            id_producto,
+            id_talla,
+            cantidad
+        } : {
+            id_usuario: number;
+            id_producto: number;
+            id_talla: number;
+            cantidad: number;
         }
+    ) {
+        const result = await Carrito.setQuantity({ id_usuario, id_producto, id_talla, cantidad: cantidad + 1 });
 
-        if (!await Carrito.getProductInCart(customerId, productId)) {
-            throw new Error('El producto no está en el carrito');
-        }
-
-        if (quantity > 0) {
-
-            await Carrito.setQuantity(customerId, productId, quantity + 1);
-        }
+        return result;
     }
 
-    static async decreaseQuantityProduct(customerId: number, productId: number, quantity: number) {
-        quantity = quantity - 1;
-        if (!await Carrito.getProductInCart(customerId, productId)) {
-            throw new Error('El producto no está en el carrito');
-        }
 
-        if (quantity === 0) {
-            return await Carrito.removeProduct(customerId, productId);
+    /**
+     * Función para decrementar la cantidad de un producto en el carrito de compras de un cliente.
+     * @param id_usuario - ID del cliente del cual se desea actualizar la cantidad del producto
+     * @param id_producto - ID del producto del cual se desea actualizar la cantidad
+     * @param id_talla - ID de la talla del producto del cual se desea actualizar la cantidad
+     * @param cantidad - Nueva cantidad del producto en el carrito de compras
+    * @return boolean - Retorna true si la cantidad se actualizó correctamente, false en caso contrario 
+    */
+    static async decreaseQuantityProduct(
+        {
+            id_usuario,
+            id_producto,
+            id_talla,
+            cantidad
+        } : {
+            id_usuario: number;
+            id_producto: number;
+            id_talla: number;
+            cantidad: number;
         }
+    ) {
+        const result = await Carrito.setQuantity({ id_usuario, id_producto, id_talla, cantidad: cantidad - 1 });
 
-        if (quantity > 0) {
-
-            return await Carrito.setQuantity(customerId, productId, quantity);
-        }
-
-        if (quantity <= 0) {
-            throw new Error('La cantidad debe ser mayor a cero');
-        }
+        return result;
     }
 
+
+    /**
+     * Función para obtener el carrito de compras de un cliente por su ID.
+     * @param customerId - ID del cliente para obtener su carrito de compras
+     * @returns Lista de productos en el carrito de compras del cliente, incluyendo nombre, precio, talla, cantidad e imagen
+     */
     static async getCart(customerId: number) {
         return await Carrito.getCartByCustomerId(customerId);
     }
 
+
+    /**
+     * Función para eliminar un producto del carrito de compras de un cliente.
+     * @param id_usuario - ID del cliente del cual se desea eliminar el producto
+     * @param id_producto - ID del producto que se desea eliminar del carrito de compras
+     * @returns boolean - Retorna true si el producto se eliminó correctamente, false en caso contrario
+     */
     static async dropCart(customerId: number) {
         await Carrito.clearCart(customerId);
-    }
-
-    static async isProductInCart(customerId: number, productId: number) {
-        return await Carrito.getProductInCart(customerId, productId);
     }
 }
