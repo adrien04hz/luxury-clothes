@@ -10,45 +10,59 @@ import { QueryResult } from 'pg';
 export class PedidoRepository {
 
   static async getDetallePedido(idPedido: number) {
-
     const sql = `
       SELECT
-        p.id AS pedido_id,
-        pr.nombre,
+        dp.id_pedido,
+        pr.nombre AS producto,
+        t.nombre AS talla,
         dp.cantidad,
         dp.precio_unitario
       FROM "DetallePedido" dp
-      JOIN "Producto" pr ON pr.id = dp.id_producto
-      JOIN "Pedido" p ON p.id = dp.id_pedido
-      WHERE p.id = $1
+  
+      JOIN "Producto" pr
+        ON pr.id = dp.id_producto
+  
+      JOIN "Talla" t
+        ON t.id = dp.id_talla
+  
+      WHERE dp.id_pedido = $1
     `;
-
+  
     return await pool.query(sql, [idPedido]);
   }
 
-  static async obtenerHistorialCliente(idCliente: number) {
+  static async obtenerHistorialCliente(idUsuario: number) {
+
     const sql = `
       SELECT 
         p.id AS id_pedido,
         p.fecha,
         p.total,
   
+        ep.nombre AS estado,
+  
         pr.id AS id_producto,
-        pr.nombre,
+        pr.nombre AS producto,
         d.cantidad,
         d.precio_unitario
   
       FROM "Pedido" p
-      JOIN "DetallePedido" d 
+  
+      JOIN "EstadoPedido" ep
+        ON ep.id = p.id_estado_pedido
+  
+      JOIN "DetallePedido" d
         ON p.id = d.id_pedido
+  
       JOIN "Producto" pr
         ON pr.id = d.id_producto
   
-      WHERE p.id_cliente = $1
+      WHERE p.id_usuario = $1
+  
       ORDER BY p.fecha DESC
     `;
-
-    const result = await pool.query(sql, [idCliente]);
+  
+    const result = await pool.query(sql, [idUsuario]);
     return result.rows;
   }
 
@@ -60,18 +74,22 @@ export class PedidoRepository {
         p.fecha,
         p.total,
   
-        c.nombre,
-        c.apellidos,
-        c.correo,
+        u.nombre,
+        u.apellidos,
+        u.correo,
   
         pr.nombre AS producto,
+        t.nombre AS talla,
+  
         d.cantidad,
-        d.precio_unitario
+        d.precio_unitario,
+  
+        tm.nombre AS metodo_pago
   
       FROM "Pedido" p
   
-      JOIN "Cliente" c
-        ON c.id = p.id_cliente
+      JOIN "Usuario" u
+        ON u.id = p.id_usuario
   
       JOIN "DetallePedido" d
         ON d.id_pedido = p.id
@@ -79,9 +97,18 @@ export class PedidoRepository {
       JOIN "Producto" pr
         ON pr.id = d.id_producto
   
+      JOIN "Talla" t
+        ON t.id = d.id_talla
+  
+      JOIN "Pago" pa
+        ON pa.id_pedido = p.id
+  
+      JOIN "TipoMetodoDePago" tm
+        ON tm.id = pa.id_tipo_metodo
+  
       WHERE p.id = $1
     `;
-
+  
     return await pool.query(sql, [idPedido]);
   }
 
