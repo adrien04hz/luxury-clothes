@@ -31,73 +31,73 @@ describe("AuthService", () => {
     jest.clearAllMocks();
   });
 
-// ======================================
-// REGISTER
-// ======================================
-describe("register", () => {
+  // ======================================
+  // REGISTER
+  // ======================================
+  describe("register", () => {
 
-  const userData = {
-    nombre: "Test",
-    apellidos: "Usuario",
-    correo: "test@test.com",
-    contrasena: "123456",
-    telefono: "9510000000",
-  };
-
-  test("crea usuario correctamente cuando el correo no existe", async () => {
-
-    (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue({
-      rows: [],
-    });
-
-    (bcrypt.hash as jest.Mock).mockResolvedValue("hashed123");
-
-    (ClienteRepository.create as jest.Mock).mockResolvedValue({
-      rows: [
-        {
-          id: 1,
-          nombre: "Test",
-          apellidos: "Usuario",
-          correo: "test@test.com",
-          telefono: "9510000000",
-        },
-      ],
-    });
-
-    const result = await AuthService.register(userData);
-
-    expect(ClienteRepository.existsByCorreo).toHaveBeenCalledWith("test@test.com");
-
-    expect(bcrypt.hash).toHaveBeenCalledWith("123456", 10);
-
-    expect(ClienteRepository.create).toHaveBeenCalledWith({
-      ...userData,
-      contrasena: "hashed123",
-    });
-
-    expect(result).toEqual({
-      id: 1,
+    const userData = {
       nombre: "Test",
       apellidos: "Usuario",
       correo: "test@test.com",
+      contrasena: "123456",
       telefono: "9510000000",
+    };
+
+    test("crea usuario correctamente cuando el correo no existe", async () => {
+
+      (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue({
+        rows: [],
+      });
+
+      (bcrypt.hash as jest.Mock).mockResolvedValue("hashed123");
+
+      (ClienteRepository.create as jest.Mock).mockResolvedValue({
+        rows: [
+          {
+            id: 1,
+            nombre: "Test",
+            apellidos: "Usuario",
+            correo: "test@test.com",
+            telefono: "9510000000",
+          },
+        ],
+      });
+
+      const result = await AuthService.register(userData);
+
+      expect(ClienteRepository.existsByCorreo).toHaveBeenCalledWith("test@test.com");
+
+      expect(bcrypt.hash).toHaveBeenCalledWith("123456", 10);
+
+      expect(ClienteRepository.create).toHaveBeenCalledWith({
+        ...userData,
+        contrasena: "hashed123",
+      });
+
+      expect(result).toEqual({
+        id: 1,
+        nombre: "Test",
+        apellidos: "Usuario",
+        correo: "test@test.com",
+        telefono: "9510000000",
+      });
     });
-  });
 
-  test("lanza error si correo ya existe", async () => {
+    test("lanza error si correo ya existe", async () => {
 
-    (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue({
-      rows: [{ id: 1 }],
+      (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue({
+        rows: [{ id: 1 }],
+      });
+
+      await expect(
+        AuthService.register(userData)
+      ).rejects.toThrow("El correo ya está registrado");
+
+      expect(ClienteRepository.create).not.toHaveBeenCalled();
     });
 
-    await expect(
-      AuthService.register(userData)
-    ).rejects.toThrow("El correo ya está registrado");
-
-    expect(ClienteRepository.create).not.toHaveBeenCalled();
   });
-
-});
 
   // ======================================
   // LOGIN
@@ -135,101 +135,127 @@ describe("register", () => {
       );
     });
   });
-//***********/
-//* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Ramos Bello Jose Luis */
-//* Fecha: 06/02/2026 */
-//**********/
-  // ======================================
-  // OBTENER PERFIL
-  // ======================================
-  // describe("obtenerPerfil", () => {
-  //   test("devuelve perfil sin la contraseña cuando existe", async () => {
-  //     const mockPerfil = {
-  //       id: 5,
-  //       nombre: "Luis",
-  //       apellidos: "García",
-  //       correo: "luis@test.com",
-  //       telefono: "9511111111",
-  //       foto_perfil: "foto.jpg",
-  //       contrasena: "hash-no-visible",
-  //     };
+  //***********/
+  //* Nombre del equipo: Equipo 1 */
+  //* Autor de la clase: Ramos Bello Jose Luis */
+  //* Fecha: 06/02/2026 */
+  //**********/
 
-  //     (ClienteRepository.findById as jest.Mock).mockResolvedValue({ rows: [mockPerfil] });
+  describe('obtenerPerfil', () => {
+    test('devuelve perfil sin la contraseña cuando existe', async () => {
+      const mockPerfil = {
+        id: 5,
+        id_rol: 2,
+        nombre: 'Luis',
+        apellidos: 'García',
+        correo: 'luis@test.com',
+        telefono: '9511111111',
+        foto_perfil: 'foto.jpg',
+        activo: true,
+        contrasena: 'hash-no-visible',
+        eliminado_en: null,
+      };
 
-  //     const perfil = await AuthService.obtenerPerfil(5);
+      (ClienteRepository.findById as jest.Mock).mockResolvedValue(mockPerfil);
 
-  //     expect(perfil.contrasena).toBeUndefined();
-  //     expect(perfil.nombre).toBe("Luis");
-  //     expect(perfil.correo).toBe("luis@test.com");
-  //     expect(ClienteRepository.findById).toHaveBeenCalledWith(5);
-  //   });
+      const perfil = await AuthService.obtenerPerfil(5);
 
-  //   test("lanza error si cliente no existe o está inactivo", async () => {
-  //     (ClienteRepository.findById as jest.Mock).mockResolvedValue({ rows: [] });
+      expect(perfil.contrasena).toBeUndefined();
+      expect(perfil.nombre).toBe('Luis');
+      expect(perfil.correo).toBe('luis@test.com');
+      expect(perfil.activo).toBe(true);
+      expect(ClienteRepository.findById).toHaveBeenCalledWith(5);
+    });
 
-  //     await expect(AuthService.obtenerPerfil(999)).rejects.toThrow(
-  //       "Cliente no encontrado o cuenta inactiva"
-  //     );
-  //   });
-  // });
+    test('lanza error si usuario no existe o está inactivo', async () => {
+      (ClienteRepository.findById as jest.Mock).mockResolvedValue(null);
 
-  // // ======================================
-  // // ACTUALIZAR PERFIL
-  // // ======================================
-  // describe("actualizarPerfil", () => {
-  //   test("actualiza campos básicos correctamente", async () => {
-  //     const datos = { nombre: "NuevoNombre", telefono: "9519999999" };
+      await expect(AuthService.obtenerPerfil(999)).rejects.toThrow(
+        'Usuario no encontrado o cuenta inactiva'
+      );
+    });
+  });
 
-  //     (ClienteRepository.findById as jest.Mock).mockResolvedValue({
-  //       rows: [{ id: 5, correo: "luis@test.com" }],
-  //     });
-  //     (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue({ rows: [] });
-  //     (ClienteRepository.updateById as jest.Mock).mockResolvedValue(undefined);
+  describe('actualizarPerfil', () => {
+    test('actualiza campos básicos correctamente', async () => {
+      const datos = { nombre: 'NuevoNombre', telefono: '9519999999' };
 
-  //     await AuthService.actualizarPerfil(5, datos);
+      (ClienteRepository.findById as jest.Mock).mockResolvedValue({
+        id: 5,
+        correo: 'luis@test.com',
+        contrasena: 'hash123',
+      });
 
-  //     expect(ClienteRepository.updateById).toHaveBeenCalledWith(5, expect.objectContaining(datos));
-  //   });
+      (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue(false);
 
-  //   test("rechaza cambio de correo si ya existe", async () => {
-  //     (ClienteRepository.findById as jest.Mock).mockResolvedValue({
-  //       rows: [{ id: 5, correo: "luis@test.com" }],
-  //     });
-  //     (ClienteRepository.existsByCorreo as jest.Mock).mockResolvedValue({
-  //       rows: [{ id: 10 }],
-  //     });
+      const mockUpdated = {
+        id: 5,
+        nombre: 'NuevoNombre',
+        telefono: '9519999999',
+        correo: 'luis@test.com',
+        contrasena: 'hash123',
+      };
 
-  //     await expect(
-  //       AuthService.actualizarPerfil(5, { correo: "otro@ocupado.com" })
-  //     ).rejects.toThrow("El correo ya está registrado");
-  //   });
+      (ClienteRepository.updateById as jest.Mock).mockResolvedValue(mockUpdated);
 
-  //   test("requiere contraseña actual para cambiar contraseña", async () => {
-  //     await expect(
-  //       AuthService.actualizarPerfil(5, { nueva_contrasena: "nueva123" })
-  //     ).rejects.toThrow("Debes proporcionar la contraseña actual");
-  //   });
-  // });
+      const resultado = await AuthService.actualizarPerfil(5, datos);
 
-  // // ======================================
-  // // DESACTIVAR CUENTA
-  // // ======================================
-  // describe("desactivarCuenta", () => {
-  //   test("desactiva cuenta correctamente", async () => {
-  //     (ClienteRepository.deactivateById as jest.Mock).mockResolvedValue({ rowCount: 1 });
+      expect(ClienteRepository.updateById).toHaveBeenCalledWith(
+        5,
+        expect.objectContaining({
+          nombre: 'NuevoNombre',
+          telefono: '9519999999',
+        })
+      );
 
-  //     await AuthService.desactivarCuenta(5);
+      expect(resultado.nombre).toBe('NuevoNombre');
+      expect(resultado.contrasena).toBeUndefined();
+    });
 
-  //     expect(ClienteRepository.deactivateById).toHaveBeenCalledWith(5);
-  //   });
+    test('rechaza cambio de correo si ya existe en otra cuenta', async () => {
+      (ClienteRepository.findById as jest.Mock).mockResolvedValue({
+        id: 5,
+        correo: 'luis@test.com',
+      });
 
-  //   test("lanza error si no se pudo desactivar (no existe o ya desactivada)", async () => {
-  //     (ClienteRepository.deactivateById as jest.Mock).mockResolvedValue({ rowCount: 0 });
+      (ClienteRepository.existsByCorreo as jest.Mock).mockImplementation(
+        (correo: string) => correo === 'otro@ocupado.com'
+      );
 
-  //     await expect(AuthService.desactivarCuenta(999)).rejects.toThrow(
-  //       "Cuenta no encontrada o ya está desactivada"
-  //     );
-  //   });
-  // });
+      await expect(
+        AuthService.actualizarPerfil(5, { correo: 'otro@ocupado.com' })
+      ).rejects.toThrow('El correo ya está registrado por otra cuenta');
+    });
+
+    test('requiere contraseña actual para cambiar contraseña', async () => {
+      await expect(
+        AuthService.actualizarPerfil(5, { nueva_contrasena: 'nueva123' })
+      ).rejects.toThrow(
+        'Debes proporcionar la contraseña actual para cambiarla'
+      );
+    });
+  });
+
+  describe('desactivarCuenta', () => {
+    test('desactiva cuenta correctamente', async () => {
+      (ClienteRepository.deactivateById as jest.Mock).mockResolvedValue({
+        id: 5,
+        activo: false,
+      });
+
+      const response = await AuthService.desactivarCuenta(5);
+
+      expect(ClienteRepository.deactivateById).toHaveBeenCalledWith(5);
+      expect(response).toMatchObject({ message: expect.any(String) });
+    });
+
+    test('lanza error si no se pudo desactivar (no existe o ya desactivada)', async () => {
+      (ClienteRepository.deactivateById as jest.Mock).mockResolvedValue(null);
+
+      await expect(AuthService.desactivarCuenta(999)).rejects.toThrow(
+        'Cuenta no encontrada o ya está desactivada'
+      );
+    });
+  });
+
 });

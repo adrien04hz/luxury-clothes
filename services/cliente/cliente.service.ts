@@ -55,75 +55,101 @@ export class AuthService {
 
     return token;
   }
+
+  //***********/
+  //* Nombre del equipo: Equipo 1 */
+  //* Autor de la clase: Ramos Bello Jose Luis */
+  //* Fecha: 06/02/2026 */
+  //**********/
+
+  /* =====================
+       OBTENER PERFIL
+    ===================== */
+  static async obtenerPerfil(usuarioId: number) {
+    const result = await ClienteRepository.findById(usuarioId);
+
+    if (!result) {
+      throw new Error("Usuario no encontrado o cuenta inactiva");
+    }
+
+    const { contrasena, ...perfil } = result;
+    return perfil;
+  }
+
+  /* =====================
+     ACTUALIZAR PERFIL
+  ===================== */
+  static async actualizarPerfil(usuarioId: number, datos: {
+    nombre?: string;
+    apellidos?: string;
+    telefono?: string;
+    foto_perfil?: string | null;
+    correo?: string;
+    contrasena_actual?: string;
+    nueva_contrasena?: string;
+  }) {
+    const updates: Partial<typeof datos> = {};
+
+    if (datos.nombre !== undefined) updates.nombre = datos.nombre;
+    if (datos.apellidos !== undefined) updates.apellidos = datos.apellidos;
+    if (datos.telefono !== undefined) updates.telefono = datos.telefono;
+    if (datos.foto_perfil !== undefined) updates.foto_perfil = datos.foto_perfil;
+
+    if (datos.correo) {
+      const existe = await ClienteRepository.existsByCorreo(datos.correo);
+
+      if (existe) {
+        const usuarioActual = await ClienteRepository.findById(usuarioId);
+        if (usuarioActual?.correo !== datos.correo) {
+          throw new Error("El correo ya está registrado por otra cuenta");
+        }
+      }
+      updates.correo = datos.correo;
+    }
+
+    if (datos.nueva_contrasena) {
+      if (!datos.contrasena_actual) {
+        throw new Error("Debes proporcionar la contraseña actual para cambiarla");
+      }
+
+      const usuario = await ClienteRepository.findById(usuarioId);
+      if (!usuario) {
+        throw new Error("Usuario no encontrado");
+      }
+
+      const match = await bcrypt.compare(datos.contrasena_actual, usuario.contrasena);
+      if (!match) {
+        throw new Error("La contraseña actual es incorrecta");
+      }
+
+      updates.nueva_contrasena = await bcrypt.hash(datos.nueva_contrasena, 10);
+    }
+
+    if (Object.keys(updates).length === 0) {
+      throw new Error("No se proporcionaron campos para actualizar");
+    }
+
+    const usuarioActualizado = await ClienteRepository.updateById(usuarioId, updates);
+
+    if (!usuarioActualizado) {
+      throw new Error("No se pudo actualizar el perfil (usuario no encontrado o inactivo)");
+    }
+
+    const { contrasena, ...perfilActualizado } = usuarioActualizado;
+    return perfilActualizado;
+  }
+
+  /* =====================
+     DESACTIVAR CUENTA
+  ===================== */
+  static async desactivarCuenta(usuarioId: number) {
+    const result = await ClienteRepository.deactivateById(usuarioId);
+
+    if (!result) {
+      throw new Error("Cuenta no encontrada o ya está desactivada");
+    }
+
+    return { message: "Cuenta desactivada correctamente" };
+  }
+
 }
-//***********/
-//* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Ramos Bello Jose Luis */
-//* Fecha: 06/02/2026 */
-//**********/
-//   /* =====================
-//      OBTENER PERFIL
-//   ===================== */
-//   static async obtenerPerfil(clienteId: number) {
-//     const result = await ClienteRepository.findById(clienteId);
-//     if (result.rows.length === 0) {
-//       throw new Error("Cliente no encontrado o cuenta inactiva");
-//     }
-//     const { contrasena, ...perfil } = result.rows[0];
-//     return perfil;
-//   }
-
-//   /* =====================
-//      ACTUALIZAR PERFIL
-//   ===================== */
-//   static async actualizarPerfil(clienteId: number, datos: any) {
-//     const updates: any = {};
-
-//     if (datos.nombre !== undefined) updates.nombre = datos.nombre;
-//     if (datos.apellidos !== undefined) updates.apellidos = datos.apellidos;
-//     if (datos.telefono !== undefined) updates.telefono = datos.telefono;
-//     if (datos.foto_perfil !== undefined) updates.foto_perfil = datos.foto_perfil;
-
-//     // Validar cambio de correo
-//     if (datos.correo) {
-//       const existe = await ClienteRepository.existsByCorreo(datos.correo);
-//       if (existe.rows.length > 0) {
-//         // Aquí podrías comparar con el correo actual del usuario
-//         throw new Error("El correo ya está registrado");
-//       }
-//       updates.correo = datos.correo;
-//     }
-
-//     // Cambio de contraseña
-//     if (datos.nueva_contrasena) {
-//       if (!datos.contrasena_actual) {
-//         throw new Error("Debes proporcionar la contraseña actual");
-//       }
-//       const usuario = await ClienteRepository.findById(clienteId);
-//       if (usuario.rows.length === 0) {
-//         throw new Error("Cliente no encontrado");
-//       }
-//       const match = await bcrypt.compare(datos.contrasena_actual, usuario.rows[0].contrasena);
-//       if (!match) {
-//         throw new Error("Contraseña actual incorrecta");
-//       }
-//       updates.contrasena = await bcrypt.hash(datos.nueva_contrasena, 10);
-//     }
-
-//     if (Object.keys(updates).length === 0) {
-//       throw new Error("No se proporcionaron campos para actualizar");
-//     }
-
-//     await ClienteRepository.updateById(clienteId, updates);
-//   }
-
-//   /* =====================
-//      DESACTIVAR CUENTA
-//   ===================== */
-//   static async desactivarCuenta(clienteId: number) {
-//     const result = await ClienteRepository.deactivateById(clienteId);
-//     if (result.rowCount === 0) {
-//       throw new Error("Cuenta no encontrada o ya está desactivada");
-//     }
-//   }
-// }
