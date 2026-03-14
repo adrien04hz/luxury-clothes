@@ -12,12 +12,13 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+
     const { id } = await context.params;
     const idPedido = Number(id);
 
     if (isNaN(idPedido)) {
       return NextResponse.json(
-        { error: "ID inválido" },
+        { error: "ID de pedido inválido" },
         { status: 400 }
       );
     }
@@ -32,5 +33,6 @@ export async function GET(
       { error: error.message },
       { status: 404 }
     );
+
   }
 }

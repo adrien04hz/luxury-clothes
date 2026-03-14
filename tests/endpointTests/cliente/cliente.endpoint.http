@@ -9,12 +9,11 @@ POST http://localhost:3000/api/auth/register
 Content-Type: application/json
 
 {
-  "nombre": "Pedro",
+  "nombre": "pedro",
   "apellidos": "Perez",
-  "correo": "pedroper@test.com",
-  "contrasena": "1234567",
-  "telefono": "9559876542",
-  "foto_perfil": "t.png"
+  "correo": "pedro@test.com",
+  "contrasena": "123456",
+  "telefono": "9559876541"
 }
 
 ###
@@ -24,14 +23,14 @@ POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 
 {
-  "correo": "pedroper@test.com",
-  "contrasena": "1234567"
+  "correo": "juan@test.com",
+  "contrasena": "123456"
 }
 
 ###
 
 
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImNvcnJlbyI6InBlZHJvcGVyQHRlc3QuY29tIiwiaWF0IjoxNzcyMjE1MDI3LCJleHAiOjE3NzIyMjIyMjd9.Z8kQ0WihZYk6FeoUbay8VlHq_kjXcucUS5r20XWokH8
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiY29ycmVvIjoianVhbkB0ZXN0LmNvbSIsInJvbCI6MiwiaWF0IjoxNzczNDQ2MjEzLCJleHAiOjE3NzM0NTM0MTN9.45_ky8OoavKRGUW1-EkfKXAwPPoH4UsYl_qp_o0cu7Y
 
 ###
 //***********/

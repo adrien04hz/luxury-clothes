@@ -7,8 +7,14 @@ jest.mock('@/repositories/metododepago/metododepago.repository', () => ({
     agregarMetodo: jest.fn(),
     modificarMetodo: jest.fn(),
     eliminarMetodo: jest.fn(),
+    obtenerRolUsuario: jest.fn(),
   },
 }));
+
+beforeEach(() => {
+  jest.resetAllMocks();
+  (MetodoDePagoRepository.obtenerRolUsuario as jest.Mock).mockResolvedValue(1);
+});
 
 // vizualizar los metodos disponibles
 describe('Ver Metodos de Pago Disponibles', () => {
@@ -67,7 +73,6 @@ describe('Agregar nuevo metodo de pago', () => {
       id_tipo: 1,
       numero_cuenta: '1234567890123456',
     };
-
     (MetodoDePagoRepository.Ver as jest.Mock).mockResolvedValue([]);
     (MetodoDePagoRepository.agregarMetodo as jest.Mock).mockResolvedValue(metodoNuevo);
 

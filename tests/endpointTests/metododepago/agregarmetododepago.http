@@ -1,8 +1,24 @@
+###
 POST  http://localhost:3000/api/metodosdepago/agregar
 Content-Type: application/json
 
 {
-  "id_usuario": 1,
+  "id_usuario": 3,
+  "id_tipo_metodo": 1,
+  "numero_cuenta": "1234567891234567",
+  "nombre_titular": "Luis Diaz",
+  "fecha_vencimiento": "2029-12-01",
+  "banco": "BBVA",
+  "correo": "",
+  "id_proveedor": 1
+}
+
+###
+POST  http://localhost:3000/api/metodosdepago/agregar
+Content-Type: application/json
+
+{
+  "id_usuario": 5,
   "id_tipo_metodo": 1,
   "numero_cuenta": "1234567891234567",
   "nombre_titular": "Luis Diaz",

@@ -8,14 +8,14 @@ POST http://localhost:3000/api/direcciondeenvio
 Content-Type: application/json
 
 {
-  "clientId": 1,
+  "clientId": 4,
   "data": {
     "ciudad": "Zapopan",
     "estado": "Jalisco1",
     "codigo_postal": "45100",
     "calle": "Av. Patria",
-    "numero_externo": "250",
-    "numero_interno": "3B",
+    "numero_exterior": "250",
+    "numero_interior": "3B",
     "colonia": "Chapalita"
   }
 }

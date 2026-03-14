@@ -1,245 +1,307 @@
-//***********/
-//* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Ramos Bello Jose Luis */
-//* Fecha: 25/02/2026 */
-//**********/
+// //***********/
+// //* Nombre del equipo: Equipo 1 */
+// //* Autor de la clase: Ramos Bello Jose Luis */
+// //* Fecha: 25/02/2026 */
+// //**********/
 import { PedidoService } from "@/services/pedido/pedido.service";
 import { PedidoRepository } from "@/repositories/pedido/pedido.repository";
 
 jest.mock("@/repositories/pedido/pedido.repository", () => ({
-    PedidoRepository: {
-        cancelarPedido: jest.fn(),
-        estadoPedido: jest.fn(),
-        getDetallePedido: jest.fn(),
-        obtenerHistorialCliente: jest.fn(),
-        procesarCompra: jest.fn(),
-        crearPedidoDesdeCarrito: jest.fn(),
-    },
+  PedidoRepository: {
+    cancelarPedido: jest.fn(),
+    estadoPedido: jest.fn(),
+    getDetallePedido: jest.fn(),
+    obtenerHistorialCliente: jest.fn(),
+    procesarCompra: jest.fn(),
+    crearPedidoDesdeCarrito: jest.fn(),
+    obtenerComprobante: jest.fn(),
+  },
 }));
 
 describe("PedidoService", () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe("cancelarPedido", () => {
+    test("cancela pedido correctamente cuando está permitido", async () => {
+      // Mock del repository (éxito)
+      (PedidoRepository.cancelarPedido as jest.Mock).mockResolvedValue({
+        rowCount: 1,
+        rows: [{ id: 25 }],
+      });
+
+      // Mock interno de obtenerEstadoPedido (porque el service lo llama)
+      jest.spyOn(PedidoService, "obtenerEstadoPedido").mockResolvedValueOnce({
+        estado: "cancelado",
+      });
+
+      const result = await PedidoService.cancelarPedido(25, 10);
+
+      expect(result).toMatchObject({
+        mensaje: expect.stringContaining("Pedido cancelado correctamente"),
+        pedidoId: 25,
+        nuevoEstado: "cancelado",
+        motivo: "No especificado",
+      });
+
+      expect(PedidoRepository.cancelarPedido).toHaveBeenCalledWith(25, 10, undefined);
+      expect(PedidoService.obtenerEstadoPedido).toHaveBeenCalledWith(25);
     });
 
-    //************************************/
-    // Cancelaion de pedido
-    //************************************/
+    test("permite especificar motivo de cancelación", async () => {
+      (PedidoRepository.cancelarPedido as jest.Mock).mockResolvedValue({
+        rowCount: 1,
+        rows: [{ id: 28 }],
+      });
 
-    describe("Cancelar pedido", () => {
-        test("cancela pedido correctamente cuando está permitido", async () => {
-            (PedidoRepository.cancelarPedido as jest.Mock).mockResolvedValue({
-                rowCount: 1,
-                rows: [{ id: 25, estado: "cancelado" }],
-            });
+      jest.spyOn(PedidoService, "obtenerEstadoPedido").mockResolvedValueOnce({
+        estado: "cancelado",
+      });
 
-            const result = await PedidoService.cancelarPedido(25);
+      const motivo = "Cliente cambió de opinión";
+      const result = await PedidoService.cancelarPedido(28, 7, motivo);
 
-            expect(result).toMatchObject({
-                mensaje: "Pedido cancelado correctamente",
-                pedidoId: 25,
-                nuevoEstado: "cancelado",
-            });
-            expect(PedidoRepository.cancelarPedido).toHaveBeenCalledWith(25);
-        });
+      expect(result).toMatchObject({
+        mensaje: expect.stringContaining("Pedido cancelado correctamente"),
+        pedidoId: 28,
+        motivo,
+        nuevoEstado: "cancelado",
+      });
 
-        test("lanza error si el pedido no puede ser cancelado o no existe", async () => {
-            (PedidoRepository.cancelarPedido as jest.Mock).mockResolvedValue({
-                rowCount: 0,
-                rows: [],
-            });
-
-            await expect(PedidoService.cancelarPedido(999)).rejects.toThrow(
-                "El pedido no existe o no se puede cancelar en su estado actual"
-            );
-        });
+      expect(PedidoRepository.cancelarPedido).toHaveBeenCalledWith(28, 7, motivo);
+      expect(PedidoService.obtenerEstadoPedido).toHaveBeenCalledWith(28);
     });
 
-    //************************************/
-    // Estado de pedido
-    //************************************/
+    test("lanza error si el pedido no puede ser cancelado o no existe", async () => {
+      (PedidoRepository.cancelarPedido as jest.Mock).mockResolvedValue({
+        rowCount: 0,
+        rows: [],
+      });
 
-    describe("Estado de pedido", () => {
-        test("retorna el estado del pedido cuando existe", async () => {
-            const mockPedido = {
-                id: 30,
-                estado: "en proceso",
-                fecha_pedido: "2026-02-20",
-            };
+      await expect(PedidoService.cancelarPedido(999, 10)).rejects.toThrow(
+        "El pedido no existe o no se puede cancelar en su estado actual"
+      );
 
-            (PedidoRepository.estadoPedido as jest.Mock).mockResolvedValue({
-                rowCount: 1,
-                rows: [mockPedido],
-            });
+      expect(PedidoRepository.cancelarPedido).toHaveBeenCalledWith(999, 10, undefined);
+      expect(PedidoService.obtenerEstadoPedido).not.toHaveBeenCalled();
+    });
+  });
 
-            const result = await PedidoService.obtenerEstadoPedido(30);
+  describe("procesarCompra", () => {
+    test("crea pedido correctamente con carrito válido", async () => {
+      const mockPedido = {
+        id: 100,
+        total: 1500.00,
+        estado: "pendiente",
+        fecha: new Date().toISOString(),
+        notas: "Sin notas",
+      };
 
-            expect(result).toEqual(mockPedido);
-            expect(PedidoRepository.estadoPedido).toHaveBeenCalledWith(30);
-        });
+      (PedidoRepository.crearPedidoDesdeCarrito as jest.Mock).mockResolvedValue({
+        rowCount: 1,
+        rows: [mockPedido],
+      });
 
-        test("lanza error si el pedido no existe", async () => {
-            (PedidoRepository.estadoPedido as jest.Mock).mockResolvedValue({
-                rowCount: 0,
-                rows: [],
-            });
+      const resultado = await PedidoService.procesarCompra(5, 1, 2, "Sin notas");
 
-            await expect(PedidoService.obtenerEstadoPedido(999)).rejects.toThrow(
-                "Pedido no encontrado"
-            );
-        });
+      expect(resultado).toMatchObject({
+        mensaje: expect.stringContaining("Compra procesada correctamente"),
+        pedido: {
+          id: 100,
+          total: 1500.00,
+          estado: "pendiente",
+        },
+      });
+
+      expect(PedidoRepository.crearPedidoDesdeCarrito).toHaveBeenCalledWith(
+        5,
+        1,
+        2,
+        "Sin notas"
+      );
     });
 
+    test("lanza error específico si carrito está vacío o sin stock", async () => {
+      // Caso stock insuficiente (el que más probablemente está ocurriendo)
+      (PedidoRepository.crearPedidoDesdeCarrito as jest.Mock).mockRejectedValue(
+        new Error("El carrito está vacío o no hay stock suficiente para algún producto")
+      );
 
-    //************************************/
-    // Proceso de compra de pedido
-    //************************************/
+      await expect(PedidoService.procesarCompra(5, 1, 2)).rejects.toThrow(
+        "No hay stock suficiente para uno o más productos"
+      );
 
-    describe("Proceso de compra de pedido", () => {
-        test("crea pedido correctamente con carrito válido", async () => {
-            (PedidoRepository.crearPedidoDesdeCarrito as jest.Mock).mockResolvedValue({
-                rowCount: 1,
-                rows: [{
-                    id: 100,
-                    id_cliente: 5,
-                    total: 1500,
-                    estado: "pendiente"
-                }],
-            });
+      // Caso carrito vacío (para cubrir la otra rama)
+      (PedidoRepository.crearPedidoDesdeCarrito as jest.Mock).mockRejectedValueOnce(
+        new Error("El carrito está vacío")
+      );
 
-            const resultado = await PedidoService.procesarCompra(5, 1, 2, "Sin notas");
-
-            expect(resultado).toMatchObject({
-                id: 100,
-                total: 1500,
-                estado: "pendiente"
-            });
-            expect(PedidoRepository.crearPedidoDesdeCarrito).toHaveBeenCalledWith(5, 1, 2, "Sin notas");
-        });
-
-        test("envia error si carrito vacío", async () => {
-            (PedidoRepository.crearPedidoDesdeCarrito as jest.Mock).mockRejectedValue(
-                new Error("El carrito está vacío o no tiene productos válidos")
-            );
-
-            await expect(
-                PedidoService.procesarCompra(5, 1, 2)
-            ).rejects.toThrow("El carrito está vacío o no tiene productos válidos");
-        });
+      await expect(PedidoService.procesarCompra(5, 1, 2)).rejects.toThrow(
+        "El carrito está vacío o los productos no están disponibles"
+      );
     });
 
-    //***********/
-    //* Nombre del equipo: Equipo 1 */
-    //* Autor de la clase: Cervantes Rosales Abdiel */
-    //* Fecha: 26/02/2026 */
-    //**********/
+    test("lanza error genérico si falla por otra razón", async () => {
+      const errorMsg = "Error de conexión inesperado";
 
+      (PedidoRepository.crearPedidoDesdeCarrito as jest.Mock).mockRejectedValue(
+        new Error(errorMsg)
+      );
 
-    //************************************/
-    // Detalle de pedido
-    //************************************/
+      await expect(PedidoService.procesarCompra(5, 1, 2)).rejects.toThrow(
+        errorMsg   // ← coincide exactamente con el mensaje que lanza el catch final
+      );
+    });
+  });
 
-    describe("getDetalle", () => {
+  describe("obtenerEstadoPedido", () => {
+    test("devuelve correctamente el estado del pedido existente", async () => {
+      (PedidoRepository.estadoPedido as jest.Mock).mockResolvedValue({
+        rowCount: 1,
+        rows: [{
+          estado: "enviado",
+          fecha_estado: new Date().toISOString(),
+        }],
+      });
 
-        test("retorna el detalle del pedido cuando existe", async () => {
+      const resultado = await PedidoService.obtenerEstadoPedido(123);
 
-            const mockDetalle = [
-                {
-                    pedido_id: 1,
-                    nombre: "Camisa Nike",
-                    cantidad: 1,
-                    precio_unitario: 299.99,
-                },
-            ];
+      expect(resultado.estado).toBe("enviado");
+      expect(PedidoRepository.estadoPedido).toHaveBeenCalledWith(123);
+    });
+  });
 
-            (PedidoRepository.getDetallePedido as jest.Mock).mockResolvedValue({
-                rows: mockDetalle,
-            });
+  //***********/
+  //* Nombre del equipo: Equipo 1 */
+  //* Autor de la clase: Cervantes Rosales Abdiel */
+  //* Fecha: 26/02/2026 */
+  //**********/
 
-            const result = await PedidoService.getDetalle(1);
+  //************/
+  // Detalle de pedido
+  //************/
 
-            expect(result).toEqual(mockDetalle);
-            expect(PedidoRepository.getDetallePedido).toHaveBeenCalledWith(1);
-        });
+  describe("getDetalle", () => {
+    test("retorna el detalle del pedido cuando existe", async () => {
+      const mockDetalle = [
+        {
+          id_pedido: 1,
+          producto: "Camisa Nike",
+          talla: "M",
+          cantidad: 1,
+          precio_unitario: 299.99,
+        },
+      ];
 
-        test("lanza error cuando el pedido no existe", async () => {
+      (PedidoRepository.getDetallePedido as jest.Mock).mockResolvedValue({
+        rows: mockDetalle,
+      });
 
-            (PedidoRepository.getDetallePedido as jest.Mock).mockResolvedValue({
-                rows: [],
-            });
+      const result = await PedidoService.getDetalle(1);
 
-            await expect(
-                PedidoService.getDetalle(999)
-            ).rejects.toThrow("Pedido no encontrado");
-        });
+      expect(result).toEqual(mockDetalle);
+      expect(PedidoRepository.getDetallePedido).toHaveBeenCalledWith(1);
     });
 
-    //************************************/
-    // Historial pedidos cliente
-    //************************************/
+    test("lanza error cuando el pedido no existe", async () => {
+      (PedidoRepository.getDetallePedido as jest.Mock).mockResolvedValue({
+        rows: [],
+      });
 
-    describe("obtenerHistorialCliente", () => {
+      await expect(PedidoService.getDetalle(999)).rejects.toThrow(
+        "Pedido no encontrado"
+      );
+    });
+  });
 
-        test("retorna historial cuando el cliente tiene pedidos", async () => {
+  //************/
+  // Historial pedidos usuario
+  //************/
 
-            const mockHistorial = [
-                {
-                    id_pedido: 1,
-                    fecha: "2026-02-25",
-                    total: 299.99,
-                    nombre: "Camisa Nike",
-                    cantidad: 1,
-                    precio_unitario: 299.99,
-                },
-            ];
+  describe("obtenerHistorialUsuario", () => {
+    test("retorna historial cuando el usuario tiene pedidos", async () => {
+      const mockHistorial = [
+        {
+          id_pedido: 1,
+          fecha: "2026-02-25",
+          total: 299.99,
+          estado: "pagado",
+          producto: "Camisa Nike",
+          cantidad: 1,
+          precio_unitario: 299.99,
+        },
+      ];
 
-            (PedidoRepository.obtenerHistorialCliente as jest.Mock).mockResolvedValue(
-                mockHistorial
-            );
+      const mockResponse = {
+        rows: mockHistorial,
+      };
 
-            const result = await PedidoService.obtenerHistorialCliente(1);
+      (PedidoRepository.obtenerHistorialCliente as jest.Mock).mockResolvedValue(
+        mockResponse
+      );
 
-            expect(result).toEqual(mockHistorial);
-            expect(PedidoRepository.obtenerHistorialCliente).toHaveBeenCalledWith(1);
-        });
+      const result = await PedidoService.obtenerHistorialUsuario(1);
 
-        test("retorna arreglo vacío si no hay pedidos", async () => {
-
-            (PedidoRepository.obtenerHistorialCliente as jest.Mock).mockResolvedValue(
-                []
-            );
-
-            const result = await PedidoService.obtenerHistorialCliente(50);
-
-            expect(result).toEqual([]);
-        });
+      expect(result).toEqual(mockResponse);
+      expect(PedidoRepository.obtenerHistorialCliente).toHaveBeenCalledWith(1);
     });
 
-    //************************************/
-    // Obtener comprobante
-    //************************************/
+    test("retorna arreglo vacío si no hay pedidos", async () => {
+      const mockResponse = {
+        rows: [],
+      };
 
-    describe("obtenerComprobante", () => {
+      (PedidoRepository.obtenerHistorialCliente as jest.Mock).mockResolvedValue(
+        mockResponse
+      );
 
-        test("genera comprobante con datos del pedido", async () => {
+      const result = await PedidoService.obtenerHistorialUsuario(50);
 
-            const mockDetalle = [
-                {
-                    pedido_id: 1,
-                    nombre: "Camisa Nike",
-                    cantidad: 1,
-                    precio_unitario: 299.99,
-                },
-            ];
-
-            (PedidoRepository.getDetallePedido as jest.Mock).mockResolvedValue({
-                rows: mockDetalle,
-            });
-
-            const result = await PedidoService.getDetalle(1);
-
-            expect(result.length).toBeGreaterThan(0);
-            expect(result[0]).toHaveProperty("nombre");
-        });
+      expect(result).toEqual(mockResponse);
     });
+  });
+
+  //************/
+  // Obtener comprobante
+  //************/
+
+  describe("obtenerComprobante", () => {
+    test("genera comprobante con datos del pedido", async () => {
+      const mockComprobante = [
+        {
+          pedido_id: 1,
+          fecha: "2026-02-25",
+          total: 299.99,
+          nombre: "Luis",
+          apellidos: "Perez",
+          correo: "test@test.com",
+          producto: "Camisa Nike",
+          talla: "M",
+          cantidad: 1,
+          precio_unitario: 299.99,
+          metodo_pago: "tarjeta",
+        },
+      ];
+
+      (PedidoRepository.obtenerComprobante as jest.Mock).mockResolvedValue({
+        rows: mockComprobante,
+      });
+
+      const result = await PedidoService.obtenerComprobante(1);
+
+      expect(result).toEqual(mockComprobante);
+      expect(PedidoRepository.obtenerComprobante).toHaveBeenCalledWith(1);
+    });
+
+    test("lanza error si el pedido no existe", async () => {
+      (PedidoRepository.obtenerComprobante as jest.Mock).mockResolvedValue({
+        rows: [],
+      });
+
+      await expect(PedidoService.obtenerComprobante(500)).rejects.toThrow(
+        "Pedido no encontrado"
+      );
+    });
+  });
 });

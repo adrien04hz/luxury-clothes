@@ -7,8 +7,10 @@
 ### Detalle del pedido
 GET http://localhost:3000/api/pedido/1
 
-### Historial pedidos cliente
+
+### Historial pedidos usuario
 GET http://localhost:3000/api/pedido/cliente/1
+
 
 ### Obtener comprobante
 GET http://localhost:3000/api/pedido/1/comprobante

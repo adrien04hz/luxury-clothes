@@ -9,34 +9,21 @@ import { PedidoService } from "@/services/pedido/pedido.service";
 
 export async function GET(
   req: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  console.log(params);
+  const { id } = await params;
+  const idUsuario = Number(id);
 
-  try {
-
-    const { id } = await context.params;
-
-    const idCliente = Number(id);
-
-    if (isNaN(idCliente)) {
-      return NextResponse.json(
-        { error: "ID inválido" },
-        { status: 400 }
-      );
-    }
-
-    const historial =
-      await PedidoService.obtenerHistorialCliente(idCliente);
-
-    return NextResponse.json(historial);
-
-  } catch (error) {
-
+  if (isNaN(idUsuario)) {
     return NextResponse.json(
-      { error: "Error al obtener historial" },
-      { status: 500 }
+      { error: "ID inválido" },
+      { status: 400 }
     );
-
   }
 
+  const historial =
+    await PedidoService.obtenerHistorialUsuario(idUsuario);
+
+  return NextResponse.json(historial);
 }

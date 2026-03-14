@@ -45,6 +45,9 @@ export class MetodoDePagoService {
         if (!id_usuario)
             throw new Error("Cliente requerido");
 
+        //validar rol
+        await this.validarCliente(id_usuario);
+
         //validar tipo de pago
 
         const tiposvalidos = [1, 2, 3, 4, 5, 6, 7];
@@ -107,6 +110,9 @@ export class MetodoDePagoService {
         if (!id_usuario)
             throw new Error("Cliente requerido");
 
+        //validar rol
+        await this.validarCliente(id_usuario);
+
         if (!id_metodo)
             throw new Error("Metodo requerido");
 
@@ -165,6 +171,9 @@ export class MetodoDePagoService {
         if (!id_usuario)
             throw new Error("Cliente requerido");
 
+        //validar rol
+        await this.validarCliente(id_usuario);
+
         if (!id_metodo)
             throw new Error("Metodo requerido");
 
@@ -200,5 +209,16 @@ export class MetodoDePagoService {
                 break;
         }
     }
+    
+    //validar rol de usuario
+    private static async validarCliente(id_usuario: number) {
 
+        const idRol = await MetodoDePagoRepository.obtenerRolUsuario(id_usuario);
+
+        if (idRol === null || idRol === undefined)
+            throw new Error("Usuario no encontrado");
+
+        if (Number(idRol) !== 1)
+            throw new Error("Solo los clientes pueden gestionar métodos de pago");
+    }
 }

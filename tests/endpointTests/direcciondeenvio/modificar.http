@@ -2,15 +2,15 @@ PUT http://localhost:3000/api/direcciondeenvio
 Content-Type: application/json
 
 {
-  "clientId": 1,
-  "addressId": 16,
+  "clientId": 2,
+  "addressId": 13,
   "data": {
-    "ciudad": "Guadalajara",
-    "estado": "Jalisco",
-    "codigo_postal": "44100",
-    "colonia": "Centro",
-    "calle": "Av. Juárez",
-    "numero_externo": "123",
-    "numero_interno": "2A"
+    "ciudad": "Zapopan",
+    "estado": "Jalisco1",
+    "codigo_postal": "45100",
+    "calle": "Av. Patria",
+    "numero_exterior": "250",
+    "numero_interior": "3B",
+    "colonia": "Chapalita"
   }
 }

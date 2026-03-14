@@ -2,6 +2,6 @@ DELETE http://localhost:3000/api/direcciondeenvio
 Content-Type: application/json
 
 {
-  "clientId": 1,
-  "addressId": 6
+  "clientId": 4,
+  "addressId": 4
 }
