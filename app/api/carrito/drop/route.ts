@@ -20,7 +20,7 @@ export async function DELETE (req : Request) {
     return NextResponse.json({ ok: true, message: 'Carrito vaciado' });
 
   } catch (error: any) {
-    console.error('DELETE /api/carrito/', error);
+    console.error('DELETE /api/carrito/drop', error);
 
     return NextResponse.json(
       {
