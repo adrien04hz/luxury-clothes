@@ -112,3 +112,58 @@ export class LogisticaRepository {
     );
   }
 }
+
+/**
+ * Función para obtener el historial de estados de un pedido
+ * @param id_Pedido - ID del pedido
+ * @returns Historial de estados del pedido
+ */
+export async function getHistorialEstadosPedido(id_Pedido: number) {
+  const result = await pool.query(
+    `SELECT
+      E.nombre AS estado,
+      E.descripcion,
+      H.fecha
+    FROM "HistorialEstadoPedido" H
+    INNER JOIN "EstadoPedido" E
+      ON H.id_estado_pedido = E.id
+    WHERE H.id_pedido = $1
+    ORDER BY H.fecha ASC;`,
+    [id_Pedido]
+  );
+
+  return result.rows;
+}
+
+
+/**
+ * Función para obtener Envio
+ * @param id_pedido - ID del pedido
+ * @return Información del envío asociado al pedido
+ */
+export async function getEnvioByPedido(id_pedido: number) {
+  const result = await pool.query(
+    `
+    SELECT
+      E.numero_guia,
+      ES.nombre AS estado_envio,
+      E.fecha_envio,
+      E.fecha_entrega_estimada,
+      D.calle,
+      D.numero_exterior,
+      D.numero_interior,
+      D.colonia,
+      D.ciudad,
+      D.estado,
+      D.codigo_postal
+    FROM "Envio" E
+    INNER JOIN "EstadoEnvio" ES
+      ON E.id_estado_envio = ES.id
+    INNER JOIN "DireccionEnvio" D
+      ON E.id_direccion = D.id
+    WHERE E.id_pedido = $1;
+    `
+  );
+
+  return result.rows[0];
+}
