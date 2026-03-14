@@ -67,15 +67,31 @@ export class Carrito {
     return rows;
   }
 
-  // Eliminar un producto del carrito
-  static async removeProduct(customerId: number, productId: number) {
-    await pool.query(
+  /**
+   * Función para eliminar un producto del carrito de compras de un cliente.
+   * @param id_usuario - ID del cliente del cual se desea eliminar el producto
+   * @param id_producto - ID del producto que se desea eliminar del carrito de compras
+   */
+  static async removeProduct(
+    {
+      id_usuario,
+      id_producto,
+      id_talla
+    } : {
+      id_usuario: number;
+      id_producto: number;
+      id_talla: number;
+    }
+  ) {
+    const result = await pool.query(
       `
         DELETE FROM "CarritoCompras"
-        WHERE id_cliente = $1 AND id_producto = $2
+        WHERE id_usuario = $1 AND id_producto = $2 AND id_talla = $3
       `,
-      [customerId, productId]
+      [id_usuario, id_producto, id_talla]
     );
+
+    return !!result && typeof result.rowCount === 'number' && result.rowCount > 0;
   }
 
   // Actualizar la cantidad de productos en el carrito
