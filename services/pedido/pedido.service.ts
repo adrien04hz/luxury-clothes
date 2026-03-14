@@ -5,29 +5,50 @@
 //**********/
 
 import { PedidoRepository } from "@/repositories/pedido/pedido.repository";
-import { QueryResult } from "pg";
 
 export class PedidoService {
+
+  //************************************/
+  // Obtener detalle de un pedido
+  //************************************/
   static async getDetalle(idPedido: number) {
+
     const result = await PedidoRepository.getDetallePedido(idPedido);
+
     if (result.rows.length === 0) {
       throw new Error("Pedido no encontrado");
     }
+
     return result.rows;
   }
 
-  static async obtenerHistorialCliente(idCliente: number) {
-    return await PedidoRepository.obtenerHistorialCliente(idCliente);
+  //************************************/
+  // Historial de pedidos del usuario
+  //************************************/
+  static async obtenerHistorialUsuario(idUsuario: number) {
+
+    const historial: any =
+      await PedidoRepository.obtenerHistorialCliente(idUsuario);
+  
+    return historial;
   }
 
-
+  //************************************/
+  // Obtener comprobante de pago
+  //************************************/
   static async obtenerComprobante(idPedido: number) {
-    const result = await PedidoRepository.obtenerComprobante(idPedido);
+
+    const result =
+      await PedidoRepository.obtenerComprobante(idPedido);
+
     if (result.rows.length === 0) {
       throw new Error("Pedido no encontrado");
     }
+
     return result.rows;
   }
+
+}
 
 
   //***********/
@@ -40,61 +61,61 @@ export class PedidoService {
   // Cancelaion de pedido
   //************************************/
 
-  static async cancelarPedido(id: number) {
-    const result: QueryResult = await PedidoRepository.cancelarPedido(id);
+//   static async cancelarPedido(id: number) {
+//     const result: QueryResult = await PedidoRepository.cancelarPedido(id);
 
-    if (result.rowCount === 0) {
-      throw new Error("El pedido no existe o no se puede cancelar en su estado actual");
-    }
+//     if (result.rowCount === 0) {
+//       throw new Error("El pedido no existe o no se puede cancelar en su estado actual");
+//     }
 
-    const pedido = result.rows[0];
-    return {
-      mensaje: "Pedido cancelado correctamente",
-      pedidoId: pedido.id,
-      nuevoEstado: pedido.estado,
-    };
-  }
+//     const pedido = result.rows[0];
+//     return {
+//       mensaje: "Pedido cancelado correctamente",
+//       pedidoId: pedido.id,
+//       nuevoEstado: pedido.estado,
+//     };
+//   }
 
-  //************************************/
-  // Estado de pedido
-  //************************************/
+//   //************************************/
+//   // Estado de pedido
+//   //************************************/
 
-  static async obtenerEstadoPedido(id: number) {
-    const result: QueryResult = await PedidoRepository.estadoPedido(id);
+//   static async obtenerEstadoPedido(id: number) {
+//     const result: QueryResult = await PedidoRepository.estadoPedido(id);
 
-    if (result.rowCount === 0) {
-      throw new Error("Pedido no encontrado");
-    }
+//     if (result.rowCount === 0) {
+//       throw new Error("Pedido no encontrado");
+//     }
 
-    return result.rows[0];
-  }
+//     return result.rows[0];
+//   }
 
-  //************************************/
-  // Proceso de compra de pedido
-  //************************************/
+//   //************************************/
+//   // Proceso de compra de pedido
+//   //************************************/
 
-  static async procesarCompra(
-    idCliente: number,
-    idMetodoPago: number,
-    idDireccion: number,
-    notas?: string
-  ) {
-    try {
-      const result = await PedidoRepository.crearPedidoDesdeCarrito(
-        idCliente,
-        idMetodoPago,
-        idDireccion,
-        notas
-      );
+//   static async procesarCompra(
+//     idCliente: number,
+//     idMetodoPago: number,
+//     idDireccion: number,
+//     notas?: string
+//   ) {
+//     try {
+//       const result = await PedidoRepository.crearPedidoDesdeCarrito(
+//         idCliente,
+//         idMetodoPago,
+//         idDireccion,
+//         notas
+//       );
 
-      if (result.rowCount === 0) {
-        throw new Error("No se pudo crear el pedido");
-      }
+//       if (result.rowCount === 0) {
+//         throw new Error("No se pudo crear el pedido");
+//       }
 
-      return result.rows[0];
-    } catch (error: any) {
-      throw new Error(error.message || "Error al procesar la compra");
-    }
-  }
+//       return result.rows[0];
+//     } catch (error: any) {
+//       throw new Error(error.message || "Error al procesar la compra");
+//     }
+//   }
 
-}
+// }
