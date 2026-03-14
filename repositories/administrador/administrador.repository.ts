@@ -1,136 +1,148 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
 //* Autor de la clase: Ramos Bello Jose Luis */
-//* Fecha: 23/02/2026 */
+//* Fecha: 13/03/2026 */
 //**********/
 import { pool } from '@/lib/db';
 import { QueryResult } from 'pg';
 
 interface ProductoInput {
-  nombre?: string;
-  precio?: number;
-  stock?: number;
-  estaActivo?: boolean;
-  marca?: string;
-  categorias?: string[] | number[] | null;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  id_color: number;
+  id_genero: number;
+  id_subcategoria: number;
+  id_marca: number;
+  activo?: boolean;
 }
 
 export class AdministradorRepository {
-
-  //************************************/
-  // Eliminar producto
-  //************************************/
-
   static async desactivarProducto(id: number): Promise<QueryResult> {
     return pool.query(
       `UPDATE "Producto"
-       SET estaActivo = false
-       WHERE id = $1 AND estaActivo = true
-       RETURNING id`,
+       SET activo = false
+       WHERE id = $1 AND activo = true
+       RETURNING id, nombre, activo`,
       [id]
     );
   }
 
-  //************************************/
-  // Agregar producto
-  //************************************/
-
   static async crearProducto(data: ProductoInput): Promise<QueryResult> {
     const {
       nombre,
+      descripcion,
       precio,
-      stock,
-      estaActivo = true,
-      marca = null,
-      categorias = null,
+      id_color,
+      id_genero,
+      id_subcategoria,
+      id_marca,
+      activo = true,
     } = data;
 
     return pool.query(
-      `INSERT INTO "Producto" (nombre, precio, stock, estaActivo, marca, categorias)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, nombre, precio, stock, estaActivo, marca, categorias`,
-      [nombre, precio, stock, estaActivo, marca, categorias]
+      `INSERT INTO "Producto" (
+         nombre, descripcion, precio,
+         id_color, id_genero, id_subcategoria, id_marca, activo
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id, nombre, descripcion, precio,
+                 id_color, id_genero, id_subcategoria, id_marca, activo`,
+      [nombre, descripcion, precio, id_color, id_genero, id_subcategoria, id_marca, activo]
     );
   }
 
-  //************************************/
-  // Modificar producto
-  //************************************/
-
-  static async actualizarProducto(id: number, data: ProductoInput): Promise<QueryResult> {
+  static async actualizarProducto(id: number, data: Partial<ProductoInput>): Promise<QueryResult> {
     if (Object.keys(data).length === 0) {
       throw new Error("No se enviaron campos para actualizar");
     }
+
     const fields: string[] = [];
     const values: any[] = [];
     let paramIndex = 1;
-    if (data.nombre !== undefined) {
-      fields.push(`nombre = $${paramIndex++}`);
-      values.push(data.nombre);
+
+    const mappings: Record<string, string> = {
+      nombre: 'nombre',
+      descripcion: 'descripcion',
+      precio: 'precio',
+      id_color: 'id_color',
+      id_genero: 'id_genero',
+      id_subcategoria: 'id_subcategoria',
+      id_marca: 'id_marca',
+      activo: 'activo'
+    };
+
+    for (const [key, dbField] of Object.entries(mappings)) {
+      if (data[key as keyof ProductoInput] !== undefined) {
+        fields.push(`${dbField} = $${paramIndex++}`);
+        values.push(data[key as keyof ProductoInput]);
+      }
     }
-    if (data.precio !== undefined) {
-      fields.push(`precio = $${paramIndex++}`);
-      values.push(data.precio);
-    }
-    if (data.stock !== undefined) {
-      fields.push(`stock = $${paramIndex++}`);
-      values.push(data.stock);
-    }
-    if (data.estaActivo !== undefined) {
-      fields.push(`estaActivo = $${paramIndex++}`);
-      values.push(data.estaActivo);
-    }
-    if (data.marca !== undefined) {
-      fields.push(`marca = $${paramIndex++}`);
-      values.push(data.marca);
-    }
-    if (data.categorias !== undefined) {
-      fields.push(`categorias = $${paramIndex++}`);
-      values.push(data.categorias);
+
+    if (fields.length === 0) {
+      throw new Error("No hay campos válidos para actualizar");
     }
 
     values.push(id);
 
     const query = `
       UPDATE "Producto"
-      SET ${fields.join(", ")}
-      WHERE id = $${paramIndex} AND estaActivo = true
-      RETURNING id, nombre, precio, stock, estaActivo, marca, categorias
+      SET ${fields.join(', ')}
+      WHERE id = $${paramIndex} AND activo = true
+      RETURNING id, nombre, descripcion, precio,
+                id_color, id_genero, id_subcategoria, id_marca, activo
     `;
 
     return pool.query(query, values);
   }
 
-  //************************************/
-  // Lista de Clientes
-  //************************************/
-
   static async obtenerClientesActivos(): Promise<QueryResult> {
-    return pool.query(
-      `SELECT id, nombre 
-       FROM "Cliente"
-       WHERE estaActivo = true
-       ORDER BY nombre ASC`
-    );
+    return pool.query(`
+      SELECT 
+        u.id, 
+        u.nombre, 
+        u.apellidos, 
+        u.correo, 
+        u.telefono,
+        u.foto_perfil
+      FROM "Usuario" u
+      JOIN "Rol" r ON u.id_rol = r.id
+      WHERE u.activo = true 
+        AND r.nombre = 'cliente'
+      ORDER BY u.nombre, u.apellidos ASC
+    `);
   }
 
-  //************************************/
-  // Historial de ventas
-  //************************************/
-
   static async obtenerHistorialVentas(): Promise<QueryResult> {
-    return pool.query(
-      `SELECT 
-         pr.id AS id_producto,
-         pr.nombre AS nombre_producto,
-         SUM(dp.cantidad) AS cantidad_total_vendida,
-         COUNT(DISTINCT p.id) AS numero_pedidos
-       FROM "DetallePedido" dp
-       JOIN "Producto" pr ON dp.id_producto = pr.id
-       JOIN "Pedido" p ON dp.id_pedido = p.id
-       WHERE p.estado NOT IN ('cancelado')  -- Opcional: excluir cancelados
-       GROUP BY pr.id, pr.nombre
-       ORDER BY cantidad_total_vendida DESC`
-    );
+    return pool.query(`
+      SELECT 
+        p.id AS id_producto,
+        p.nombre AS nombre_producto,
+        t.nombre AS talla,
+        SUM(dp.cantidad) AS cantidad_total_vendida,
+        COUNT(DISTINCT dp.id_pedido) AS numero_pedidos,
+        ROUND(AVG(dp.precio_unitario), 2) AS precio_promedio
+      FROM "DetallePedido" dp
+      JOIN "Producto" p ON dp.id_producto = p.id
+      JOIN "Talla" t ON dp.id_talla = t.id
+      JOIN "Pedido" ped ON dp.id_pedido = ped.id
+      JOIN "EstadoPedido" ep ON ped.id_estado_pedido = ep.id
+      WHERE ep.nombre NOT ILIKE '%cancelado%'
+        AND ep.nombre NOT ILIKE '%rechazado%'
+      GROUP BY p.id, p.nombre, t.id, t.nombre
+      ORDER BY cantidad_total_vendida DESC, p.nombre, t.nombre
+    `);
+  }
+
+  static async obtenerStockProducto(idProducto: number): Promise<QueryResult> {
+    return pool.query(`
+      SELECT 
+        t.nombre AS talla,
+        s.stock,
+        t.id AS id_talla
+      FROM "StockPorTalla" s
+      JOIN "Talla" t ON s.id_talla = t.id
+      WHERE s.id_producto = $1
+      ORDER BY t.nombre
+    `, [idProducto]);
   }
 }
