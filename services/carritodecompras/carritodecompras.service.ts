@@ -124,6 +124,6 @@ export class CarritoCompras {
      * @returns boolean - Retorna true si el producto se eliminó correctamente, false en caso contrario
      */
     static async dropCart(customerId: number) {
-        await Carrito.clearCart(customerId);
+        return await Carrito.clearCart(customerId);
     }
 }
