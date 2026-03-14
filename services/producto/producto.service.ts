@@ -34,6 +34,12 @@ export class Producto {
         });
     }
 
+
+    /**
+     * Función para obtener los detalles de un producto específico
+     * @param productId - ID del producto para el cual se desean obtener los detalles
+     * @returns Detalles del producto, incluyendo nombre, descripción, precio, color, marca, imágenes y stock por talla
+     */
     static async getProductDetails(productId: number) {
         return await ProductoRepo.productDetails(productId);
     }
