@@ -13,7 +13,7 @@ export class ColorRepository {
      */
 
     static async getColors() {
-        const { rows } = await pool.query('SELECT * FROM colors');
+        const { rows } = await pool.query('SELECT * FROM "Color"');
         return rows;
     }
 }
