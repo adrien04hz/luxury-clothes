@@ -1,3 +1,8 @@
+/**
+ * Equipo #1
+ * Hernández Sánchez Adrien
+ * 6 de febrero de 2026
+ */
 const API_URL = process.env.API_URL;
 
 export async function apiFetch(endpoint: string, options?: RequestInit) {
