@@ -6,7 +6,7 @@
 
 import { pool } from "@/lib/db";
 
-class Marca {
+export class Marca {
     /**
      * Funcion para obtener todas las marcas
      * @returns Lista de marcas
