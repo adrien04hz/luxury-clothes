@@ -1,7 +1,7 @@
 /**
  * Adrien Hernandez Sanchez
  * 2026-03-16
- * Repositorio de proveedor bancario
+ * Repositorio de categorias
  */
 import { pool } from "@/lib/db";
 
