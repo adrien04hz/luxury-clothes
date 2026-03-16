@@ -11,7 +11,7 @@ export class ProveedorRepository {
      * Obtener proveedores bancarios
      * @returns Lista de proveedores bancarios
      */
-    async getProveedoresBancarios() {
+    static async getProveedoresBancarios() {
         const { rows } = await pool.query(
             `
                 SELECT
