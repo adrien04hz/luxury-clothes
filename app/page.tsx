@@ -6,12 +6,7 @@ export default async function Home() {
 
   return (
     <div>
-      {data.map( proovedor  => (
-        <div key={proovedor.id}>
-          <h2>{proovedor.nombre}</h2>
-          <Image src={proovedor.url} alt={proovedor.nombre} width={200} height={200} />
-        </div>
-      ))}
+      En ploceso
     </div>
   );
 }

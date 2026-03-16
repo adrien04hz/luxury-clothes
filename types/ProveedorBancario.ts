@@ -3,7 +3,7 @@ export interface ProovedoresBancarios {
     data: Proveedor[]
 }
 
-interface Proveedor {
+export interface Proveedor {
     id: number,
     nombre: string,
     url: string
