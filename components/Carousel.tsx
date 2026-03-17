@@ -40,7 +40,7 @@ export default function Carousel(
   }, [emblaApi])
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden h-150 border border-amber-600">
       <div ref={emblaRef}>
         <div className="flex">
           {slides?.map((slide) => (
@@ -49,9 +49,10 @@ export default function Carousel(
               <Image
                 src={slide?.imagen_url || ''}
                 alt={slide?.nombre}
-                className="w-full h-125 object-cover"
-                width={500}
-                height={500}
+                className="w-full h-full object-cover"
+                width={300}
+                height={300}
+                loading="lazy"
               />
 
               {/* Texto */}
