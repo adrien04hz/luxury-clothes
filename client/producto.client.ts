@@ -41,10 +41,10 @@ export const getCatalogo = ({
     }
 
     const params = conditions.length
-    ? `? ${conditions.join('&')}`
+    ? `?${conditions.join('&')}`
     : '';
 
-    return apiFetch(`/api/catalogo${params}`);
+    return apiFetch(`/catalogo${params}`);
 }
 
 

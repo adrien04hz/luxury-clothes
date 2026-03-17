@@ -40,7 +40,7 @@ export class Producto {
 
     if (id_categoria) {
       values.push(id_categoria);
-      conditions.push(`P.id_categoria = $${values.length}`);
+      conditions.push(`S.id_categoria = $${values.length}`);
     }
 
     if (id_subcategoria) {
@@ -67,6 +67,7 @@ export class Producto {
       FROM "Producto" P
       INNER JOIN "Marca" M ON P.id_marca = M.id
       INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
+      INNER JOIN "Subcategoria" S ON P.id_subcategoria = S.id
       WHERE P.activo = true 
       ${whereClause}
       ORDER BY P.id
