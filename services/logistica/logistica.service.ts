@@ -60,4 +60,14 @@ export class LogisticaService {
     
     return result.rows[0];
   }
+
+  /**
+   * Función para obtener el historial de estados de un pedido
+   * @author Hernández Sánchez Adrien
+   * @param id_pedido - ID del pedido a consultar
+   * @return Historial de estados del pedido
+   */
+  static async obtenerHistorialEstadosPedido( id_pedido: number ) {
+    return await LogisticaRepository.getHistorialEstadosPedido( id_pedido );
+  }
 }
