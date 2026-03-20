@@ -70,4 +70,14 @@ export class LogisticaService {
   static async obtenerHistorialEstadosPedido( id_pedido: number ) {
     return await LogisticaRepository.getHistorialEstadosPedido( id_pedido );
   }
+
+  /**
+   * Función para obtener Envio de pedido por id de pedido
+   * @author Hernández Sánchez Adrien
+   * @param id_pedido - ID del pedido a consultar
+   * @return Información de envío del pedido
+   */
+  static async obtenerEnvioPedido( id_pedido: number ) {
+    return await LogisticaRepository.getEnvioByPedido( id_pedido );
+  }
 }
