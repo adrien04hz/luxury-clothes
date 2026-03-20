@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import { LogisticaService } from "@/services/logistica/logistica.service";
 
 /**
- * Endpoint para obtener el historial de estados de un pedido
+ * Endpoint para obtener el envio de un pedido por id de pedido
  * @author Hernández Sánchez Adrien
  * @param req - Objeto de solicitud HTTP
  */
@@ -27,9 +27,9 @@ export async function GET(
       );
     }
 
-    const historialEstadosPedido = await LogisticaService.obtenerHistorialEstadosPedido(idPedido);
+    const envioDePedido = await LogisticaService.obtenerEnvioPedido(idPedido);
 
-    if (!historialEstadosPedido) {
+    if (!envioDePedido) {
       return NextResponse.json(
         { ok: false, error: 'Pedido no encontrado' },
         { status: 404 }
@@ -38,10 +38,10 @@ export async function GET(
 
     return NextResponse.json({
       ok: true,
-      data: historialEstadosPedido,
+      data: envioDePedido,
     });
   } catch (error: any) {
-    console.error('ERROR EN /api/logistica/historial_estados/[id_pedido]:', error);
+    console.error('ERROR EN /api/logistica/envios/[id_pedido]:', error);
 
     return NextResponse.json(
       { ok: false, error: 'Error interno del servidor' },
