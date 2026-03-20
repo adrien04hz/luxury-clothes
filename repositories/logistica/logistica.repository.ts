@@ -122,7 +122,6 @@ export class LogisticaRepository {
     const { rows } = await pool.query(
       `SELECT
         E.nombre AS estado,
-        E.descripcion,
         H.fecha
       FROM "HistorialEstadoPedido" H
       INNER JOIN "EstadoPedido" E
