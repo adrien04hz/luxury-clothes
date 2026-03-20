@@ -18,6 +18,16 @@ export class LogisticaService {
     return result.rows[0];
   }
 
+  /**
+   * Función que actualiza el estado de un pedido y registra el cambio en el historial
+   * @author Ramos Bello José Luis
+   * @author Hernández Sánchez Adrien
+   * @param idPedido - ID del pedido a actualizar
+   * @param idNuevoEstado - Nuevo estado del pedido
+   * @param idUsuarioLogistica - ID del usuario que actualiza
+   * 
+   * Última modificación: 20/03/2026
+   */
   static async actualizarEstadoPedido(
     idPedido: number,
     idNuevoEstado: number,
