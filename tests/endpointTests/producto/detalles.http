@@ -4,4 +4,4 @@
 # 06 de febrero de 2026
 # Endpoint: Obtener detalles de un producto
 #--------------------------------------------------
-GET http://localhost:3000/api/producto/90
+GET http://localhost:3000/api/producto/10
