@@ -18,6 +18,16 @@ export class LogisticaService {
     return result.rows[0];
   }
 
+  /**
+   * Función que actualiza el estado de un pedido y registra el cambio en el historial
+   * @author Ramos Bello José Luis
+   * @author Hernández Sánchez Adrien
+   * @param idPedido - ID del pedido a actualizar
+   * @param idNuevoEstado - Nuevo estado del pedido
+   * @param idUsuarioLogistica - ID del usuario que actualiza
+   * 
+   * Última modificación: 20/03/2026
+   */
   static async actualizarEstadoPedido(
     idPedido: number,
     idNuevoEstado: number,
@@ -49,5 +59,25 @@ export class LogisticaService {
     }
     
     return result.rows[0];
+  }
+
+  /**
+   * Función para obtener el historial de estados de un pedido
+   * @author Hernández Sánchez Adrien
+   * @param id_pedido - ID del pedido a consultar
+   * @return Historial de estados del pedido
+   */
+  static async obtenerHistorialEstadosPedido( id_pedido: number ) {
+    return await LogisticaRepository.getHistorialEstadosPedido( id_pedido );
+  }
+
+  /**
+   * Función para obtener Envio de pedido por id de pedido
+   * @author Hernández Sánchez Adrien
+   * @param id_pedido - ID del pedido a consultar
+   * @return Información de envío del pedido
+   */
+  static async obtenerEnvioPedido( id_pedido: number ) {
+    return await LogisticaRepository.getEnvioByPedido( id_pedido );
   }
 }
