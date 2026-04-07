@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { Categorias } from "@/types/Categoria";
+import { Categorias } from "@/types/producto/Categoria";
 
 /**
  * Funcion que retorna listado de categorias

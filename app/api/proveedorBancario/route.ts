@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { ProveedorService } from "@/services/proveedorBancario/proveedorBancario.service";
+import { ProveedorService } from "@/services/metododepago/proveedorBancario/proveedorBancario.service";
 
 export async function GET() {
     try {

@@ -4,7 +4,7 @@
  * Servicio de categorias
  */
 
-import { CategoriaRepository } from "@/repositories/categoria/categoria.repository";
+import { CategoriaRepository } from "@/repositories/producto/categoria/categoria.repository";
 
 export class CategoriaService {
     /**

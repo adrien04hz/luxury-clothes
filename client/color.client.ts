@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { ColoresResponse } from "@/types/Color";
+import { ColoresResponse } from "@/types/producto/Color";
 
 /**
  * Funcion que retorna listados

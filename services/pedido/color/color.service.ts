@@ -3,7 +3,7 @@
  * Hernández Sánchez Adrien
  * 6 de febrero de 2026
  */
-import { ColorRepository } from '@/repositories/color/color.repository';
+import { ColorRepository } from '@/repositories/producto/color/color.repository';
 
 export class ColorService {
     /**
