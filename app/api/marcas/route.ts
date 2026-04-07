@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { MarcaService } from "@/services/marca/marca.service";
+import { MarcaService } from "@/services/pedido/marca/marca.service";
 
 export async function GET() {
     try {
