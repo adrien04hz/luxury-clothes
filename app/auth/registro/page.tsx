@@ -1,5 +1,4 @@
 // # Registro de nuevo usuario (cliente)
-
 "use client";
 
 import { useState } from "react";
