@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { MarcaResponse } from "@/types/Marca";
+import { MarcaResponse } from "@/types/producto/Marca";
 
 /**
  * Funcion que retorna listado de marcas

@@ -1,0 +1,2 @@
+// # logica de fonted, llamado a los cliente ya definidos (Pueden depender de las necesidades), 
+// es decir utilizacion de los fetch. Esta parte va depender de que se vaya ocupando, se pueden ir agregando mas cosas

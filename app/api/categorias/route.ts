@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { CategoriaService } from "@/services/categorias/categorias.service";
+import { CategoriaService } from "@/services/pedido/categorias/categorias.service";
 
 export async function GET() {
     try {

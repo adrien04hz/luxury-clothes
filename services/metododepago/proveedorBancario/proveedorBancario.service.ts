@@ -4,7 +4,7 @@
  * Servicio de proveedor bancario
  */
 
-import { ProveedorRepository } from "@/repositories/proveedorBancario/proveedorBancario.repository";
+import { ProveedorRepository } from "@/repositories/metododepago/proveedorBancario/proveedorBancario.repository";
 
 export class ProveedorService {
     /**

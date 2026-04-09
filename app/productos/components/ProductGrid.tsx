@@ -1,0 +1,1 @@
+// # lista de varios productos (representa muchos productos), usa productcard 

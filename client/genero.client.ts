@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { GeneroResponse } from "@/types/Genero";
+import { GeneroResponse } from "@/types/producto/Genero";
 
 
 /**

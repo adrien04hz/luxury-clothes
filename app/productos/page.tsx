@@ -1,0 +1,1 @@
+// # pagina de inicio principal, listado de todos los productos haciendo uso de filtrado

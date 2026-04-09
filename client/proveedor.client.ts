@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { ProovedoresBancarios } from "@/types/ProveedorBancario";
+import { ProovedoresBancarios } from "@/types/metododepago/ProveedorBancario";
 
 
 /**

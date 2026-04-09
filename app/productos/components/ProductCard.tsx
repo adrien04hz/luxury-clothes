@@ -1,0 +1,1 @@
+// # vista de un solo producto (representa un solo producto)

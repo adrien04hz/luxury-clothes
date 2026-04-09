@@ -4,7 +4,7 @@
  * Servicio de marcas
  */
 
-import { Marca } from "@/repositories/marca/marcas.repository";
+import { Marca } from "@/repositories/producto/marca/marcas.repository";
 
 export class MarcaService {
     /**

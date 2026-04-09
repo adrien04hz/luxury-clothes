@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { ProductosResponse } from "@/types/Producto";
+import { ProductosResponse } from "@/types/producto/Producto";
 
 /**
  * Funcion que retorna catalogo segun sea necesario

@@ -3,7 +3,7 @@
  * Hernández Sánchez Adrien
  * 6 de febrero de 2026
  */
-import { GeneroRepository } from "@/repositories/genero/genero.repository";
+import { GeneroRepository } from "@/repositories/producto/genero/genero.repository";
 
 export class GeneroService {
     /**

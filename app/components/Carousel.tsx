@@ -2,7 +2,7 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import { useEffect, useState } from "react";
-import { Producto } from "@/types/producto/Producto";
+import { Producto } from "@/types/Producto";
 import Image from "next/image";
 
 export default function Carousel(

@@ -5,7 +5,7 @@
  */
 
 import { NextResponse } from "next/server";
-import { ColorService } from "@/services/color/color.service";
+import { ColorService } from "@/services/pedido/color/color.service";
 
 export async function GET() {
     try {

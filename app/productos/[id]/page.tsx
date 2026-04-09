@@ -1,0 +1,1 @@
+// # detalle de un producto seleccionado en la principal

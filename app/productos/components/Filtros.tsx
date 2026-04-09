@@ -1,0 +1,1 @@
+// # generacion de filtros genero, categoria, subcategoria, talla, color, precio incluso marca

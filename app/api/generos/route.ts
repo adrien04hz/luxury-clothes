@@ -4,7 +4,7 @@
  * 6 de febrero de 2026
  */
 import { NextResponse } from "next/server";
-import { GeneroService } from "@/services/genero/genero.service";
+import { GeneroService } from "@/services/pedido/genero/genero.service";
 
 /**
  * Endpoint para obtener los generos
