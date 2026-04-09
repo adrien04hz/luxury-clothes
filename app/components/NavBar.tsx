@@ -114,14 +114,14 @@ export default async function NavBar() {
         </div>
 
         <div className="flex space-x-5">
-          <Link href="#profile">
-            <Image src="/assets/images/profile.svg" alt="Cart" width={30} height={30} />
+          <Link href="/cuenta">
+            <Image src="/assets/images/profile.svg" alt="User" width={30} height={30} />
           </Link>
-          <Link href="#wishlist">
-            <Image src="/assets/images/wish.svg" alt="User" width={30} height={30} />
+          <Link href="/cuenta/listadedeseos">
+            <Image src="/assets/images/wish.svg" alt="Wishlist" width={30} height={30} />
           </Link>
-          <Link href="#cart">
-            <Image src="/assets/images/bag.svg" alt="Heart" width={30} height={30} />
+          <Link href="/carrito">
+            <Image src="/assets/images/bag.svg" alt="Cart" width={30} height={30} />
           </Link>
         </div>
       </div>
