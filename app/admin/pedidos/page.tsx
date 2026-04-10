@@ -25,8 +25,7 @@ export default function AdminPedidosPage() {
 
     const cargarPedidos = async () => {
         try {
-            // Cambia esta ruta si tu endpoint es diferente
-            const res = await fetch("/api/administrador/histirual_venta");
+            const res = await fetch("/api/administrador/historial_venta");
             if (!res.ok) throw new Error("Error al cargar pedidos");
             const data = await res.json();
             setPedidos(data);

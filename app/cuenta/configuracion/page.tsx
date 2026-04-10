@@ -1,8 +1,8 @@
-// # Gestion de la cuenta como los datos personales
+// # Gestión de la cuenta
 //***********/
 //* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Cervantes Rosales Abdiel */
-//* Fecha: 09/04/2026 */
+//* Autor de la clase: Ramos Bello Jose Luis */
+//* Fecha: 10/04/2026 */
 //**********/
 "use client";
 import { useState, useEffect } from "react";
@@ -21,11 +21,32 @@ export default function EditarPerfilPage() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Cargar datos actuales
+  // Cargar datos actuales con token
   useEffect(() => {
-    fetch("/api/cliente/perfil")
-      .then(res => res.json())
-      .then(data => {
+    const cargarPerfil = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          router.push("/auth/login");
+          return;
+        }
+
+        const res = await fetch("/api/cliente/perfil", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            router.push("/auth/login");
+            return;
+          }
+          throw new Error(data.error || "Error al cargar datos");
+        }
+
         setForm({
           nombre: data.nombre || "",
           apellidos: data.apellidos || "",
@@ -33,9 +54,13 @@ export default function EditarPerfilPage() {
           telefono: data.telefono || "",
           foto_perfil: data.foto_perfil || "",
         });
-      })
-      .catch(() => setError("Error al cargar datos"));
-  }, []);
+      } catch (err: any) {
+        setError("Error al cargar datos");
+      }
+    };
+
+    cargarPerfil();
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -48,9 +73,18 @@ export default function EditarPerfilPage() {
     setSuccess("");
 
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/auth/login");
+        return;
+      }
+
       const res = await fetch("/api/cliente", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(form),
       });
 
@@ -61,7 +95,7 @@ export default function EditarPerfilPage() {
       }
 
       setSuccess("Perfil actualizado correctamente");
-      
+
       setTimeout(() => {
         router.push("/perfil");
       }, 1500);
@@ -131,7 +165,7 @@ export default function EditarPerfilPage() {
         </form>
 
         <button
-          onClick={() => router.push("/perfil")}
+          onClick={() => router.push("/cuenta")}
           className="mt-6 w-full border border-gray-400 py-3 rounded-lg hover:bg-gray-100"
         >
           Cancelar
