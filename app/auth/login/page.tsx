@@ -20,7 +20,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setMensaje("");
     setLoading(true);
-
+  
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -29,23 +29,49 @@ export default function LoginPage() {
         },
         body: JSON.stringify(form),
       });
-
+  
       const data: LoginResponse = await res.json();
-
+  
       if (!res.ok) {
         throw new Error((data as any).error || "Error al iniciar sesión");
       }
-
+  
+      console.log("TOKEN:", data.token); // 👈 DEBUG
+  
       localStorage.setItem("token", data.token);
-
+  
+      // 👇 VALIDACIÓN SEGURA
+      if (!data.token) {
+        throw new Error("No se recibió token");
+      }
+  
+      const base64Payload = data.token.split(".")[1];
+  
+      if (!base64Payload) {
+        throw new Error("Token inválido");
+      }
+  
+      const payload = JSON.parse(atob(base64Payload));
+  
+      console.log("PAYLOAD:", payload); // 👈 DEBUG
+  
+      if (!payload.id) {
+        throw new Error("Token sin ID");
+      }
+  
+      localStorage.setItem("userID", payload.id.toString());
+  
+      console.log("GUARDADO:", localStorage.getItem("userId")); // 👈 DEBUG
+  
       router.push("/");
-
+  
     } catch (error: any) {
       setMensaje(error.message);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
@@ -84,6 +110,13 @@ export default function LoginPage() {
             {mensaje}
           </p>
         )}
+
+        <button
+          className="w-full bg-gray-500 text-white p-2 rounded mt-2"
+          onClick={()=> router.push("/auth/registro")}
+        >
+          Registrarse
+        </button>
 
       </div>
     </div>

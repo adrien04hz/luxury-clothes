@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { getCategorias } from "@/client/categoria.client";
 import { getGeneros } from "@/client/genero.client";
-import { Search } from "lucide-react";
 import Link from "next/link";
+import SearchOverlay from "./Search";
 
 
 export default async function NavBar() {
@@ -12,14 +12,14 @@ export default async function NavBar() {
   return (
     <>
     <div className="w-full h-28 bg-black text-white flex justify-between px-12">
-      <div className="flex items-center justify-center">
+      <Link href="/" className="flex items-center justify-center">
         <Image 
           src="/assets/logo/main-logo.svg" 
           alt="Logo" 
           width={174} 
           height={80} 
         />
-      </div>
+      </Link>
       <div className="py-14">
         {
           <nav className="z-50">
@@ -102,17 +102,7 @@ export default async function NavBar() {
         }
       </div>
       <div className="flex space-x-7 items-center">
-        <div className="relative w-48 h-8">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={16} />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full h-full pl-11 pr-4 py-3 bg-gray-50 rounded-full
-            focus:outline-none focus:ring-1 focus:ring-black
-            placeholder:text-gray-400 text-black"
-          />
-        </div>
-
+        <SearchOverlay/>
         <div className="flex space-x-5">
           <Link href="/cuenta">
             <Image src="/assets/images/profile.svg" alt="User" width={30} height={30} />

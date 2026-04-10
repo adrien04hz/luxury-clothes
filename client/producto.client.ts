@@ -56,3 +56,12 @@ export const getCatalogo = ({
 export const getProducto = (id: number) : Promise<ProductosResponse> => {
     return apiFetch(`/api/producto/${id}`);
 }
+
+/**
+ * Equipo #1
+ * Diaz Antonio Luis Pedro
+ * 09 de marzo de 2026
+ */
+export const searchProductos = (q: string) : Promise<ProductosResponse>=> {
+  return apiFetch(`/motordebusqueda/busqueda?q=${encodeURIComponent(q)}`)
+}
