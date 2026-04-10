@@ -6,15 +6,12 @@ export default function PerfilPage() {
   const router = useRouter();
   const [perfil, setPerfil] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deactivating, setDeactivating] = useState(false);
 
   useEffect(() => {
     const obtenerPerfil = async () => {
       const token = localStorage.getItem("token");
-      console.log("TOKEN:", token); // 🔍 DEBUG
 
-      // Si no hay token → redirigir
       if (!token) {
         setLoading(false);
         router.push("/auth/login");
@@ -23,7 +20,6 @@ export default function PerfilPage() {
 
       try {
         const res = await fetch("/api/cliente/perfil", {
-          method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -36,14 +32,12 @@ export default function PerfilPage() {
           return;
         }
 
-        if (!res.ok) {
-          throw new Error("Error al cargar el perfil");
-        }
+        if (!res.ok) throw new Error();
 
         const data = await res.json();
         setPerfil(data);
       } catch (err) {
-        console.error("ERROR PERFIL:", err);
+        console.error(err);
         alert("Error al cargar el perfil");
       } finally {
         setLoading(false);
@@ -53,14 +47,6 @@ export default function PerfilPage() {
     obtenerPerfil();
   }, [router]);
 
-  // 🔥 Redirección correcta (NO en render directo)
-  useEffect(() => {
-    if (!loading && !perfil) {
-      router.push("/auth/login");
-    }
-  }, [loading, perfil, router]);
-
-  // Pantalla de carga
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -70,6 +56,8 @@ export default function PerfilPage() {
   }
 
   const handleDesactivarCuenta = async () => {
+    if (!confirm("¿Seguro que deseas eliminar tu cuenta?")) return;
+
     setDeactivating(true);
 
     try {
@@ -82,55 +70,57 @@ export default function PerfilPage() {
         },
       });
 
-      if (res.status === 401) {
-        router.push("/auth/login");
-        return;
-      }
+      if (!res.ok) throw new Error();
 
-      if (!res.ok) {
-        throw new Error("No se pudo desactivar la cuenta");
-      }
-
-      alert("Tu cuenta ha sido desactivada correctamente.");
+      alert("Cuenta eliminada correctamente");
 
       localStorage.removeItem("token");
       localStorage.removeItem("userID");
 
       router.push("/auth/login");
     } catch (err) {
-      console.error("ERROR DELETE:", err);
-      alert("Ocurrió un error al desactivar la cuenta");
+      console.error(err);
+      alert("Error al eliminar cuenta");
     } finally {
       setDeactivating(false);
-      setShowDeleteModal(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-center mb-8">Mi Perfil</h1>
+    <div className="min-h-screen bg-gray-100 flex">
+
+      <div className="flex-1 p-6">
+
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Mi Cuenta
+        </h1>
 
         {perfil?.foto_perfil && (
           <div className="flex justify-center mb-6">
             <img
               src={perfil.foto_perfil}
-              alt="Foto de perfil"
-              className="w-32 h-32 rounded-full object-cover border-4 border-gray-300"
+              alt="Foto"
+              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
             />
           </div>
         )}
 
         <div className="space-y-5 text-lg">
           <div>
-            <p className="text-gray-500 text-sm">Nombre</p>
+            <p className="text-gray-500 text-sm">Nombre(s)</p>
             <p className="font-semibold">
-              {perfil?.nombre} {perfil?.apellidos}
+              {perfil?.nombre}
+            </p>
+          </div>
+          <div>
+            <p className="text-gray-500 text-sm">Apellidos</p>
+            <p className="font-semibold">
+              {perfil?.apellidos}
             </p>
           </div>
 
           <div>
-            <p className="text-gray-500 text-sm">Correo electrónico</p>
+            <p className="text-gray-500 text-sm">Correo</p>
             <p className="font-semibold">{perfil?.correo}</p>
           </div>
 
@@ -142,75 +132,74 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3">
-          <button
-            onClick={() => router.push("/cuenta/configuracion")}
-            className="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
-          >
-            Editar Perfil
-          </button>
-
+        <div className="flex flex-wrap gap-3">
           <button
             onClick={() => router.push("/")}
-            className="flex-1 border border-gray-400 py-3 rounded-lg hover:bg-gray-100 transition"
+            className="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 transition font-medium"
           >
-            Volver al Inicio
+            Volver al inicio
           </button>
 
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="mt-6 text-red-600 hover:text-red-700 font-medium py-3 border border-red-300 hover:border-red-400 rounded-lg transition"
-          >
-            Eliminar Mi Cuenta
-          </button>
-          <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("userID");
-              router.push("/");
-            }}
-            className="mt-6 text-red-600 hover:text-red-700 font-medium py-3 border border-red-300 hover:border-red-400 rounded-lg transition"
-          >
-            cerrar sesión
-          </button>
+          {/* Acciones peligrosas */}
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={handleDesactivarCuenta}
+              disabled={deactivating}
+              className="w-full py-3 rounded-xl border border-red-400 text-red-600 hover:bg-red-50 transition font-medium disabled:opacity-60"
+            >
+              {deactivating ? "Eliminando cuenta..." : "Eliminar cuenta"}
+            </button>
+
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("userID");
+                router.push("/");
+              }}
+              className="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 transition font-medium"
+            >
+              Cerrar sesión
+            </button>
+
+          </div>
         </div>
       </div>
 
-      {/* Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
-            <h2 className="text-2xl font-bold text-red-600 mb-4">
-              ¿Deseas eliminar tu cuenta?
-            </h2>
+      <div className="w-72 bg-white shadow-lg p-6 border-l flex flex-col gap-4">
 
-            <p className="text-gray-600 mb-6">
-              Esta acción <strong>eliminará</strong> tu cuenta de forma permanente.
-              No podrás iniciar sesión ni recuperar tus datos.
-              <br /><br />
-              ¿Estás seguro de continuar?
-            </p>
+        <button
+          onClick={() => router.push("/cuenta/pedidos")}
+          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
+        >
+          Pedidos
+        </button>
 
-            <div className="flex gap-4">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100 transition"
-                disabled={deactivating}
-              >
-                Cancelar
-              </button>
+        <button
+          onClick={() => router.push("/cuenta/metodosdepago")}
+          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
+        >
+          Métodos de Pago
+        </button>
 
-              <button
-                onClick={handleDesactivarCuenta}
-                disabled={deactivating}
-                className="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition disabled:opacity-70"
-              >
-                {deactivating ? "Desactivando..." : "Sí, Desactivar Cuenta"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        <button
+          onClick={() => router.push("/cuenta/direcciones")}
+          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
+        >
+          Direcciones de envío
+        </button>
+        <button
+          onClick={() => router.push("/cuenta/listadedeseos")}
+          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
+        >
+          Lista de deseos
+        </button>
+        <button
+          onClick={() => router.push("/cuenta/configuracion")}
+          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
+        >
+          Configuracion
+        </button>
+      </div>
     </div>
   );
 }
