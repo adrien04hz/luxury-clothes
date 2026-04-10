@@ -47,6 +47,9 @@ export default function HistorialPedidosPage() {
 
   return (
     <div className="p-5">
+      <button onClick={() => router.push("/cuenta/")} className="mb-4 text-blue-600 hover:underline">
+        Volver a cuenta
+      </button>  
       <h1 className="text-2xl mb-4">Mis pedidos</h1>
 
       {error && <p className="text-red-500">{error}</p>}
