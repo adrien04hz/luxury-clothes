@@ -13,6 +13,8 @@ export default function PerfilPage() {
   const [perfil, setPerfil] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deactivating, setDeactivating] = useState(false);
 
   useEffect(() => {
     const obtenerPerfil = async () => {
@@ -39,12 +41,37 @@ export default function PerfilPage() {
     obtenerPerfil();
   }, []);
 
+  const handleDesactivarCuenta = async () => {
+    setDeactivating(true);
+    try {
+      const res = await fetch("/api/cliente", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "No se pudo desactivar la cuenta");
+      }
+
+      alert("Tu cuenta ha sido desactivada correctamente.");
+      router.push("/auth/login"); // Redirigir al login después de desactivar
+    } catch (err: any) {
+      alert(err.message || "Ocurrió un error al desactivar la cuenta");
+    } finally {
+      setDeactivating(false);
+      setShowDeleteModal(false);
+    }
+  };
+
   if (loading) return <div className="flex justify-center items-center h-screen">Cargando perfil...</div>;
+
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <p className="text-red-500 mb-4">{error}</p>
-        <button 
+        <button
           onClick={() => router.push("/auth/login")}
           className="bg-black text-white px-6 py-2 rounded"
         >
@@ -84,21 +111,60 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        <div className="mt-10 flex gap-4">
+        <div className="mt-10 flex flex-col gap-3">
           <button
             onClick={() => router.push("/cuenta/configuracion")}
             className="flex-1 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition"
           >
             Editar Perfil
           </button>
+
           <button
             onClick={() => router.push("/")}
             className="flex-1 border border-gray-400 py-3 rounded-lg hover:bg-gray-100 transition"
           >
             Volver al Inicio
           </button>
+
+          <button
+            onClick={() => setShowDeleteModal(true)}
+            className="mt-6 text-red-600 hover:text-red-700 font-medium py-3 border border-red-300 hover:border-red-400 rounded-lg transition"
+          >
+            Eliminar Mi Cuenta
+          </button>
         </div>
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">¿Deseas eliminar tu cuenta?</h2>
+
+            <p className="text-gray-600 mb-6">
+              Esta acción <strong>eliminará</strong> tu cuenta de forma permanente. No podrás iniciar sesión ni recuperar tus datos.
+              <br /><br />
+              ¿Estás seguro de continuar?
+            </p>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100 transition"
+                disabled={deactivating}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDesactivarCuenta}
+                disabled={deactivating}
+                className="flex-1 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition disabled:opacity-70"
+              >
+                {deactivating ? "Desactivando..." : "Sí, Desactivar Cuenta"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
