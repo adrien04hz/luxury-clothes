@@ -7,7 +7,7 @@
 import { NextResponse } from "next/server";
 import { ListaDeseos } from "@/services/listadedeseo/listadedeseo.service";
 import { getUserFromToken } from "@/lib/auth";
-import { ClienteRepository } from "@/repositories/cliente/cliente.repository";
+
 
 //endpoint que permite obtener los productos de la lista de deseos de un cliente, recibe el id del cliente como query parameter
 export async function GET(req: Request) {
@@ -51,16 +51,22 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { clientId, productId } = await req.json();
 
-    if (!clientId || !productId) {
+    const clientId = getUserFromToken(req);
+
+    if (!clientId) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+    const { productId } = await req.json();
+
+    if (!productId) {
       return NextResponse.json(
         { error: 'Client ID and Product ID are required' },
         { status: 400 }
       );
     }
 
-    await ListaDeseos.addProduct(clientId, productId);
+    await ListaDeseos.addProduct(clientId.id, productId);
 
     return NextResponse.json({
       ok: true,
@@ -75,15 +81,21 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   try{
-    const { clientId, productId } = await req.json();
-    if (!clientId || !productId) {
+
+    const clientId = getUserFromToken(req);
+
+    if (!clientId) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+    const { productId } = await req.json();
+    if (!productId) {
       return NextResponse.json(
-        { error: 'Client ID and Product ID are required' },
+        { error: 'Product ID is required' },
         { status: 400 }
       );
     }
 
-    await ListaDeseos.deleteProduct(clientId, productId);
+    await ListaDeseos.deleteProduct(clientId.id, productId);
 
     return NextResponse.json({
       ok: true,
