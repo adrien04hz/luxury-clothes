@@ -166,4 +166,54 @@ export class LogisticaRepository {
   
     return rows[0];
   }
+
+  /**
+   * Función para añadir registro al historial de estados de un pedido
+   * @author Hernández Sánchez Adrien
+   * @param id_pedido - ID del pedido
+   * @param id_estado_pedido - ID del nuevo estado del pedido
+   * @param id_estado_envio - ID del nuevo estado del envío
+   * @param id_usuario - ID del usuario que realiza el cambio
+   * @return Información de adición al historial
+   */
+  static async agregarRegistoHistorial({
+    id_pedido,
+    id_estado_pedido,
+    id_estado_envio,
+    id_usuario
+  } : {
+    id_pedido: number,
+    id_estado_pedido?: number,
+    id_estado_envio?: number,
+    id_usuario: number
+  }) {
+    const referencias: string[] = [];
+    const campos : string[] = [];
+    const valores: any[] = [];
+
+    if (id_estado_pedido) {
+      valores.push(id_estado_pedido);
+      campos.push("id_estado_pedido");
+      referencias.push(`$${valores.length}`);
+    }
+
+    if (id_estado_envio) {
+      valores.push(id_estado_envio);
+      campos.push("id_estado_envio");
+      referencias.push(`$${valores.length}`);
+    }
+
+    if (referencias.length === 0) {
+      throw new Error("Debe especificar al menos un cambio de estado");
+    }
+
+    const query = `
+      INSERT INTO "HistorialEstadoPedido" (${campos.join(", ")}, id_pedido, id_usuario) VALUES
+      ($${referencias.join(", ")}, $${referencias.length + 1}, $${referencias.length + 2}) RETURNING id, fecha
+    `;
+
+    const { rows } = await pool.query(query, [...valores, id_pedido, id_usuario]);
+
+    return rows;
+  } 
 }
