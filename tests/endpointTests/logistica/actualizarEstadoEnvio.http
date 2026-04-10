@@ -6,3 +6,6 @@ Content-Type: application/json
   "idNuevoEstado": 3,
   "idUsuarioLogistica": 3
 }
+
+###
+GET http://localhost:3000/api/logistica/estado_envio/1
