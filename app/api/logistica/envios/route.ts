@@ -14,21 +14,21 @@ import { LogisticaService } from "@/services/logistica/logistica.service";
 export async function GET() {
   try {
 
-    const envioDePedido = await LogisticaService.obtenerEnvioPedido(idPedido);
+    const enviosSinEntregar = await LogisticaService.obtenerEnviosSinEntregar();
 
-    if (!envioDePedido) {
+    if (!enviosSinEntregar) {
       return NextResponse.json(
-        { ok: false, error: 'Pedido no encontrado' },
+        { ok: false, error: 'No se encontraron envíos sin entregar' },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
       ok: true,
-      data: envioDePedido,
+      data: enviosSinEntregar,
     });
   } catch (error: any) {
-    console.error('ERROR EN /api/logistica/envios/[id_pedido]:', error);
+    console.error('ERROR EN /api/logistica/envios/:', error);
 
     return NextResponse.json(
       { ok: false, error: 'Error interno del servidor' },
