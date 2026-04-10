@@ -1,4 +1,10 @@
 // # Gestion de productos guardados (Ver, aumentar, agregar a carrito, comprar, eliminar)
+/**
+ * Equipo #1
+ * Valeriano López Magali Natividad
+ * 10 de Abril de 2026
+ */
+
 import ProductCard from "@/app/components/ProductCard";
 
 export default function ListadeseosPage() {

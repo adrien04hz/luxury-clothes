@@ -1,5 +1,11 @@
 //parametros
 //showBoton, que sea dinamico el card 
+/**
+ * Equipo #1
+ * Valeriano López Magali Natividad
+ * 9 de Abril de 2026
+ */
+
 import Image from "next/image";
 
 export default function ProductCard({ showToCart = true }) {

@@ -12,6 +12,9 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const clientId = searchParams.get("clientId");
+    if (!clientId) {
+      return NextResponse.json({ error: "Client ID is required" }, { status: 400 });
+    }
 
     const products = await ListaDeseos.getWhislist(Number(clientId));
 

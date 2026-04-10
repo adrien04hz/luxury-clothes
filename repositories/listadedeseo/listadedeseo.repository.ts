@@ -40,7 +40,7 @@ export class DetalleListaDeseos {
       JOIN "Marca" m ON p.id_marca = m.id
       LEFT JOIN "ImagenProducto" i ON p.id = i.id_producto
       WHERE ld.id_usuario = $1
-      GROUP BY p.id, p.nombre, p.precio, m.nombre
+      GROUP BY p.id, m.nombre, p.nombre, p.precio, m.nombre
       ORDER BY p.id
     `;
 
