@@ -43,6 +43,10 @@ export default function DetallePedidoPage() {
 
     return (
         <div className="p-5">
+
+    <button onClick={() => router.push("/cuenta/pedidos")} className="mb-4 text-blue-600 hover:underline">
+        Volver a pedidos
+    </button>  
         <h1 className="text-2xl mb-4">Detalle del Pedido #{id}</h1>
 
         {error && <p className="text-red-500">{error}</p>}

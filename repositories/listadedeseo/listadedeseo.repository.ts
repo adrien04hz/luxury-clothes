@@ -32,13 +32,15 @@ export class DetalleListaDeseos {
         p.id,
         p.nombre,
         p.precio,
+        m.nombre AS marca,
         array_remove(array_agg(i.url), NULL) AS imagenes
       FROM "ListaDeseos" ld
       JOIN "DetalleDeseos" dd ON ld.id = dd.id_lista_deseos
       JOIN "Producto" p ON dd.id_producto = p.id
+      JOIN "Marca" m ON p.id_marca = m.id
       LEFT JOIN "ImagenProducto" i ON p.id = i.id_producto
       WHERE ld.id_usuario = $1
-      GROUP BY p.id, p.nombre, p.precio
+      GROUP BY p.id, m.nombre, p.nombre, p.precio, m.nombre
       ORDER BY p.id
     `;
 

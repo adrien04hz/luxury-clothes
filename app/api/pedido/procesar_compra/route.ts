@@ -33,18 +33,21 @@ export async function POST(req: Request) {
             idCliente,
             id_metodo_pago,
             id_direccion,
-            notas
-        );
+          );
+          
+        const idPedido = pedidoCreado.id;
+
+        console.log("Pedido creado:", pedidoCreado);
 
         return NextResponse.json(
             {
-                success: true,
-                message: "Compra procesada correctamente",
-                pedido: pedidoCreado,
-                id_pedido: pedidoCreado.id,
+              success: true,
+              message: "Compra procesada correctamente",
+              pedido: pedidoCreado,
+              id_pedido: idPedido,
             },
             { status: 201 }
-        );
+          );
     } catch (error: any) {
         console.error("Error al procesar la compra:", error);
 

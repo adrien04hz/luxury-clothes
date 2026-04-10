@@ -7,7 +7,7 @@
 import { DetalleListaDeseos } from "@/repositories/listadedeseo/listadedeseo.repository";
 
 export class ListaDeseos {
-    static async getWhislist(clientId: number) {
+    static async getWhishlist(clientId: number) {
         if (!clientId) {
             throw new Error("Client ID is required");
         }
