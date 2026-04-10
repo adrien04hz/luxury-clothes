@@ -100,10 +100,10 @@ export class PedidoRepository {
       JOIN "Talla" t
         ON t.id = d.id_talla
   
-      JOIN "Pago" pa
+      LEFT JOIN "Pago" pa
         ON pa.id_pedido = p.id
   
-      JOIN "TipoMetodoDePago" tm
+      LEFT JOIN "TipoMetodoDePago" tm
         ON tm.id = pa.id_tipo_metodo
   
       WHERE p.id = $1
@@ -253,19 +253,17 @@ export class PedidoRepository {
 
       const pedidoResult = await client.query(
         `INSERT INTO "Pedido" (
-         id_usuario, 
-         id_estado_pedido, 
-         total, 
-         fecha, 
-         notas
-       ) VALUES (
-         $1, 
-         (SELECT id FROM "EstadoPedido" WHERE nombre ILIKE 'pendiente' LIMIT 1),
-         $2, 
-         CURRENT_TIMESTAMP, 
-         $3
-       ) RETURNING id`,
-        [idUsuario, total, notas || null]
+          id_usuario, 
+          id_estado_pedido, 
+          total, 
+          fecha
+        ) VALUES (
+          $1, 
+          (SELECT id FROM "EstadoPedido" WHERE nombre ILIKE 'pendiente' LIMIT 1),
+          $2, 
+          CURRENT_TIMESTAMP
+        ) RETURNING id`,
+        [idUsuario, total]
       );
 
       const idPedido = pedidoResult.rows[0].id;
