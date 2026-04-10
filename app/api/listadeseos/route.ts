@@ -6,14 +6,29 @@
 
 import { NextResponse } from "next/server";
 import { ListaDeseos } from "@/services/listadedeseo/listadedeseo.service";
+import { getUserFromToken } from "@/lib/auth";
 
 //endpoint que permite obtener los productos de la lista de deseos de un cliente, recibe el id del cliente como query parameter
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const clientId = searchParams.get("clientId");
+    
+     if (!clientId) {
+      return NextResponse.json({ error: "Client ID is required" }, { status: 400 });
+    }
+  
 
-    const products = await ListaDeseos.getWhislist(Number(clientId));
+ /*    const user = getUserFromToken(req);
+    console.log("USER:", user);
+    if (!user) {
+      return NextResponse.json(
+        { ok: false, message: "No autorizado" },
+        { status: 401 }
+      );
+    }
+    */
+    const products = await ListaDeseos.getWhishlist(Number(clientId));
 
     return NextResponse.json({
       ok: true,
