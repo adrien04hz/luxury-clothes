@@ -13,15 +13,6 @@ import { LogisticaService } from "@/services/logistica/logistica.service";
  */
 export async function GET() {
   try {
-    const { id_pedido } = await context.params;
-    const idPedido = Number(id_pedido);
-
-    if (Number.isNaN(idPedido)) {
-      return NextResponse.json(
-        { ok: false, error: 'ID de pedido inválido' },
-        { status: 400 }
-      );
-    }
 
     const envioDePedido = await LogisticaService.obtenerEnvioPedido(idPedido);
 

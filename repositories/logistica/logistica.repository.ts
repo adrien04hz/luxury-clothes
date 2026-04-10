@@ -244,6 +244,32 @@ export class LogisticaRepository {
   }
 
   /**
-   * Función para obtener loes envíos que no sean entregados
+   * Función para obtener los envíos que no sean entregados
+   * @author Hernández Sánchez Adrien
+   * @returns Lista de envíos sin entregar y no cancelados
    */
+  static async obtenerEnviosSinEntregar() {
+    const { rows } = await pool.query(
+      `
+        SELECT
+          P.id as id_pedido,
+          U.nombre as cliente_nombre,
+          U.apellidos as cliente_apellido,
+          E.fecha_entrega_estimada as fecha_estimada,
+          E.numero_guia as numero_guia,
+          EE.nombre as estado_envio
+        FROM "Envio" E
+        
+        JOIN "Pedido" P ON E.id_pedido = P.id
+        JOIN "Usuario" U ON P.id_usuario = U.id
+        JOIN "Rol" R ON U.id_rol = R.id
+        JOIN "EstadoEnvio" EE ON E.id_estado_envio = EE.id
+
+        WHERE R.id = 1
+        AND E.id_estado_envio != 5;
+      `
+    );
+
+    return rows;
+  }
 }
