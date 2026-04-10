@@ -122,8 +122,8 @@ export class LogisticaRepository {
     const { rows } = await pool.query(
       `
         SELECT
-          E.nombre AS EstadoPedido,
-          EE.nombre as EstadoEnvio,
+          E.nombre AS estado_pedido,
+          EE.nombre as estado_envio,
           H.fecha
         FROM "HistorialEstadoPedido" H
         LEFT JOIN "EstadoPedido" E ON H.id_estado_pedido = E.id
