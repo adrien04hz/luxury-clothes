@@ -7,8 +7,8 @@
 export interface ProductosResponse {
     ok: boolean;
     count?: number;
-    productos?: Producto[];
-    data? : Producto;
+    productos: Producto[];
+    data : Producto[];
 
 }
 
