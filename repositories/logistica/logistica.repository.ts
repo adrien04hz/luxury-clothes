@@ -120,14 +120,17 @@ export class LogisticaRepository {
    */
   static async getHistorialEstadosPedido(id_Pedido: number) {
     const { rows } = await pool.query(
-      `SELECT
-        E.nombre AS estado,
-        H.fecha
-      FROM "HistorialEstadoPedido" H
-      INNER JOIN "EstadoPedido" E
-        ON H.id_estado_pedido = E.id
-      WHERE H.id_pedido = $1
-      ORDER BY H.fecha ASC;`,
+      `
+        SELECT
+          E.nombre AS EstadoPedido,
+          EE.nombre as EstadoEnvio,
+          H.fecha
+        FROM "HistorialEstadoPedido" H
+        LEFT JOIN "EstadoPedido" E ON H.id_estado_pedido = E.id
+        LEFT JOIN "EstadoEnvio" EE ON H.id_estado_envio = EE.id
+        WHERE H.id_pedido = $1
+        ORDER BY H.fecha ASC;
+      `,
       [id_Pedido]
     );
   
