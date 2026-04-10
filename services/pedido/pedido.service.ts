@@ -135,14 +135,10 @@ export class PedidoService {
       const pedidoCreado = result.rows[0];
 
       return {
-        mensaje: "Compra procesada correctamente",
-        pedido: {
-          id: pedidoCreado.id,
-          total: pedidoCreado.total,
-          estado: pedidoCreado.estado || "pendiente",
-          fecha: pedidoCreado.fecha,
-          notas: pedidoCreado.notas,
-        },
+        id: pedidoCreado.id,
+        total: pedidoCreado.total,
+        estado: pedidoCreado.estado,
+        fecha: pedidoCreado.fecha,
       };
     } catch (error: any) {
       if (error.message.includes("stock")) {
