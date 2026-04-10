@@ -1,7 +1,7 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
 //* Autor de la clase: Ramos Bello Jose Luis */
-//* Fecha: 06/02/2026 */
+//* Fecha: 10/04/2026 */
 //**********/
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -16,14 +16,15 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-
     const updates: Record<string, any> = {};
 
     // Campos permitidos para actualizar
-    if (body.nombre !== undefined) updates.nombre = body.nombre;
-    if (body.apellidos !== undefined) updates.apellidos = body.apellidos;
-    if (body.telefono !== undefined) updates.telefono = body.telefono;
-    if (body.foto_perfil !== undefined) updates.foto_perfil = body.foto_perfil;
+    const camposPermitidos = ["nombre", "apellidos", "telefono", "foto_perfil"];
+    for (const campo of camposPermitidos) {
+      if (body[campo] !== undefined) {
+        updates[campo] = body[campo];
+      }
+    }
 
     // Cambio de correo → validar unicidad
     if (body.correo !== undefined && body.correo !== user.correo) {
@@ -66,7 +67,7 @@ export async function PATCH(req: Request) {
       updates.contrasena = await bcrypt.hash(body.nueva_contrasena, 10);
     }
 
-    // Validar que haya algo que actualizar
+    // Validar que haya al menos un campo para actualizar
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(
         { error: "No se enviaron campos válidos para actualizar" },
@@ -85,7 +86,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({
       message: "Perfil actualizado correctamente",
-      datosActualizados: result.rows[0]
+      datosActualizados: result.rows[0] || null,
     });
   } catch (error: any) {
     console.error("Error en PATCH /api/Cliente:", error);
@@ -113,7 +114,7 @@ export async function DELETE(req: Request) {
     }
 
     return NextResponse.json({
-      message: "Cuenta desactivada correctamente"
+      message: "Cuenta desactivada correctamente",
     });
   } catch (error: any) {
     console.error("Error en DELETE /api/Cliente:", error);
