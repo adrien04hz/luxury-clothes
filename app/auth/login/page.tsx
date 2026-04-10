@@ -47,6 +47,7 @@ export default function LoginPage() {
     }
   };
 
+
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="w-80 p-6 shadow-lg rounded-2xl">
@@ -84,6 +85,13 @@ export default function LoginPage() {
             {mensaje}
           </p>
         )}
+
+        <button
+          className="w-full bg-gray-500 text-white p-2 rounded mt-2"
+          onClick={()=> router.push("/auth/registro")}
+        >
+          Registrarse
+        </button>
 
       </div>
     </div>
