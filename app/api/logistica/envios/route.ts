@@ -14,7 +14,7 @@ import { LogisticaService } from "@/services/logistica/logistica.service";
 export async function GET() {
   try {
 
-    const enviosSinEntregar = await LogisticaService.obtenerEnviosSinEntregar();
+    const enviosSinEntregar = await LogisticaService.obtenerEnviosNoEntregados();
 
     if (!enviosSinEntregar) {
       return NextResponse.json(

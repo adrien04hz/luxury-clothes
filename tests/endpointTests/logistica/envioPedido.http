@@ -3,3 +3,7 @@ GET http://localhost:3000/api/logistica/envios/1
 ###
 # Información de pedido
 GET http://localhost:3000/api/logistica/pedido/1
+
+###
+# Envios sin entregar
+GET http://localhost:3000/api/logistica/envios/

@@ -129,7 +129,7 @@ export class LogisticaService {
    * @author Hernández Sánchez Adrien
    * @return Lista de envíos sin entregar y no cancelados
    */
-  static async obtenerEnviosSinEntregar() {
+  static async obtenerEnviosNoEntregados() {
     return await LogisticaRepository.obtenerEnviosSinEntregar();
   }
 }
