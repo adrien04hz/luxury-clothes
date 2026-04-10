@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/logistica/estado_pedido/
+Content-Type: application/json
+
+{
+  "idPedido": 1,
+  "idNuevoEstado": 5,
+  "idUsuarioLogistica": 2
+}

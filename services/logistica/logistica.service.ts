@@ -45,20 +45,11 @@ export class LogisticaService {
       idUsuarioLogistica
     );
 
-    const nuevoRegistro = LogisticaRepository.agregarRegistoHistorial(
-      {
-        id_pedido: idPedido,
-        id_estado_pedido: idNuevoEstado,
-        id_usuario: idUsuarioLogistica
-      }
-    );
-
     return {
       mensaje: "Estado del pedido actualizado correctamente",
       id_pedido: idPedido,
       nuevo_estado: idNuevoEstado,
-      historial_id: result.rows[0]?.historial_id,
-      fecha_registro: nuevoRegistro
+      historial_id: result.rows[0]?.historial_id
     };
   }
 
