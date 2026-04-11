@@ -15,16 +15,22 @@ export async function GET(req: Request) {
     const palabra = searchParams.get("q");
     const idCategoria = searchParams.get("categoria");
     const idMarca = searchParams.get("marca");
+    const genero = searchParams.get("genero");
+    const color = searchParams.get("color");
     const precioMin = searchParams.get("precioMin");
     const precioMax = searchParams.get("precioMax");
     const stock = searchParams.get("stock");
+    const orden = searchParams.get("orden");
 
     const data = await FiltroArticuloService.filtrar({
       palabra: palabra || undefined,
       idCategoria: idCategoria ? Number(idCategoria) : undefined,
       idMarca: idMarca ? Number(idMarca) : undefined,
+      idGenero: genero ? Number(genero) : undefined,
+      idColor: color ? Number(color) : undefined,
       precioMin: precioMin ? Number(precioMin) : undefined,
       precioMax: precioMax ? Number(precioMax) : undefined,
+      orden: orden || undefined,
       soloActivos: true,
       conStock: stock === "true"
     });
