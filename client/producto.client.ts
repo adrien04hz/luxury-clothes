@@ -5,7 +5,7 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { ProductosResponse } from "@/types/producto/Producto";
+import { DetailResponse, ProductosResponse } from "@/types/producto/Producto";
 
 /**
  * Funcion que retorna catalogo segun sea necesario
@@ -53,8 +53,8 @@ export const getCatalogo = ({
  * @param id - ID del producto
  * @returns Detalles del producto
  */
-export const getProducto = (id: number) : Promise<ProductosResponse> => {
-    return apiFetch(`/api/producto/${id}`);
+export const getProducto = (id: number) : Promise<DetailResponse> => {
+    return apiFetch(`/producto/${id}`);
 }
 
 /**
