@@ -52,12 +52,6 @@ export default function AdminClientesPage() {
             <header className="bg-white shadow-sm border-b sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => router.push("/admin/")}
-                            className="text-gray-600 hover:text-black flex items-center gap-2"
-                        >
-                            Dashboard
-                        </button>
                         <h1 className="text-2xl font-bold text-gray-800">Gestión de Clientes</h1>
                     </div>
 

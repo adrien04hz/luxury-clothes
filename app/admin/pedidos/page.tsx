@@ -21,17 +21,39 @@ export default function AdminPedidosPage() {
     const router = useRouter();
     const [pedidos, setPedidos] = useState<Pedido[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [filtroEstado, setFiltroEstado] = useState("todos");
 
     const cargarPedidos = async () => {
         try {
-            const res = await fetch("/api/administrador/historial_venta");
-            if (!res.ok) throw new Error("Error al cargar pedidos");
+            setLoading(true);
+            setError(null);
+
+            const res = await fetch("/api/administrador/historial_venta", {
+                credentials: "include", // Por si usas autenticación con cookies
+            });
+
+            if (!res.ok) {
+                throw new Error(`Error ${res.status}: No se pudo cargar los pedidos`);
+            }
+
             const data = await res.json();
-            setPedidos(data);
-        } catch (error) {
-            console.error(error);
-            alert("No se pudieron cargar los pedidos");
+
+            if (!data.success) {
+                throw new Error(data.error || "Error al procesar la respuesta");
+            }
+
+            // Aceptamos tanto "pedidos" como "historial_ventas" por compatibilidad
+            const listaPedidos = Array.isArray(data.pedidos) 
+                ? data.pedidos 
+                : Array.isArray(data.historial_ventas) 
+                    ? data.historial_ventas 
+                    : [];
+
+            setPedidos(listaPedidos);
+        } catch (err: any) {
+            console.error("Error cargando pedidos:", err);
+            setError(err.message || "No se pudieron cargar los pedidos");
         } finally {
             setLoading(false);
         }
@@ -42,7 +64,8 @@ export default function AdminPedidosPage() {
     }, []);
 
     const pedidosFiltrados = pedidos.filter(pedido =>
-        filtroEstado === "todos" || pedido.estado.toLowerCase() === filtroEstado
+        filtroEstado === "todos" || 
+        pedido.estado.toLowerCase() === filtroEstado.toLowerCase()
     );
 
     const getEstadoColor = (estado: string) => {
@@ -61,12 +84,6 @@ export default function AdminPedidosPage() {
             <header className="bg-white shadow-sm border-b sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => router.push("/admin/")}
-                            className="text-gray-600 hover:text-black flex items-center gap-2"
-                        >
-                            Dashboard
-                        </button>
                         <h1 className="text-2xl font-bold text-gray-800">Gestión de Pedidos</h1>
                     </div>
 
@@ -95,7 +112,7 @@ export default function AdminPedidosPage() {
                     <select
                         value={filtroEstado}
                         onChange={(e) => setFiltroEstado(e.target.value)}
-                        className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none"
+                        className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-black"
                     >
                         <option value="todos">Todos los estados</option>
                         <option value="pendiente">Pendiente</option>
@@ -105,6 +122,18 @@ export default function AdminPedidosPage() {
                         <option value="cancelado">Cancelado</option>
                     </select>
                 </div>
+
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 flex justify-between items-center">
+                        <span>{error}</span>
+                        <button 
+                            onClick={cargarPedidos}
+                            className="underline hover:no-underline"
+                        >
+                            Reintentar
+                        </button>
+                    </div>
+                )}
 
                 {loading ? (
                     <div className="text-center py-12 text-gray-500">Cargando pedidos...</div>
@@ -134,7 +163,7 @@ export default function AdminPedidosPage() {
                                         </td>
                                         <td className="px-6 py-5">
                                             <span className={`px-4 py-1 text-xs rounded-full font-medium ${getEstadoColor(pedido.estado)}`}>
-                                                {pedido.estado}
+                                                {pedido.estado.replace("_", " ")}
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-center">
