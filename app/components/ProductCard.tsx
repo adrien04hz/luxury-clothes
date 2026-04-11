@@ -19,6 +19,8 @@ export default function ProductCard(
     showToCart = true,  //mostrar boton de agregar al carrito
     showIcon = true,    //mostrar icono de favorito
     onRemoveFavorite,     //funcion para eliminar de favoritos
+    onUndo,
+    pendingDelete,
     item,
   }
   : 
@@ -27,11 +29,12 @@ export default function ProductCard(
     showToCart?: boolean, 
     showIcon?: boolean,
     onRemoveFavorite?: (productId: number) => void,
+    onUndo?: () => void,
+    pendingDelete?: boolean,
     item?: Producto
   }
 ) {
 
-  const [showConfirm, setShowConfirm] = useState(false);
   return (
     // Quitamos alturas fijas del contenedor principal
     <div className="border border-gray-200 flex flex-col h-fit">
@@ -48,7 +51,7 @@ export default function ProductCard(
         />
         {showIcon && (
           <button
-            onClick={() => setShowConfirm(true)}
+            onClick={() => onRemoveFavorite?.(product!.id)}
             className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full shadow-md hover:bg-gray-100 transition"
             >
             <svg
@@ -63,29 +66,29 @@ export default function ProductCard(
             </svg>
           </button>
         ) }
-         {/* {showConfirm && ( */}
-          <div className="absolute bottom-0 left-0 bg-black w-full p-4 flex items-center justify-center text-white">
+        {pendingDelete && (
+           <div className="absolute inset-0 bg-white/30">
+          <div className="absolute bottom-0 left-0 w-full p-4 flex items-center justify-center text-white
+                          bg-black">
 
-           <div className="flex items-center pr-4">
+            <div className="flex items-center pr-4">
               <p className="text-base font-semibold tracking-tight">
-                Eliminando de Favoritos
+                Eliminando de favoritos...
               </p>
-          </div>
+            </div>
 
             <button
-              onClick={() => {
-                onRemoveFavorite?.(product!.id);
-                setShowConfirm(false);
-              }}
+              onClick={onUndo}
               className="text-white hover:text-gray-300 transition-colors 
-                       underline underline-offset-4 text-sm font-medium
-                       flex items-center gap-1.5"
+                        underline underline-offset-4 text-sm font-medium
+                        flex items-center gap-1.5"
             >
               Deshacer
             </button>
 
           </div>
-        {/* )} */}
+        </div>
+        )} 
 
       </div>
 
