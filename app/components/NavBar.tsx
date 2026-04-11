@@ -16,6 +16,7 @@ export default async function NavBar() {
         <Image 
           src="/assets/logo/main-logo.svg" 
           alt="Logo" 
+          loading="eager"
           width={174} 
           height={80} 
         />

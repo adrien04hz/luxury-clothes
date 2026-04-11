@@ -52,8 +52,11 @@ export class FiltroArticulo {
     palabra: string | null,
     idCategoria: number | null,
     idMarca: number | null,
+    idGenero: number | null,
+    idColor: number | null,
     precioMin: number | null,
     precioMax: number | null,
+    orden: string | null,
     soloActivos: boolean,
     conStock: boolean
   ) {
@@ -61,6 +64,16 @@ export class FiltroArticulo {
     const condiciones: string[] = [];
     const valores: any[] = [];
     let i = 1;
+
+    let orderBy = "ORDER BY P.id DESC";
+
+    if (orden === "precio_asc") {
+      orderBy = "ORDER BY P.precio ASC";
+    }
+
+    if (orden === "precio_desc") {
+      orderBy = "ORDER BY P.precio DESC";
+    }
 
     if (palabra) {
       condiciones.push(`
@@ -75,15 +88,27 @@ export class FiltroArticulo {
       i++;
     }
 
-    if (idCategoria) {
+    if (idCategoria !== null) {
       condiciones.push(`C.id = $${i}`);
       valores.push(idCategoria);
       i++;
     }
 
-    if (idMarca) {
+    if (idMarca !== null) {
       condiciones.push(`P.id_marca = $${i}`);
       valores.push(idMarca);
+      i++;
+    }
+
+    if (idGenero !== null) {
+      condiciones.push(`P.id_genero = $${i}`);
+      valores.push(idGenero);
+      i++;
+    }
+
+    if (idColor !== null) {
+      condiciones.push(`P.id_color = $${i}`);
+      valores.push(idColor);
       i++;
     }
 
@@ -139,7 +164,7 @@ export class FiltroArticulo {
       INNER JOIN "Subcategoria" S ON P.id_subcategoria = S.id
       INNER JOIN "Categoria" C ON S.id_categoria = C.id
       ${where}
-      ORDER BY P.id DESC
+      ${orderBy} 
       LIMIT 50
     `;
 

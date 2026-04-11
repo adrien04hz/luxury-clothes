@@ -13,6 +13,9 @@ const geistMontserrat = Montserrat({
 export const metadata: Metadata = {
   title: "Luxury Clothes",
   description: "Ecommerce de ropa de lujo",
+  icons: {
+    icon: "/assets/logo/logo.png",
+  }
 };
 
 export default function RootLayout({

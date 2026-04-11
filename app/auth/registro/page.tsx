@@ -1,4 +1,3 @@
-// # Registro de nuevo usuario (cliente)
 "use client";
 
 import { useState } from "react";
@@ -19,8 +18,8 @@ export default function RegisterPage() {
 
     const handleChange = (e: any) => {
         setForm({
-        ...form,
-        [e.target.name]: e.target.value,
+            ...form,
+            [e.target.name]: e.target.value,
         });
     };
 
@@ -28,65 +27,101 @@ export default function RegisterPage() {
         e.preventDefault();
 
         try {
-        const res = await fetch("/api/auth/register", {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-        });
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(form),
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (!res.ok) {
-            throw new Error(data.error);
-        }
+            if (!res.ok) {
+                throw new Error(data.error);
+            }
 
-        // Si hay registro exitoso -> ir a login
-        router.push("/auth/login");
+            router.push("/auth/login");
         } catch (err: any) {
-        setError(err.message);
+            setError(err.message);
         }
     };
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
-        <h1 className="text-2xl mb-4">Registro</h1>
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2 w-80">
-            <input
-            name="nombre"
-            placeholder="Nombre"
-            onChange={handleChange}
-            required
-            />
-            <input
-            name="apellidos"
-            placeholder="Apellidos"
-            onChange={handleChange}
-            required
-            />
-            <input
-            name="correo"
-            placeholder="Correo"
-            onChange={handleChange}
-            required
-            />
-            <input
-            name="contrasena"
-            type="password"
-            placeholder="Contraseña"
-            onChange={handleChange}
-            required
-            />
-            <input name="telefono" placeholder="Teléfono" onChange={handleChange} />
+                <h1 className="text-2xl font-semibold text-center mb-6">
+                    Registro
+                </h1>
 
-            <button type="submit" className="bg-black text-white p-2">
-            Registrarse
-            </button>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-            {error && <p className="text-red-500">{error}</p>}
-        </form>
+                    <input
+                        name="nombre"
+                        placeholder="Nombre"
+                        onChange={handleChange}
+                        required
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    />
+
+                    <input
+                        name="apellidos"
+                        placeholder="Apellidos"
+                        onChange={handleChange}
+                        required
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    />
+
+                    <input
+                        name="correo"
+                        placeholder="Correo"
+                        onChange={handleChange}
+                        required
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    />
+
+                    <input
+                        name="contrasena"
+                        type="password"
+                        placeholder="Contraseña"
+                        onChange={handleChange}
+                        required
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    />
+
+                    <input
+                        name="telefono"
+                        placeholder="Teléfono"
+                        onChange={handleChange}
+                        className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    />
+
+                    <button
+                        type="submit"
+                        className="bg-black text-white p-3 rounded-lg mt-2 hover:bg-gray-800 transition"
+                    >
+                        Registrarse
+                    </button>
+
+                    {error && (
+                        <p className="text-red-500 text-sm text-center">
+                            {error}
+                        </p>
+                    )}
+
+                    <p className="text-center text-sm text-gray-600 mt-2">
+                        ¿Ya tienes cuenta?{" "}
+                        <span
+                            className="text-blue-600 cursor-pointer hover:underline"
+                            onClick={() => router.push("/auth/login")}
+                        >
+                            Inicia sesión
+                        </span>
+                    </p>
+
+                </form>
+            </div>
         </div>
     );
 }

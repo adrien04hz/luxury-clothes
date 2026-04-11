@@ -11,6 +11,7 @@ import { useRef, useState } from "react";
 
 import Image from "next/image";
 import { ListaDeDeseos } from "@/types/listadedeseos/ListaDeDeseos";
+import { Producto } from "@/types/producto/Producto";
 
 export default function ProductCard(
   { 
@@ -18,6 +19,7 @@ export default function ProductCard(
     showToCart = true,  //mostrar boton de agregar al carrito
     showIcon = true,    //mostrar icono de favorito
     onRemoveFavorite,     //funcion para eliminar de favoritos
+    item,
   }
   : 
   { 
@@ -25,6 +27,7 @@ export default function ProductCard(
     showToCart?: boolean, 
     showIcon?: boolean,
     onRemoveFavorite?: (productId: number) => void,
+    item?: Producto
   }
 ) {
 
@@ -36,11 +39,12 @@ export default function ProductCard(
       <div className="relative aspect-square w-full flex items-center justify-center overflow-hidden">
         
         <Image
-          src={product?.imagenes?.[0] || "/placeholder.png"}
+          src={product?.imagenes?.[0] || item?.imagen_url || "/assets/images/bag.svg"}
           width={400}
           height={400}
-          alt={product?.nombre || "Producto"}
+          alt={product?.nombre || item?.nombre || "Producto"}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
         {showIcon && (
           <button
@@ -86,15 +90,15 @@ export default function ProductCard(
       </div>
 
       <div className="p-4 flex flex-col">
-        <h2 className="text-black font-semibold">{product?.marca}</h2>
+        <h2 className="text-black font-semibold">{product?.marca || item?.marca}</h2>
 
         <p className="text-black font-regular mb-4">
-          {product?.nombre}
+          {product?.nombre || item?.nombre}
         </p>
 
         <div className="mt-auto">
           <p className="text-black font-medium">
-             ${Number(product?.precio).toLocaleString()}
+             ${Number(product?.precio || item?.precio).toLocaleString()}
           </p>
           
           {showToCart && (
