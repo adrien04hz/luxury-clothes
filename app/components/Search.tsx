@@ -1,3 +1,9 @@
+/**
+ * Equipo #1
+ * Diaz Antonio Luis Pedro
+ * 6 de febrero de 2026
+ * 10 de abril de 2026
+ */
 "use client";
 
 import { useEffect, useState } from "react";

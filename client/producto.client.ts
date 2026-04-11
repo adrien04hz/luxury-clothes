@@ -60,8 +60,39 @@ export const getProducto = (id: number) : Promise<ProductosResponse> => {
 /**
  * Equipo #1
  * Diaz Antonio Luis Pedro
- * 09 de marzo de 2026
+ * 6 de febrero de 2026
+ * 10 de abril de 2026
  */
-export const searchProductos = (q: string) : Promise<ProductosResponse>=> {
-  return apiFetch(`/motordebusqueda/busqueda?q=${encodeURIComponent(q)}`)
-}
+export const filterProductos = ({
+  q,
+  categoria,
+  marca,
+  genero,
+  color,
+  precioMin,
+  precioMax,
+  orden
+}: {
+  q?: string;
+  categoria?: string;
+  marca?: string;
+  genero?: string;
+  color?: string;
+  precioMin?: string;
+  precioMax?: string;
+  orden?: string;
+}) => {
+
+  const params = new URLSearchParams();
+
+  if (q) params.append("q", q);
+  if (categoria) params.append("categoria", categoria);
+  if (marca) params.append("marca", marca);
+  if (genero) params.append("genero", genero);
+  if (color) params.append("color", color); 
+  if (precioMin) params.append("precioMin", precioMin);
+  if (precioMax) params.append("precioMax", precioMax);
+  if (orden) params.append("orden", orden); 
+
+  return apiFetch(`/motordebusqueda/filtro?${params.toString()}`);
+};

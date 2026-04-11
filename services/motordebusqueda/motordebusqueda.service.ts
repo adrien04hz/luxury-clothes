@@ -23,37 +23,41 @@ export class FiltroArticuloService {
 
   static async filtrar(params: {
     palabra?: string;
-    idCategoria?: number;
-    idMarca?: number;
-    precioMin?: number;
-    precioMax?: number;
+    idCategoria?: number | null;
+    idMarca?: number | null;
+    idGenero?: number | null;
+    idColor?: number | null;
+    precioMin?: number | null;
+    precioMax?: number | null;
+    orden?: string;
     soloActivos?: boolean;
     conStock?: boolean;
   }) {
 
     // recibir parametros
-    if (params.precioMin && params.precioMin < 0) {
+    const min = params.precioMin;
+    const max = params.precioMax;
+
+    if (min != null && min < 0) {
       throw new Error('El precio mínimo no puede ser negativo');
     }
 
-    if (params.precioMax && params.precioMax < 0) {
+    if (max != null && max < 0) {
       throw new Error('El precio máximo no puede ser negativo');
     }
 
-    if (
-      params.precioMin !== undefined &&
-      params.precioMax !== undefined &&
-      params.precioMin > params.precioMax
-    ) {
+    if (min != null && max != null && min > max) {
       throw new Error('El precio mínimo no puede ser mayor al máximo');
     }
-
     return await FiltroArticulo.filtrar(
       params.palabra ?? null,
       params.idCategoria ?? null,
       params.idMarca ?? null,
+      params.idGenero ?? null,
+      params.idColor ?? null,
       params.precioMin ?? null,
       params.precioMax ?? null,
+      params.orden ?? null,
       params.soloActivos ?? true,
       params.conStock ?? false
     );
