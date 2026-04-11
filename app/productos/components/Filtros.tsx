@@ -6,48 +6,52 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { X, Plus, Minus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 interface Props {
     categorias: any[];
     generos: any[];
     colores: any[];
     marcas: any[];
+    title?: string;
+    count?: number;
 }
 
-export default function Filtros({ categorias, generos, colores, marcas }: Props) {
+export default function Filtros({ categorias, generos, colores, marcas, title, count }: Props) {
     const [open, setOpen] = useState(false);
     const [activo, setActivo] = useState<string | null>(null);
 
     function getColor(nombre: string) {
         switch (nombre.toLowerCase()) {
             case "negro":
-                return "black";
+                return "#111111";
             case "blanco":
-                return "white";
+                return "#F2F1ED";
             case "rojo":
-                return "red";
+                return "#7A1E1E";
             case "azul":
-                return "blue";
+                return "#0F1A2B";
             case "verde":
-                return "green";
+                return "#0F3D2E";
             case "amarillo":
-                return "yellow";
+                return "#C6A75E";
             case "gris":
-                return "gray";
+                return "#4A4F55";
             case "naranja":
-                return "orange";
+                return "#A65A3A";
             case "rosa":
-                return "pink";
+                return "#B76E79";
             case "morado":
-                return "purple";
+                return "#4B2E3F";
             case "café":
+                return "#3B241C";
             case "cafe":
-                return "#92400e";
+                return "#3B241C";
             case "beige":
-                return "#f5f5dc";
+                return "#C8B69C";
             default:
                 return "lightgray";
         }
@@ -83,13 +87,33 @@ export default function Filtros({ categorias, generos, colores, marcas }: Props)
     return (
 
         <>
-            <button onClick={() => setOpen(true)} className="text-blue-600 text-sm font-medium hover:underline">
-                Filtrar y ordenar
-            </button>
+
+            <div className="flex w-full justify-between mb-4 items-end">
+                <div className="text-3xl font-medium">
+                    <p>{"Resultados para: \"" + title + "\" (" + count + ")"}</p>
+                </div>
+        
+                <button onClick={() => setOpen(true)} className="text-sm font-regular hover:underline">
+                    <div className="flex items-center space-x-2">
+                        <div className="text-xl hover:cursor-pointer">
+                            <p>Mostrar Filtros</p>
+                        </div>
+            
+                        <div>
+                            <Image
+                                src="/assets/images/filter.svg"
+                                alt="Filtros"
+                                width={27}
+                                height={27}
+                            />
+                        </div>
+                    </div>
+                </button>
+            </div>
 
             {open && (
                 <div className="fixed inset-0 bg-black/30 z-50 flex justify-end">
-                    <div className="w-[350px] bg-white h-full p-6 overflow-y-auto">
+                    <div className="w-87.5 bg-white h-full p-6 overflow-y-auto">
 
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-semibold">
@@ -140,11 +164,11 @@ export default function Filtros({ categorias, generos, colores, marcas }: Props)
 
                         {/* seccion de Color */}
                         <FiltroItem title="Color" open={activo === "color"} onToggle={() => setActivo(activo === "color" ? null : "color")}>
-                            <div className="flex gap-6 flex-wrap">
+                            <div className=" px-8 mt-4 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
                                 {colores?.map((color) => (
-                                    <div key={color.id} className="flex flex-col items-center">
+                                    <div key={color.id} className="flex flex-col items-center  w-fit">
                                         <div
-                                            className="w-10 h-10 rounded-full border cursor-pointer hover:scale-110 transition"
+                                            className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition"
                                             style={{ backgroundColor: getColor(color.nombre) }}
                                             onClick={() => aplicarFiltro("color", color.id.toString())}
                                         ></div>

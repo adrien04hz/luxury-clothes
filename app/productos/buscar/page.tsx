@@ -5,15 +5,12 @@
  * 10 de abril de 2026
  */
 import { filterProductos } from "@/client/producto.client";
-import Image from "next/image";
 import Filtros from "../components/Filtros";
 import { getCategorias } from "@/client/categoria.client";
 import { getGeneros } from "@/client/genero.client";
 import { getColores } from "@/client/color.client";
 import { getMarcas } from "@/client/marca.client";
-import { Producto } from "@/types/producto/Producto";
 import CatalogoCuerpo from "../components/CatalogoCuerpo";
-import TituloCatalogo from "../components/TituloCatalogo";
 import BreadCrumb from "../components/BreadCrumb";
 
 
@@ -60,11 +57,9 @@ export default async function BuscarPage({ searchParams }: Props) {
     return (
         <div className="flex flex-col justify-center items-start px-24">
             <BreadCrumb />
-            <TituloCatalogo title={`Resultados para: "${params.q}"`} count={productos?.length || 0} />
-            <hr />
-
-            <div className="flex justify-between items-center mt-2 mb-4">
-                <Filtros categorias={categorias} generos={generos} colores={colores} marcas={marcas} />
+            
+            <div className="flex justify-between items-center mt-2 mb-4 w-full">
+                <Filtros categorias={categorias} generos={generos} colores={colores} marcas={marcas} title={params.q} count={productos.length} />
             </div>
 
             <CatalogoCuerpo items={productos} />
