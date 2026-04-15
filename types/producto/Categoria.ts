@@ -35,3 +35,8 @@ export interface SubcategoriaPorGenero {
     total: number,
     nombre: string
 }
+
+export interface CategoriasGeneroGeneral {
+    generoId: number,
+    categorias: CategoriaPorGeneroItem[]
+}

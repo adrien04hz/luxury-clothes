@@ -3,8 +3,10 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import { getCategorias, getTodasLasCategorias } from "@/client/categoria.client";
+import { getCategorias, getCategoriasDefault, getTodasLasCategorias } from "@/client/categoria.client";
 import { getGeneros } from "@/client/genero.client";
+import { getProveedoresBancarios } from "@/client/proveedor.client";
+import { getMarcas } from "@/client/marca.client";
 
 
 const geistMontserrat = Montserrat({
@@ -27,20 +29,27 @@ export default async function RootLayout({
 }>) {
 
   // Funciones para NavBar
-    const generos = await getGeneros();
-  
-    const categoriasPorGenero = await Promise.all(
-      generos.data.slice(0, 3).map(async (genero) => {
-        const categorias = await getCategorias(genero.id);
-        return {
-          generoId: genero.id,
-          categorias: categorias.data,
-        };
-      })
-    );
-  
-    const todasLasCategorias = await getTodasLasCategorias();
+  const generos = await getGeneros();
+
+  const categoriasPorGenero = await Promise.all(
+    generos.data.slice(0, 3).map(async (genero) => {
+      const categorias = await getCategorias(genero.id);
+      return {
+        generoId: genero.id,
+        categorias: categorias.data,
+      };
+    })
+  );
+
+  const todasLasCategorias = await getTodasLasCategorias();
+
+
   // Funciones para Footer
+  const categorias = await getCategoriasDefault();
+  const marcas = await getMarcas();
+  const proveedoresBancarios = await getProveedoresBancarios();
+
+  console.log(categoriasPorGenero);
   return (
     <html lang="es">
       <body
