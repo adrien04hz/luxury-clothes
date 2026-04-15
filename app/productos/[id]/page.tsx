@@ -33,19 +33,22 @@ export default function ProductoPage() {
             {/* Div para la galeria de imagenes */}
             <div className="flex space-x-4 w-fit">
                 {/* Imagenes de costado */}
-                <div>
+                <div className="flex flex-col justify-start items-center space-y-3">
                     {producto.imagenes && producto.imagenes.map((imgUrl, index) => (
-                        <Image
-                            key={index}
-                            src={imgUrl}
-                            alt={`${producto.nombre} - Imagen ${index + 1}`}
-                            width={70}
-                            height={70}
-                            className="mb-4 cursor-pointer border rounded hover:opacity-80"
-                            onClick={() => setURL(imgUrl)}
-                            onMouseEnter={() => setURL(imgUrl)}
-                            loading="lazy"
-                        />
+                        <div className="w-17.5 h-17.5 overflow-hidden rounded-[10px]" key={index}>
+                            <Image
+                                key={index}
+                                src={imgUrl}
+                                alt={`${producto.nombre} - Imagen ${index + 1}`}
+                                width={70}
+                                height={70}
+                                className="mb-4 cursor-pointer border rounded hover:opacity-80"
+                                onClick={() => setURL(imgUrl)}
+                                onMouseEnter={() => setURL(imgUrl)}
+                                objectFit="cover"
+                                loading="lazy"
+                            />
+                        </div>
                     ))}
                 </div>
                 {/* Imagen principal */}
@@ -97,7 +100,7 @@ export default function ProductoPage() {
 
                 <div className="mt-6 w-full">
                     <button className="text-black bg-white py-2 px-4 rounded-[28px] w-full h-16 border border-[#E6E6E6] hover:shadow-md transition-shadow">
-                        Agregar al carrito
+                        Añadir a lista de deseos
                     </button>
                 </div>
             </div>
