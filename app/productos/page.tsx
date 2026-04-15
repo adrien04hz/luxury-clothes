@@ -3,6 +3,7 @@ import BreadCrumb from "./components/BreadCrumb";
 import CatalogoCuerpo from "./components/CatalogoCuerpo";
 import { Producto } from "@/types/producto/Producto";
 import { getCatalogo } from "@/client/producto.client";
+import { Loader } from "lucide-react";
 
 type Props = {
   searchParams: {
@@ -27,14 +28,14 @@ export default async function Productos({searchParams}: Props) {
   if (productos.length === 0) {
     return (
       <div className="h-full w-full flex items-center justify-center">
-        No se encontraron productos para esta categoría.
+        <Loader className="animate-spin" size={48} />
       </div>
     );
   }
 
   return (
     // div principal
-    <div className="flex flex-col justify-center items-start px-24">
+    <div className="flex flex-col justify-center items-start px-24 mb-24 w-full h-fit">
       {/* breadcrumb */}
       <BreadCrumb />
 
