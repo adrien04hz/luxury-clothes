@@ -3,12 +3,22 @@ import { getCategorias } from "@/client/categoria.client";
 import { getGeneros } from "@/client/genero.client";
 import Link from "next/link";
 import SearchOverlay from "./Search";
-
+import { SubcategoriaPorGenero } from "@/types/producto/Categoria";
 
 export default async function NavBar() {
-  const categorias = await getCategorias();
   const generos = await getGeneros();
-  
+
+  const categoriasPorGenero = await Promise.all(
+    generos.data.slice(0, 3).map(async (genero) => {
+      const categorias = await getCategorias(genero.id);
+      return {
+        generoId: genero.id,
+        categorias: categorias.data,
+      };
+    })
+  );
+
+
   return (
     <>
     <div className="w-full h-28 bg-black text-white flex justify-between px-12">
@@ -24,7 +34,7 @@ export default async function NavBar() {
         
       <nav className="z-50 *:h-full flex items-center">
         <ul className="h-full flex justify-center items-center text-sm space-x-9">
-          <li className="h-full text-white group hover:underline" key={12312}>
+          {/* <li className="h-full text-white group hover:underline" key={12312}>
             <div className="h-full w-auto flex items-center justify-center">
               <Link href="#">
                 {"CATEGORÍAS"}
@@ -60,47 +70,54 @@ export default async function NavBar() {
 
               </div>
             </div>
-          </li>
+          </li> */}
 
-          {generos.data.slice(0, 3)?.map( genero => (
-            <li className="h-full text-white group hover:underline flex justify-center items-center" key={genero.id}>
-              <div className="h-full w-auto flex items-center justify-center">
-                <Link href="#">
-                  {genero.nombre.toUpperCase()}
-                </Link>
-              </div>
-
-              <div className="
-                fixed left-0 top-28 w-full opacity-0 invisible
-                group-hover:opacity-100 group-hover:visible
-                transition-all duration-300
-                bg-white text-black shadow-xl py-10
-              ">
-                <div className="max-w-6xl mx-auto grid grid-cols-3 gap-8 px-8">
-
-                  {
-                    categorias.data?.map( categoria =>
-                      <div key={categoria.id}>
-                        <p className="font-semibold mb-3"><Link href="#">{categoria.name.toUpperCase()}</Link></p>
-                        <ul className="space-y-2 text-gray-600">
-                          {
-                            categoria.subcategories.map(
-                              subcategoria => (
-                                <li key={subcategoria.id} className="hover:underline cursor-pointer">
-                                  <Link href={`/productos?categoria=${categoria.id}&subcategoria=${subcategoria.id}&genero=${genero.id}`}>{subcategoria.nombre}</Link>
-                                </li>
-                              )
-                            )
-                          }
-                        </ul>
-                      </div>
-                    )
-                  }
-
+          {
+            generos.data.slice(0, 3)?.map( (genero) => {
+              const categorias = categoriasPorGenero.find(c => c.generoId === genero.id);
+              return (<li className="h-full text-white group hover:underline flex justify-center items-center" key={genero.id}>
+                <div className="h-full w-auto flex items-center justify-center">
+                  <Link href="#">
+                    {genero.nombre.toUpperCase()}
+                  </Link>
                 </div>
-              </div>
-            </li>
-          ))}
+              
+
+                
+                  <div className="
+                  fixed left-0 top-28 w-full opacity-0 invisible
+                  group-hover:opacity-100 group-hover:visible
+                  transition-all duration-300
+                  bg-white text-black shadow-xl py-10
+                ">
+                    <div className="max-w-6xl mx-auto grid grid-cols-3 gap-8 px-8">
+
+                      {
+                        categorias?.categorias?.map( (categoria) => (
+                          <div key={categoria.id_categoria}>
+                            <p className="font-semibold mb-3"><Link href="#">{categoria.categoria.toUpperCase()}</Link></p>
+                            <ul className="space-y-2 text-gray-600">
+                              {
+                                categoria.subcategorias.map(
+                                  subcategoria => (
+                                    <li key={subcategoria.id} className="hover:underline cursor-pointer">
+                                      <Link href={`/productos?categoria=${categoria.id_categoria}&subcategoria=${subcategoria.id}&genero=${genero.id}`}>{subcategoria.nombre}</Link>
+                                    </li>
+                                  )
+                                )
+                              }
+                            </ul>
+                          </div>
+                        ))
+                      }
+
+                    </div>
+                  </div>
+                
+              </li>
+              )
+            })
+          }
         </ul>
       </nav>
         

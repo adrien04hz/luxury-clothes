@@ -5,12 +5,12 @@
  */
 
 import { apiFetch } from "@/lib/api";
-import { Categorias } from "@/types/producto/Categoria";
+import { CategoriaPorGenero } from "@/types/producto/Categoria";
 
 /**
  * Funcion que retorna listado de categorias
  * con sus correspondientes subcategorias
  */
-export const getCategorias = () : Promise<Categorias> => {
-    return apiFetch("/categorias");
+export const getCategorias = (id_genero: number) : Promise<CategoriaPorGenero> => {
+    return apiFetch(`/categorias?id_genero=${id_genero}`);
 }
