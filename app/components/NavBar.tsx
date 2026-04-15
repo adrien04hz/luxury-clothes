@@ -1,23 +1,19 @@
 import Image from "next/image";
-import { getCategorias, getTodasLasCategorias } from "@/client/categoria.client";
-import { getGeneros } from "@/client/genero.client";
 import Link from "next/link";
 import SearchOverlay from "./Search";
+import { GeneroResponse } from "@/types/producto/Genero";
+import { CategoriaPorGenero, CategoriasGeneroGeneral } from "@/types/producto/Categoria";
 
-export default async function NavBar() {
-  const generos = await getGeneros();
 
-  const categoriasPorGenero = await Promise.all(
-    generos.data.slice(0, 3).map(async (genero) => {
-      const categorias = await getCategorias(genero.id);
-      return {
-        generoId: genero.id,
-        categorias: categorias.data,
-      };
-    })
-  );
-
-  const todasLasCategorias = await getTodasLasCategorias();
+export default async function NavBar({
+  generos,
+  categoriasPorGenero,
+  todasLasCategorias,
+}: Readonly<{
+  generos: GeneroResponse;
+  categoriasPorGenero: CategoriasGeneroGeneral[];
+  todasLasCategorias: CategoriaPorGenero;
+}>) {
 
 
   return (

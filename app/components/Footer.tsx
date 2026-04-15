@@ -3,6 +3,9 @@ import { getMarcas } from "@/client/marca.client";
 import { getProveedoresBancarios } from "@/client/proveedor.client";
 import Link from "next/link";
 import Image from "next/image";
+import { Categorias } from "@/types/producto/Categoria";
+import { MarcaResponse } from "@/types/producto/Marca";
+import { ProovedoresBancarios, Proveedor } from "@/types/metododepago/ProveedorBancario";
 
 const asistencias = {
   data: [
@@ -14,10 +17,18 @@ const asistencias = {
   ],
 };
 
-export default async function Footer() {
-  const categorias = await getCategoriasDefault();
-  const marcas = await getMarcas();
-  const proveedoresBancarios = await getProveedoresBancarios();
+export default async function Footer({
+  categorias,
+  marcas,
+  proveedoresBancarios,
+} : {
+  categorias: Categorias,
+  marcas: MarcaResponse,
+  proveedoresBancarios: ProovedoresBancarios,
+}) {
+  // const categorias = await getCategoriasDefault();
+  // const marcas = await getMarcas();
+  // const proveedoresBancarios = await getProveedoresBancarios();
 
   return (
     <>
