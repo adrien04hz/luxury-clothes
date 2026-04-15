@@ -1,9 +1,9 @@
 import Image from "next/image";
 import BreadCrumb from "./components/BreadCrumb";
 import CatalogoCuerpo from "./components/CatalogoCuerpo";
-import { Producto } from "@/types/producto/Producto";
 import { getCatalogo } from "@/client/producto.client";
 import { Loader } from "lucide-react";
+import { breadCrumbs } from "./utils/producto";
 
 type Props = {
   searchParams: {
@@ -19,6 +19,12 @@ export default async function Productos({searchParams}: Props) {
 
   const res = await getCatalogo({
     id_categoria: categoria,
+    id_subcategoria: subcategoria,
+    id_genero: genero
+  });
+
+  const titulos = breadCrumbs({
+    id_categoria: categoria || 0,
     id_subcategoria: subcategoria,
     id_genero: genero
   });
@@ -46,7 +52,7 @@ export default async function Productos({searchParams}: Props) {
       {/* titulo y apartado de filtro */}
       <div className="flex w-full justify-between mb-4">
         <div className="text-3xl font-medium">
-          <p>Chamarras para Hombre (10) </p>
+          <p>{(titulos.subcategoria ? titulos.subcategoria : titulos.categoria) + " " + (titulos.genero ? "para " + titulos.genero + " (" + productos.length + ")" : "(" + productos.length + ")")}</p>
         </div>
 
         <div className="flex items-center space-x-1">
