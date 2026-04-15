@@ -12,6 +12,11 @@ export interface ProductosResponse {
 
 }
 
+export interface DetailResponse {
+    ok: boolean;
+    data: Producto;
+}
+
 export interface Producto {
     id: number;
     nombre: string;

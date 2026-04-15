@@ -4,25 +4,27 @@
 //* Fecha: 26/02/2026 */
 //**********/
 import { NextResponse } from "next/server";
-import { AdministradorRepository } from "@/repositories/administrador/administrador.repository";
+import { ProductoService } from "@/services/administrador/administrador.service";
 import { getUserFromToken } from "@/lib/auth";
 
 export async function GET(req: Request) {
   try {
-      const user = getUserFromToken(req);
-      if (!user) {
-        return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-      }
-    const result = await AdministradorRepository.obtenerClientesActivos();
+    const user = getUserFromToken(req);
+    if (!user) {
+      return NextResponse.json({ success: false, error: "No autorizado" }, { status: 401 });
+    }
+
+    const clientes = await ProductoService.listaClientes();
 
     return NextResponse.json({
-      clientes: result.rows,
-      total: result.rowCount,
+      success: true,
+      clientes,
+      total: clientes.length,
     });
   } catch (error: any) {
     console.error("Error al listar clientes:", error);
     return NextResponse.json(
-      { error: "Error al obtener la lista de clientes" },
+      { success: false, error: error.message || "Error al obtener clientes" },
       { status: 500 }
     );
   }

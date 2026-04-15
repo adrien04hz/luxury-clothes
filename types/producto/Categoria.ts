@@ -10,11 +10,28 @@ export interface Categorias {
 
 export interface Categoria {
     id: number,
-    name: string,
+    nombre: string,
     subcategories: Subcategoria[]
 }
 
 export interface Subcategoria {
     id: number,
+    nombre: string
+}
+
+export interface CategoriaPorGenero {
+    ok: boolean,
+    data: CategoriaPorGeneroItem[]
+}
+
+export interface CategoriaPorGeneroItem {
+    id_categoria: number,
+    categoria: string,
+    subcategorias: SubcategoriaPorGenero[]
+}
+
+export interface SubcategoriaPorGenero {
+    id: number,
+    total: number,
     nombre: string
 }

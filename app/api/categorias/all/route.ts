@@ -1,18 +1,17 @@
 /**
  * Adrien Hernandez Sanchez
- * 2026-03-16
+ * 2026-04-15
  * Endpoint de categorias
  */
 
 import { NextResponse } from "next/server";
 import { CategoriaService } from "@/services/pedido/categorias/categorias.service";
 
-export async function GET(request: Request) {
+export async function GET() {
     try {
-        const { searchParams } = new URL(request.url);
-        const id_genero = Number(searchParams.get("id_genero"));
 
-        const categorias = await CategoriaService.getCategoriasConSubcategorias(id_genero);
+
+        const categorias = await CategoriaService.getTodasLasCategorias();
 
         if (!categorias || categorias.length === 0) {
             throw new Error("No se encontraron categorías");

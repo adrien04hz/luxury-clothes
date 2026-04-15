@@ -1,35 +1,46 @@
-import { getCatalogo } from "@/client/producto.client";
-import ProductCard from "../components/ProductCard";
-import Link from "next/dist/client/link";
 import Image from "next/image";
+import BreadCrumb from "./components/BreadCrumb";
+import CatalogoCuerpo from "./components/CatalogoCuerpo";
 import { Producto } from "@/types/producto/Producto";
-export default async function Productos() {
+import { getCatalogo } from "@/client/producto.client";
+import { Loader } from "lucide-react";
 
-  const response = await getCatalogo({id_categoria: 1});
-  const productos = response.productos; // por como regresas los datos en tu api
+type Props = {
+  searchParams: {
+    categoria?: number;
+    subcategoria?: number;
+    genero?: number;
+  };
+};
+
+
+export default async function Productos({searchParams}: Props) {
+  const { categoria, subcategoria, genero } = await searchParams;
+
+  const res = await getCatalogo({
+    id_categoria: categoria,
+    id_subcategoria: subcategoria,
+    id_genero: genero
+  });
+
+  const { productos } = res || {};
+
+  if (productos.length === 0) {
+    return (
+      <div className="h-full w-full flex items-center justify-center">
+        <Loader className="animate-spin" size={48} />
+      </div>
+    );
+  }
 
   return (
     // div principal
-    <div className="flex flex-col justify-center items-start px-24">
+    <div className="flex flex-col justify-center items-start px-24 mb-24 w-full h-fit">
       {/* breadcrumb */}
-      <div className="flex items-center justify-start space-x-2 w-fit mt-3 mb-10 text-md font-light">
-        <div className="hover:underline w-fit">
-          <Link
-            href={"#"}
-          >Ropa</Link>
-        </div>
-        <span>/</span>
-        <div className="hover:underline w-fit">
-          <Link href={"#"}>Hombre</Link>
-        </div>
-        <span>/</span>
-        <div className="hover:underline w-fit">
-          <Link href={"#"}>Chamarra</Link>
-        </div>
-      </div>
+      <BreadCrumb />
 
       {/* titulo y apartado de filtro */}
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between mb-4">
         <div className="text-3xl font-medium">
           <p>Chamarras para Hombre (10) </p>
         </div>
@@ -51,17 +62,7 @@ export default async function Productos() {
       </div>
 
       {/* Contenedor principal para productos cards */}
-      <div className="grid grid-cols-3 gap-3.5 h-fit">
-        {productos.map((producto: Producto) => (
-          <ProductCard
-            key={producto.id}
-            isFavorite={false}
-            showIcon={false}
-            showToCart={false}
-            item={producto}
-          />
-        ))}
-      </div>
+      <CatalogoCuerpo items={productos} />
     </div>
   );
 }

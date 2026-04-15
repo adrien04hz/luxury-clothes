@@ -37,7 +37,7 @@ export default function ProductCard(
 
   return (
     // Quitamos alturas fijas del contenedor principal
-    <div className="border border-gray-200 flex flex-col h-fit">
+    <div className="border border-gray-200 flex flex-col h-full">
       
       <div className="relative aspect-square w-full flex items-center justify-center overflow-hidden">
         
