@@ -9,7 +9,7 @@ type CatalogoCuerpoProps = {
 export default function CatalogoCuerpo({ items }: CatalogoCuerpoProps) {
     return (
         // {/* Contenedor principal para productos cards */}
-        <div className="grid grid-cols-3 gap-3.5">
+        <div className="w-full h-fit grid grid-cols-3 gap-3.5">
         {items.map((producto: Producto) => (
             <Link
             key={producto.id}
