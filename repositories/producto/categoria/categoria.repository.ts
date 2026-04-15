@@ -78,5 +78,17 @@ export class CategoriaRepository {
             `
         );
         return rows;
-    }   
+    }
+
+    /**
+     * Obtener categorias default
+     */
+    static async getCategoriasDefault() {
+        const { rows } = await pool.query(
+            `
+            SELECT id, nombre FROM "Categoria" ORDER BY id;
+            `
+        );
+        return rows;
+    }
 }

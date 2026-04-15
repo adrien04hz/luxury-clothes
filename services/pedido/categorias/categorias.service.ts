@@ -23,4 +23,12 @@ export class CategoriaService {
     static async getTodasLasCategorias() {
         return await CategoriaRepository.getTodasLasCategorias();
     }
+
+    /**
+     * Obtener categorias default
+     * @returns Lista de categorias con su id y nombre
+     */
+    static async getCategoriasDefault() {
+        return await CategoriaRepository.getCategoriasDefault();
+    }
 }

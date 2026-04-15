@@ -1,6 +1,4 @@
-import { getCategorias } from "@/client/categoria.client";
-import { getGeneros } from "@/client/genero.client";
-import { getColores } from "@/client/color.client";
+import { getCategoriasDefault } from "@/client/categoria.client";
 import { getMarcas } from "@/client/marca.client";
 import { getProveedoresBancarios } from "@/client/proveedor.client";
 import Link from "next/link";
@@ -17,9 +15,7 @@ const asistencias = {
 };
 
 export default async function Footer() {
-  const categorias = await getCategorias();
-  const generos = await getGeneros();
-  const colores = await getColores();
+  const categorias = await getCategoriasDefault();
   const marcas = await getMarcas();
   const proveedoresBancarios = await getProveedoresBancarios();
 
@@ -91,7 +87,7 @@ export default async function Footer() {
                     (categoria) => (
                       <li key={categoria.id} className="hover:underline">
                         <Link href={`#`}>
-                          {categoria.name}
+                          {categoria.nombre}
                         </Link>
                       </li>
                     )

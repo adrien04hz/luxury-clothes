@@ -10,7 +10,7 @@ export interface Categorias {
 
 export interface Categoria {
     id: number,
-    name: string,
+    nombre: string,
     subcategories: Subcategoria[]
 }
 
