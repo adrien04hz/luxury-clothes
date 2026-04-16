@@ -9,7 +9,7 @@ Content-Type: application/json
 
 {
   "id_usuario": 1,
-  "id_producto": 120,
+  "id_producto": 10,
   "id_talla": 3,
   "cantidad": 2
 }
