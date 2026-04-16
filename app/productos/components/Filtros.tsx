@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { X, Plus, Minus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -279,6 +279,8 @@ export default function Filtros({ categorias, generos, colores, marcas, title, c
 
 /* componente del debplegable de los campos de filtro */
 function FiltroItem({ title, open, onToggle, children }: any) {
+    const contentRef = useRef<HTMLDivElement>(null);
+    
     return (
         <div className="border-b py-4">
 
@@ -288,14 +290,26 @@ function FiltroItem({ title, open, onToggle, children }: any) {
                 onClick={onToggle}
             >
                 <span>{title}</span>
-                {open ? <Minus size={16} /> : <Plus size={16} />}
+                <div className="transition-transform duration-300">
+                    {open ? <Minus size={16} /> : <Plus size={16} />}
+                </div>
             </div>
 
-            {open && (
-                <div className="mt-3 space-y-2">
+            {/* Contenido animado */}
+
+            <div
+                style={{
+                    height: open
+                        ? contentRef.current?.scrollHeight
+                        : 0,
+                    marginTop: open ? "0.75rem" : 0,
+                }}
+                className="overflow-hidden transition-all duration-300 ease-in-out"
+            >
+                <div ref={contentRef} className=" space-y-2">
                     {children}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
