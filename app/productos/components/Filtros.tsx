@@ -19,9 +19,14 @@ interface Props {
     marcas: any[];
     title?: string;
     count?: number;
+    titulos?: {
+        categoria: string;
+        subcategoria?: string;
+        genero?: string;
+    };
 }
 
-export default function Filtros({ categorias, generos, colores, marcas, title, count }: Props) {
+export default function Filtros({ categorias, generos, colores, marcas, title, count, titulos }: Props) {
     const [open, setOpen] = useState(false);
     const [activo, setActivo] = useState<string | null>(null);
 
@@ -91,7 +96,15 @@ export default function Filtros({ categorias, generos, colores, marcas, title, c
 
             <div className="flex w-full justify-between mb-4 items-end">
                 <div className="text-3xl font-medium">
-                    <p>{"Resultados para: \"" + title + "\" (" + count + ")"}</p>
+                    {
+                        titulos && (<p>{titulos?.categoria ? ((titulos.subcategoria ? titulos.subcategoria : titulos.categoria) + " " + (titulos.genero ? "para " + titulos.genero + " (" + count + ")" : "(" + count + ")")) : "Todos los productos (" + count + ")"}</p>)
+                    }
+
+                    {
+                        title && (
+                            <p>{"Resultados para: \"" + title + "\" (" + count + ")"}</p>
+                        )
+                    }
                 </div>
         
                 <button onClick={() => setOpen(true)} className="text-sm font-regular hover:underline">
