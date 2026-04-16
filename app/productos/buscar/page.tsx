@@ -11,6 +11,7 @@ import { getGeneros } from "@/client/genero.client";
 import { getColores } from "@/client/color.client";
 import { getMarcas } from "@/client/marca.client";
 import CatalogoCuerpo from "../components/CatalogoCuerpo";
+import BreadCrumb from "../components/BreadCrumb";
 
 
 interface Props {
@@ -54,8 +55,11 @@ export default async function BuscarPage({ searchParams }: Props) {
 
     return (
         <div className="flex flex-col justify-center items-start px-24">
-            
-            <div className="flex justify-between items-center mt-18 w-full">
+            <BreadCrumb 
+                categoria={0}
+                search={true}
+            />
+            <div className="flex justify-between items-center w-full">
                 <Filtros categorias={categoriasRes} generos={generos} colores={colores} marcas={marcas} title={params.q} count={productos.length} />
             </div>
 

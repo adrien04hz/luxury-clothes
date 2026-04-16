@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { breadCrumbs } from "../utils/producto";
 
-export default function BreadCrumb({ categoria, subcategoria, genero }: { categoria: number; subcategoria?: number; genero?: number }) {
+export default function BreadCrumb({ categoria, subcategoria, genero, search = false}: { categoria: number; subcategoria?: number; genero?: number; search?: boolean}) {
 
     const crumbs = breadCrumbs({
         id_categoria: categoria,
@@ -12,7 +12,7 @@ export default function BreadCrumb({ categoria, subcategoria, genero }: { catego
     return (
         <div className="flex items-center justify-start space-x-2 w-fit mt-3 mb-10 text-md font-light">
             {
-                crumbs.categoria && (
+                crumbs.categoria && !search && (
                     <div className="hover:underline w-fit">
                         <Link href={"#"}>{crumbs.categoria}</Link>
                     </div>
@@ -20,7 +20,7 @@ export default function BreadCrumb({ categoria, subcategoria, genero }: { catego
             }
 
             {
-                crumbs.subcategoria && (
+                crumbs.subcategoria && !search && (
                     <>
                         <span>/</span>
                         <div className="hover:underline w-fit">
@@ -30,12 +30,23 @@ export default function BreadCrumb({ categoria, subcategoria, genero }: { catego
                 )
             }
             {
-                crumbs.genero && (
+                crumbs.genero && !search && (
                     <>
                         <span>/</span>
                         <div className="hover:underline w-fit">
                             <Link href={"#"}>{crumbs.genero}</Link>
                         </div>
+                    </>
+                )
+            }
+
+            {
+                search && (
+                    <>
+                        <div className="hover:underline w-fit">
+                            <Link href={"#"}>Búsquedas</Link>
+                        </div>
+                        <span>/</span>
                     </>
                 )
             }
