@@ -94,7 +94,7 @@ export default function Filtros({ categorias, generos, colores, marcas, title, c
 
         <>
 
-            <div className="flex w-full justify-between mb-4 items-end">
+            <div className="flex w-full justify-between items-end">
                 <div className="text-3xl font-medium">
                     {
                         titulos && (<p>{titulos?.categoria ? ((titulos.subcategoria ? titulos.subcategoria : titulos.categoria) + " " + (titulos.genero ? "para " + titulos.genero + " (" + count + ")" : "(" + count + ")")) : "Todos los productos (" + count + ")"}</p>)

@@ -62,7 +62,7 @@ export default async function Productos({searchParams}: Props) {
         genero={genero}
       />
 
-      <div className="flex justify-between items-center w-full">
+      <div className="flex justify-between items-center w-full sticky top-0 bg-white z-40 mt-4 py-4">
         <Filtros categorias={categoriasRes} generos={generos} colores={colores} marcas={marcas}  count={productos.length} titulos={titulos}/>
       </div>
 

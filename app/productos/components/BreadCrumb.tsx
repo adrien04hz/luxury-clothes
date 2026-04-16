@@ -10,7 +10,7 @@ export default function BreadCrumb({ categoria, subcategoria, genero, search = f
     });
 
     return (
-        <div className="flex items-center justify-start space-x-2 w-fit mt-3 mb-10 text-md font-light">
+        <div className="flex items-center justify-start space-x-2 w-fit mt-3 text-md font-light">
             {
                 crumbs.categoria && !search && (
                     <div className="hover:underline w-fit">
