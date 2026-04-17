@@ -7,22 +7,26 @@
 import { NextResponse } from "next/server";
 import { DireccionesEnvio } from "@/services/direcciondeenvio/direcciondeenvio.service";
 import { count } from "console";
+import { getUserFromToken } from "@/lib/auth";
 
 //endpoint que permite obtener las direcciones de envío de un cliente, recibe el id del cliente como query parameter
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
-    const clientId = searchParams.get("clientId");
+    // const clientId = searchParams.get("clientId");
+    const user = getUserFromToken(req);
     const addressId = searchParams.get("addressId");
 
-    if (!clientId) {
+    if (!user) {
       return NextResponse.json(
         { error: "clientId is required" },
         { status: 400 }
       );
     }
-
+    // console.log(req.headers.get("authorization"));
+    
+    const clientId = user.id;
     // Si viene addressId → traer una sola dirección
     if (addressId) {
       const address = await DireccionesEnvio.getAddress(
