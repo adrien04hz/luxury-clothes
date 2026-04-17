@@ -1,7 +1,7 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
 //* Autor de la clase: Cervantes Rosales Abdiel */
-//* Fecha: 10/04/2026 */
+//* Fecha: 16/04/2026 */
 //**********/
 
 "use client";
@@ -76,29 +76,69 @@ export default function LoginPage() {
       <div className="w-full max-w-sm bg-white p-6 rounded-2xl shadow-md">
         
         <h1 className="text-2xl font-semibold text-center mb-6">
-          Login
+          Iniciar sesión
         </h1>
-
-        <input
-          className="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-          type="email"
-          placeholder="Correo"
-          value={form.correo}
-          onChange={(e) =>
-            setForm({ ...form, correo: e.target.value })
-          }
-        />
 
         <div className="relative mb-4">
           <input
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            type="email"
+            id="correo"
+            placeholder=" "
+            value={form.correo}
+            onChange={(e) =>
+              setForm({ ...form, correo: e.target.value })
+            }
+            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+          />
+
+          <label
+            htmlFor="correo"
+            className="absolute left-3 top-3 text-gray-500 text-sm transition-all
+            peer-placeholder-shown:top-3
+            peer-placeholder-shown:text-base
+            peer-placeholder-shown:text-gray-400
+            peer-focus:top-[-10px]
+            peer-focus:text-sm
+            peer-focus:text-black
+
+            peer-not-placeholder-shown:top-[-10px]
+            peer-not-placeholder-shown:text-sm
+            peer-not-placeholder-shown:text-black
+            bg-white px-1"
+          >
+            Correo
+          </label>
+        </div>
+
+        <div className="relative mb-4">
+          <input
             type="password"
-            placeholder="Contraseña"
+            id="contrasena"
+            placeholder=" "
             value={form.contrasena}
             onChange={(e) =>
               setForm({ ...form, contrasena: e.target.value })
             }
+            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
           />
+
+          <label
+            htmlFor="contrasena"
+            className="absolute left-3 top-3 text-gray-500 text-sm transition-all
+            peer-placeholder-shown:top-3
+            peer-placeholder-shown:text-base
+            peer-placeholder-shown:text-gray-400
+            peer-focus:top-[-10px]
+            peer-focus:text-sm
+            peer-focus:text-black
+
+            peer-not-placeholder-shown:top-[-10px]
+            peer-not-placeholder-shown:text-sm
+            peer-not-placeholder-shown:text-black
+            bg-white px-1"
+          >
+            Contraseña
+          </label>
         </div>
 
         <button
@@ -109,12 +149,15 @@ export default function LoginPage() {
           {loading ? "Cargando..." : "Ingresar"}
         </button>
 
-        <button
-          className="w-full bg-gray-300 text-black py-3 rounded-lg font-medium mt-3 hover:bg-gray-400 transition"
-          onClick={() => router.push("/auth/registro")}
-        >
-          Registrarse
-        </button>
+        <p className="mt-4 text-sm text-center text-gray-600">
+          ¿No tienes una cuenta?{" "}
+          <span
+            className="text-blue-600 cursor-pointer hover:underline font-medium"
+            onClick={() => router.push("/auth/registro")}
+          >
+            Registrarse
+          </span>
+        </p>
 
         {mensaje && (
           <p className="mt-4 text-red-500 text-sm text-center">
