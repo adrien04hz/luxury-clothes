@@ -1,4 +1,7 @@
 export interface ListaDireccionEnvio {
+  nombre: string;
+  apellido: string;
+  telefono: string;
   ciudad: string;
   estado: string;
   codigo_postal: string;
