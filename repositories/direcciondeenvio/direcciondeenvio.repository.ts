@@ -130,9 +130,6 @@ export class DireccionEnvio {
         ];
         
         const { rows } = await pool.query(query, values);
-        console.log("🔥 METHOD USED: addAddress");
-        console.log("🔥 VALUES:", values);
-        console.log("🔥 COUNT:", values.length);
         return rows[0];
     }
 
