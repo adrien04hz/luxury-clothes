@@ -87,68 +87,61 @@ export default function PerfilPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-
-      <div className="flex-1 p-6">
-
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Mi Cuenta
-        </h1>
-
-        {perfil?.foto_perfil && (
-          <div className="flex justify-center mb-6">
-            <img
-              src={perfil.foto_perfil}
-              alt="Foto"
-              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
-            />
-          </div>
-        )}
-
-        <div className="space-y-5 text-lg">
-          <div>
-            <p className="text-gray-500 text-sm">Nombre(s)</p>
-            <p className="font-semibold">
-              {perfil?.nombre}
-            </p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Apellidos</p>
-            <p className="font-semibold">
-              {perfil?.apellidos}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-gray-500 text-sm">Correo</p>
-            <p className="font-semibold">{perfil?.correo}</p>
-          </div>
-
-          <div>
-            <p className="text-gray-500 text-sm">Teléfono</p>
-            <p className="font-semibold">
-              {perfil?.telefono || "No registrado"}
-            </p>
-          </div>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
+        <div className="max-w-7xl mx-auto px-8 py-6">
+          <h1 className="text-3xl font-semibold text-center">Mi cuenta</h1>
+          <p className="text-center text-gray-600 mt-1 text-lg">
+            Bienvenido <span className="font-medium text-gray-900">{perfil?.nombre || "nombre_cliente"}</span>
+          </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() => router.push("/")}
-            className="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 transition font-medium"
-          >
-            Volver al inicio
-          </button>
-
-          {/* Acciones peligrosas */}
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={handleDesactivarCuenta}
-              disabled={deactivating}
-              className="w-full py-3 rounded-xl border border-red-400 text-red-600 hover:bg-red-50 transition font-medium disabled:opacity-60"
+      <div className="flex flex-1 w-full max-w-7xl px-50">
+        {/* Sidebar Izquierda */}
+        <div className="w-60 flex-shrink-0">
+          <nav className="flex flex-col">
+            <a
+              href="/"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
             >
-              {deactivating ? "Eliminando cuenta..." : "Eliminar cuenta"}
-            </button>
+              Inicio
+            </a>
+            <a
+              href="/cuenta/"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
+            >
+              Mi información
+            </a>
+            <a
+              href="/cuenta/pedidos"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
+            >
+              Mis compras
+            </a>
+            <a
+              href="/cuenta/listadedeseos"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
+            >
+              Mi lista de deseo
+            </a>
+            <a
+              href="/cuenta/direcciones"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
+            >
+              Mis direcciones
+            </a>
+            <a
+              href="/cuenta/metodosdepago"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
+            >
+              Mis métodos de pago
+            </a>
+            <a
+              href="/cuenta/configuracion"
+              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
+            >
+              Configuracion
+            </a>
 
             <button
               onClick={() => {
@@ -156,49 +149,60 @@ export default function PerfilPage() {
                 localStorage.removeItem("userID");
                 router.push("/");
               }}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-xl border border-gray-300 hover:bg-gray-100 transition font-medium"
+              className="px-2 py-3 text-left text-red-600 border-b hover:bg-red-50 font-medium transition"
             >
               Cerrar sesión
             </button>
+          </nav>
+        </div>
 
+        {/* Área Principal de Contenido */}
+        <div className="flex-1 px-40 bg-gray-50">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-10">
+            {/* Foto de perfil (si existe) */}
+            {perfil?.foto_perfil && (
+              <div className="flex justify-center mb-8">
+                <img
+                  src={perfil.foto_perfil}
+                  alt="Foto de perfil"
+                  className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
+                />
+              </div>
+            )}
+
+            <div className="space-y-10 space-x-100 text-lg">
+              <div>
+                <p className="text-gray-500 text-sm mb-1">Nombre(s)</p>
+                <p className="font-semibold text-xl">{perfil?.nombre}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-sm mb-1">Apellidos</p>
+                <p className="font-semibold text-xl">{perfil?.apellidos}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-sm mb-1">Correo electrónico</p>
+                <p className="font-semibold text-xl">{perfil?.correo}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-sm mb-1">Teléfono</p>
+                <p className="font-semibold text-xl">
+                  {perfil?.telefono || "No registrado"}
+                </p>
+              </div>
+            </div>
+
+            {/* Botones de acción */}
+            <div className="mt-12 flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleDesactivarCuenta}
+                disabled={deactivating}
+                className="flex-1 py-3.5 rounded-xl border border-black text-black hover:bg-gray-50 transition font-medium disabled:opacity-70"
+              >
+                {deactivating ? "Eliminando cuenta..." : "Eliminar cuenta"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="w-72 bg-white shadow-lg p-6 border-l flex flex-col gap-4">
-
-        <button
-          onClick={() => router.push("/cuenta/pedidos")}
-          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
-        >
-          Pedidos
-        </button>
-
-        <button
-          onClick={() => router.push("/cuenta/metodosdepago")}
-          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
-        >
-          Métodos de Pago
-        </button>
-
-        <button
-          onClick={() => router.push("/cuenta/direcciones")}
-          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
-        >
-          Direcciones de envío
-        </button>
-        <button
-          onClick={() => router.push("/cuenta/listadedeseos")}
-          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
-        >
-          Lista de deseos
-        </button>
-        <button
-          onClick={() => router.push("/cuenta/configuracion")}
-          className="text-left p-3 rounded-lg hover:bg-gray-100 transition"
-        >
-          Configuracion
-        </button>
       </div>
     </div>
   );
