@@ -56,9 +56,19 @@ export async function GET(req: Request) {
 //endpoint que permite agregar una dirección de envío de un cliente, recibe el id del cliente como query parameter
 export async function POST(req: Request) {
   try {
-    const { clientId, data } = await req.json();
 
-    if (!clientId || !data) {
+    const user = getUserFromToken(req);
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "clientId is required" },
+        { status: 400 }
+      );
+    }
+    const clientId = user.id;
+    const data = await req.json();
+
+    if (!data) {
       return NextResponse.json(
         { error: "Faltan datos (clientId, addressId o data)" },
         { status: 400 }
