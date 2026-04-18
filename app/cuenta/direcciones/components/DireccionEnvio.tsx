@@ -24,7 +24,7 @@ export default function DireccionEnvio({ direccion }: Props) {
   };
 
   return (
-    <div className="max-w-xl border-b py-6">
+    <div className="max-w-xl p-6 border border-gray-200 ">
 
       <h2 className="text-black font-semibold text-lg mb-2">
         Dirección de entrega
@@ -38,13 +38,13 @@ export default function DireccionEnvio({ direccion }: Props) {
           </p>
           <p>
             {direccion.calle} {direccion.numero_exterior}
-            {direccion.numero_interior && ` Int. ${direccion.numero_interior}`}
+            {direccion.numero_interior && ` Int. ${direccion.numero_interior}`} {direccion.colonia}
           </p>
-          <p>{direccion.colonia}</p>
+          
           <p>
-            {direccion.codigo_postal} {direccion.ciudad}
+            {direccion.codigo_postal} {direccion.ciudad}, {direccion.estado}
           </p>
-          <p>{direccion.estado}</p>
+          <p></p>
         </div>
 
         <button

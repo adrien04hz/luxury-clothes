@@ -76,10 +76,12 @@ export default function DireccionesPage() {
         </>
       ):(
         <>
-      <p>Si tenemos direcciones</p>
-        {direcciones.map((dir, index) => (
-          <DireccionEnvio key={index} direccion={dir} />
-        ))}
+        <p>Si tenemos direcciones</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {direcciones.map((dir, index) => (
+            <DireccionEnvio key={index} direccion={dir} />
+          ))}
+        </div>
         </>
       )}
 

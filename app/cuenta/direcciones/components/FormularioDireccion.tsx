@@ -92,6 +92,50 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
 
           </div>
 
+
+          <div className="grid grid-cols-3 gap-4">
+            
+            <div className="relative">
+              <input id="calle" type="text" defaultValue={selectedDireccion?.calle} placeholder=" " required
+                className="peer border border-gray-600 p-3 rounded-md w-full" />
+              <label htmlFor="calle"
+                className="absolute left-3 top-3 text-gray-400 transition-all
+                peer-placeholder-shown:top-3
+                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+                bg-white px-1">
+                Calle*
+              </label>
+            </div>
+
+            <div className="relative">
+              <input id="colonia" type="text" defaultValue={selectedDireccion?.colonia} placeholder=" " required
+                className="peer border border-gray-600 p-3 rounded-md w-full" />
+              <label htmlFor="colonia"
+                className="absolute left-3 top-3 text-gray-400 transition-all
+                peer-placeholder-shown:top-3
+                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+                bg-white px-1">
+                Colonia*
+              </label>
+            </div>
+            <div className="relative">
+              <input id="numero_exterior" type="text" defaultValue={selectedDireccion?.numero_exterior} placeholder=" " required
+                className="peer border border-gray-600 p-3 rounded-md w-full" />
+              <label htmlFor="apellido"
+                className="absolute left-3 top-3 text-gray-400 transition-all
+                peer-placeholder-shown:top-3
+                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+                bg-white px-1">
+                No. exterior*
+              </label>
+            </div>
+
+          </div>
+
+
           {/* Dirección */}
           <div className="relative">
             <input id="direccion" type="text" defaultValue={selectedDireccion?.direccion} placeholder=" " required
