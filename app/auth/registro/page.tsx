@@ -79,7 +79,7 @@ export default function RegisterPage() {
                                 nombre: valor,
                                 });
                             }}
-                            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
                         />
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
@@ -115,7 +115,7 @@ export default function RegisterPage() {
                                 apellidos: valor,
                                 });
                             }}
-                            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
                         />
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
@@ -143,7 +143,7 @@ export default function RegisterPage() {
                             placeholder=" "
                             onChange={handleChange}
                             required
-                            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
                         />
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
@@ -171,7 +171,7 @@ export default function RegisterPage() {
                             placeholder=" "
                             onChange={handleChange}
                             required
-                            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
                         />
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
@@ -206,7 +206,7 @@ export default function RegisterPage() {
                             telefono: valor,
                             });
                         }}
-                        className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
                     />
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
