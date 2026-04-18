@@ -10,17 +10,68 @@ interface Props {
   selectedDireccion?: any | null;
 }
 
-export default function FormularioDireccion({ isOpen, onClose, onSubmit, selectedDireccion}: Props) {
+export default function FormularioDireccion(
+  { 
+    isOpen, 
+    onClose, 
+    onSubmit, 
+    selectedDireccion
+  }: Props) {
+
   const [telefono, setTelefono] = useState("");
   const isEditing = !!selectedDireccion;
 
+  const [form, setForm] = useState({
+    nombre: "",
+    apellido: "",
+    telefono: "",
+    calle: "",
+    colonia: "",
+    numero_exterior:"",
+    numero_interior: "",
+    ciudad: "",
+    codigo_postal: "",
+    estado: "",
+  })
+  //fetch para agregar una direccion de envio
+ const createDireccion = async (direccion: any) => {
+  try {
+    const res = await fetch("/api/direcciondeenvio", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(direccion),
+    });
+
+    if (!res.ok) {
+  const text = await res.text();
+  console.error("RAW ERROR:", text);
+  return;
+}
+
+    const newDireccion = await res.json();
+
+    onSubmit(newDireccion);
+    onClose();
+
+  } catch (error) {
+    console.error("Error fetch:", error);
+  }
+};
+
   useEffect(() => {
-    if (selectedDireccion?.telefono) {
-      setTelefono(
-        selectedDireccion.telefono.replace("+52", "").replace(/\s/g, "")
-      );
-    } else {
-      setTelefono("");
+    if (selectedDireccion) {
+      setForm(selectedDireccion);
+
+      if (selectedDireccion.telefono) {
+        const clean = selectedDireccion.telefono
+          .replace("+52", "")
+          .replace(/\s/g, "");
+
+        setTelefono(clean);
+      }
     }
   }, [selectedDireccion]);
 
@@ -44,28 +95,30 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
 
         <form 
           className="space-y-6" 
-          onSubmit={(e) => {e.preventDefault();
+          onSubmit={(e) => {
+              e.preventDefault();
 
-            onSubmit({
-              nombre: (document.getElementById("nombre") as HTMLInputElement)?.value,
-              apellido: (document.getElementById("apellido") as HTMLInputElement)?.value,
-              direccion: (document.getElementById("direccion") as HTMLInputElement)?.value,
-              ciudad: (document.getElementById("ciudad") as HTMLInputElement)?.value,
-              cp: (document.getElementById("cp") as HTMLInputElement)?.value,
-              estado: (document.querySelector("select") as HTMLSelectElement)?.value,
-              telefono: "+52 " + telefono.replace(/\s/g, ""),
-              isEditing,
-            });
+              const data = {
+                ...form
+              };
+              console.log("DATA ENVIADA:", data);
 
-          }}
-          
+              createDireccion(data);
+            }}
         >
 
           {/* Nombre / Apellido */}
           <div className="grid grid-cols-2 gap-4">
             
             <div className="relative">
-              <input id="nombre" type="text" defaultValue={selectedDireccion?.nombre} placeholder=" " required
+              <input
+                id="nombre"
+                type="text"
+                value={form.nombre}
+                onChange={(e) =>
+                  setForm({ ...form, nombre: e.target.value })
+                }
+                placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
               <label htmlFor="nombre"
                 className="absolute left-3 top-3 text-gray-400 transition-all
@@ -78,7 +131,12 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
             </div>
 
             <div className="relative">
-              <input id="apellido" type="text" defaultValue={selectedDireccion?.apellido} placeholder=" " required
+              <input id="apellido" type="text" 
+                value={form.apellido}
+                onChange={(e) =>
+                  setForm({ ...form, apellido: e.target.value })
+                }
+                placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
               <label htmlFor="apellido"
                 className="absolute left-3 top-3 text-gray-400 transition-all
@@ -91,25 +149,34 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
             </div>
 
           </div>
-
+          
+           {/* Calle */}
+          <div className="relative">
+            <input id="calle" type="text" 
+              value={form.calle}
+              onChange={(e) =>
+                setForm({ ...form, calle: e.target.value })
+              }
+              placeholder=" " required
+              className="peer border border-gray-600 p-3 rounded-md w-full" />
+            <label htmlFor="calle"
+              className="absolute left-3 top-3 text-gray-400 transition-all
+              peer-placeholder-shown:top-3
+              peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+              peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+              bg-white px-1">
+              Calle*
+            </label>
+          </div>
 
           <div className="grid grid-cols-3 gap-4">
-            
             <div className="relative">
-              <input id="calle" type="text" defaultValue={selectedDireccion?.calle} placeholder=" " required
-                className="peer border border-gray-600 p-3 rounded-md w-full" />
-              <label htmlFor="calle"
-                className="absolute left-3 top-3 text-gray-400 transition-all
-                peer-placeholder-shown:top-3
-                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
-                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
-                bg-white px-1">
-                Calle*
-              </label>
-            </div>
-
-            <div className="relative">
-              <input id="colonia" type="text" defaultValue={selectedDireccion?.colonia} placeholder=" " required
+              <input id="colonia" type="text"
+              value={form.colonia}
+              onChange={(e) =>
+                setForm({ ...form, colonia: e.target.value })
+              }
+              placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
               <label htmlFor="colonia"
                 className="absolute left-3 top-3 text-gray-400 transition-all
@@ -121,9 +188,14 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
               </label>
             </div>
             <div className="relative">
-              <input id="numero_exterior" type="text" defaultValue={selectedDireccion?.numero_exterior} placeholder=" " required
+              <input id="numero_exterior" type="text"
+              value={form.numero_exterior}
+              onChange={(e) =>
+                setForm({ ...form, numero_exterior: e.target.value })
+              }
+              placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
-              <label htmlFor="apellido"
+              <label htmlFor="numero_exterior"
                 className="absolute left-3 top-3 text-gray-400 transition-all
                 peer-placeholder-shown:top-3
                 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
@@ -132,55 +204,36 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
                 No. exterior*
               </label>
             </div>
-
-          </div>
-
-
-          {/* Dirección */}
-          <div className="relative">
-            <input id="direccion" type="text" defaultValue={selectedDireccion?.direccion} placeholder=" " required
-              className="peer border border-gray-600 p-3 rounded-md w-full" />
-            <label htmlFor="direccion"
-              className="absolute left-3 top-3 text-gray-400 transition-all
-              peer-placeholder-shown:top-3
-              peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
-              peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
-              bg-white px-1">
-              Dirección*
-            </label>
-          </div>
-
-          {/* Apartamento */}
-         <div className="relative">
-            <input
-              id="apartamento"
-              type="text"
+            <div className="relative">
+              <input id="numero_interior" type="text"
+              value={form.numero_interior}
+              onChange={(e) =>
+                setForm({ ...form, numero_interior: e.target.value })
+              }
               placeholder=" "
-              className="peer border border-gray-600 p-3 rounded-md w-full"
-            />
+                className="peer border border-gray-600 p-3 rounded-md w-full" />
+              <label htmlFor="numero_interior"
+                className="absolute left-3 top-3 text-gray-400 transition-all
+                peer-placeholder-shown:top-3
+                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+                bg-white px-1">
+                No. interior*
+              </label>
+            </div>
 
-            <label
-              htmlFor="apartamento"
-              className="absolute left-3 top-3 text-gray-400 transition-all
-              peer-placeholder-shown:top-3
-              peer-placeholder-shown:text-gray-400
-              peer-focus:-top-2
-              peer-focus:text-sm
-              peer-focus:text-black
-              peer-not-placeholder-shown:-top-2
-              peer-not-placeholder-shown:text-sm
-              peer-not-placeholder-shown:text-black
-              bg-white px-1"
-            >
-              Apartamento, suite, edificio
-            </label>
           </div>
 
-          {/* Ciudad / CP */}
+          {/* Ciudad / codigo_postal */}
           <div className="grid grid-cols-2 gap-6">
 
             <div className="relative">
-              <input id="ciudad" type="text" defaultValue={selectedDireccion?.ciudad} placeholder=" " required
+              <input id="ciudad" type="text" 
+              value={form.ciudad}
+              onChange={(e) =>
+                setForm({ ...form, ciudad: e.target.value })
+              }
+              placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
               <label htmlFor="ciudad"
                 className="absolute left-3 top-3 text-gray-400 transition-all
@@ -193,9 +246,14 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
             </div>
 
             <div className="relative">
-              <input id="cp" type="text" defaultValue={selectedDireccion?.cp} placeholder=" " required
+              <input id="codigo_postal" type="text" 
+              value={form.codigo_postal}
+              onChange={(e) =>
+                setForm({ ...form, codigo_postal: e.target.value })
+              }
+              placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
-              <label htmlFor="cp"
+              <label htmlFor="codigo_postal"
                 className="absolute left-3 top-3 text-gray-400 transition-all
                 peer-placeholder-shown:top-3
                 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
@@ -210,8 +268,14 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
           {/* Estado / País */}
           <div className="grid grid-cols-2 gap-4">
 
-            <select defaultValue="" required
-              className="border border-gray-600 p-3 rounded-md w-full bg-white">
+           <select
+              value={form.estado}
+              onChange={(e) =>
+                setForm({ ...form, estado: e.target.value })
+              }
+              required
+              className="border border-gray-600 p-3 rounded-md w-full bg-white"
+            >
               <option value="" disabled>Estado*</option>
               {Estados.map((state) => (
                 <option key={state.id} value={state.name}>
@@ -259,6 +323,10 @@ export default function FormularioDireccion({ isOpen, onClose, onSubmit, selecte
                 }
 
                 setTelefono(formatted);
+                setForm({
+                  ...form,
+                  telefono: value,
+                });
               }}
               placeholder="953 174 2001"
               className="peer p-3 w-full outline-none"

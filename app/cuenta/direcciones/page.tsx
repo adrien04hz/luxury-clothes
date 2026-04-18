@@ -38,11 +38,8 @@ export default function DireccionesPage() {
     } 
   }
 
-
-  const handleSaveAddress = (data: any) => {
-    console.log("Guardando dirección...", data);
-    // Aquí iría tu fetch al API
-    setIsModalOpen(false);  
+  const handleAddDireccion = (newDir: any) => {
+    setDirecciones((prev) => [...prev, newDir.direccion]);
   };
 
   return (
@@ -71,7 +68,7 @@ export default function DireccionesPage() {
         <FormularioDireccion 
           isOpen={isModalOpen} 
           onClose={() => setIsModalOpen(false)}
-          onSubmit={handleSaveAddress}
+          onSubmit={handleAddDireccion}
         />
         </>
       ):(

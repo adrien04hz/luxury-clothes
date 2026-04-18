@@ -56,9 +56,6 @@ export class DireccionEnvio {
 
         const values = [
             clientId,
-            data.nombre,
-            data.apellido,
-            data.telefono,
             data.ciudad,
             data.estado,
             data.codigo_postal,
@@ -73,39 +70,42 @@ export class DireccionEnvio {
     }
     
     //no permitir direcciones duplicadas para un mismo cliente
-    static async findDuplicateAddress(clientId: number, addressId: number, data: any){
-        const query = `
-            SELECT 1 FROM "DireccionEnvio"
-            WHERE id_usuario = $1
-            AND nombre = $2
-            AND apellido = $3
-            AND telefono = $4
-            AND ciudad = $5
-            AND estado = $6
-            AND codigo_postal = $7
-            AND colonia = $8
-            AND calle = $9
-            AND numero_exterior = $10
-            AND numero_interior is NOT DISTINCT FROM $11 AND id <> $12
-        LIMIT 1;
-        `;
-        const values = [
-            clientId,
-            data.nombre,
-            data.apellido,
-            data.telefono,
-            data.ciudad,
-            data.estado,
-            data.codigo_postal,
-            data.colonia,
-            data.calle,
-            data.numero_exterior,
-            data.numero_interior ?? null,
-            addressId
-        ];
-        const { rows } = await pool.query(query, values);
-        return rows.length > 0;
-    }
+    static async findDuplicateAddress(clientId: number, addressId: number, data: any) {
+    const query = `
+      SELECT 1 FROM "DireccionEnvio"
+      WHERE id_usuario = $1
+      AND nombre = $2
+      AND apellido = $3
+      AND telefono = $4
+      AND ciudad = $5
+      AND estado = $6
+      AND codigo_postal = $7
+      AND colonia = $8
+      AND calle = $9
+      AND numero_exterior = $10
+      AND numero_interior IS NOT DISTINCT FROM $11
+      AND id <> $12
+      LIMIT 1;
+    `;
+
+    const values = [
+      clientId,
+      data.nombre,
+      data.apellido,
+      data.telefono,
+      data.ciudad,
+      data.estado,
+      data.codigo_postal,
+      data.colonia,
+      data.calle,
+      data.numero_exterior,
+      data.numero_interior ?? null,
+      addressId
+    ];
+
+    const { rows } = await pool.query(query, values);
+    return rows.length > 0;
+  }
 
     //Agregar una nueva dirección de envío para un cliente
     static async addShippingAddress(clientId: number, data: any){
@@ -117,19 +117,22 @@ export class DireccionEnvio {
 
         const values = [
             clientId,
-            data.nombre,
-            data.apellido,
-            data.telefono,
-            data.ciudad,
-            data.estado,
-            data.codigo_postal,
-            data.calle,
-            data.numero_exterior,
-            data.numero_interior,
-            data.colonia
-        ]
+            data.nombre ?? null,
+            data.apellido ?? null,
+            data.telefono ?? null,
+            data.ciudad ?? null,
+            data.estado ?? null,
+            data.codigo_postal ?? null,
+            data.calle ?? null,
+            data.numero_exterior ?? null,
+            data.numero_interior ?? null,
+            data.colonia ?? null
+        ];
         
         const { rows } = await pool.query(query, values);
+        console.log("🔥 METHOD USED: addAddress");
+        console.log("🔥 VALUES:", values);
+        console.log("🔥 COUNT:", values.length);
         return rows[0];
     }
 
