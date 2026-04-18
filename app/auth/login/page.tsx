@@ -88,7 +88,7 @@ export default function LoginPage() {
             onChange={(e) =>
               setForm({ ...form, correo: e.target.value })
             }
-            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
           />
 
           <label
@@ -119,7 +119,7 @@ export default function LoginPage() {
             onChange={(e) =>
               setForm({ ...form, contrasena: e.target.value })
             }
-            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
           />
 
           <label
