@@ -8,7 +8,7 @@ POST http://localhost:3000/api/direcciondeenvio
 Content-Type: application/json
 
 {
-  "clientId": 4,
+  "clientId": 1,
   "data": {
     "ciudad": "Zapopan",
     "estado": "Jalisco1",
