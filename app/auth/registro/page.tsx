@@ -8,6 +8,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -21,6 +22,7 @@ export default function RegisterPage() {
     });
 
     const [error, setError] = useState("");
+    const [mostrarPassword, setMostrarPassword] = useState(false);
 
     const handleChange = (e: any) => {
         setForm({
@@ -167,12 +169,13 @@ export default function RegisterPage() {
                     <div className="relative">
                         <input
                             name="contrasena"
-                            type="password"
+                            type={mostrarPassword ? "text" : "password"}
                             placeholder=" "
                             onChange={handleChange}
                             required
-                            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
+                            className="peer w-full p-3 pr-12 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
                         />
+
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
                             peer-placeholder-shown:text-base
@@ -189,25 +192,46 @@ export default function RegisterPage() {
                             bg-white px-1">
                             Contraseña
                         </label>
+                        <button
+                            type="button"
+                            onClick={() => setMostrarPassword(!mostrarPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+                        >
+                            {mostrarPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
                     </div>
 
                     {/* TELÉFONO */}
                     <div className="relative">
-                    <input
-                        name="telefono"
-                        type="tel"
-                        inputMode="numeric"
-                        placeholder=" "
-                        value={form.telefono}
-                        onChange={(e) => {
-                            const valor = e.target.value.replace(/\D/g, "").slice(0, 10);
-                            setForm({
-                            ...form,
-                            telefono: valor,
-                            });
-                        }}
-                        className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
-                    />
+                        <input
+                            name="telefono"
+                            type="tel"
+                            inputMode="numeric"
+                            placeholder=" "
+                            value={form.telefono}
+                            onChange={(e) => {
+                                // Solo números y máximo 10 dígitos
+                                const numeros = e.target.value.replace(/\D/g, "").slice(0, 10);
+
+                                // Formato: 951 395 0632
+                                let formateado = numeros;
+
+                                if (numeros.length > 3 && numeros.length <= 6) {
+                                    formateado = `${numeros.slice(0,3)} ${numeros.slice(3)}`;
+                                }
+
+                                if (numeros.length > 6) {
+                                    formateado = `${numeros.slice(0,3)} ${numeros.slice(3,6)} ${numeros.slice(6)}`;
+                                }
+
+                                setForm({
+                                    ...form,
+                                    telefono: formateado,
+                                });
+                            }}
+                            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+
                         <label className="absolute left-3 top-3 text-gray-500 text-sm transition-all
                             peer-placeholder-shown:top-3
                             peer-placeholder-shown:text-base
