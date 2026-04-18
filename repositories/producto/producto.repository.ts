@@ -109,6 +109,7 @@ export class Producto {
           (
             SELECT json_agg(
               json_build_object(
+                'id', T.id,
                 'talla', T.nombre,
                 'stock', S.stock
               )

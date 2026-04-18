@@ -30,6 +30,7 @@ export interface Producto {
 }
 
 export interface Talla {
+    id: number;
     talla: string;
     stock: number;
 }
