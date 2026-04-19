@@ -18,7 +18,6 @@ export default function CatalogoCuerpo({ items }: CatalogoCuerpoProps) {
             >
             <ProductCard
                 key={producto.id}
-                isFavorite={false}
                 showIcon={false}
                 showToCart={false}
                 item={producto}

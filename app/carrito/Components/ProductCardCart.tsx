@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Heart, LucideTrash2, Plus } from "lucide-react";
+import { Minus, LucideTrash2, Plus } from "lucide-react";
 import Link from "next/link";
 
 export default function ProductCardCart(
@@ -10,7 +10,8 @@ export default function ProductCardCart(
         color, 
         talla, 
         genero, 
-        id 
+        id,
+        cantidad,
     } : { 
         name: string; 
         price: number; 
@@ -18,7 +19,8 @@ export default function ProductCardCart(
         color: string; 
         talla: string; 
         genero: string; 
-        id: number }) {
+        id: number;
+        cantidad: number;}) {
     return (
         <div className="relative h-fit w-180 flex flex-col space-y-7">
           {/* card de carrito */}
@@ -40,9 +42,9 @@ export default function ProductCardCart(
                 {/* Boton para cantidades */}
                 <div className="rounded-full border border-gray-200 flex justify-between items-center w-26 h-10">
                   <button className="h-10 w-10 flex hover:bg-gray-200 justify-center items-center rounded-full">
-                    <LucideTrash2 className="h-4.5 w-4.5" />
+                    <Minus className="h-4.5 w-4.5" />
                   </button>
-                  <p>1</p>
+                  <p>{cantidad}</p>
           
                   <button className="h-10 w-10 hover:bg-gray-200 flex justify-center items-center rounded-full">
                     <Plus className="h-4.5 w-4.5" />
@@ -51,7 +53,7 @@ export default function ProductCardCart(
                 {/* Boton para favoritos */}
                 <div className="rounded-full flex justify-center items-center w-10 h-10 border border-gray-200">
                   <button className="h-full w-full flex hover:bg-gray-200 justify-center items-center rounded-full">
-                    <Heart className="h-4.5 w-4.5" color="black"/>
+                    <LucideTrash2 className="h-4.5 w-4.5" color="black"/>
                   </button>
                 </div>
               </div>

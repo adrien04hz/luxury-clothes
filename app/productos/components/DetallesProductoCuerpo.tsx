@@ -88,17 +88,17 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
                 <div className="mt-6 flex flex-col gap-4">
                     <p className={`font-semibold ${notSelected ? 'text-red-500' : ''}`}>Selecciona tu talla:</p>
                     <div className={`w-fit ${notSelected ? 'border border-red-500' : ''} py-2 rounded-md`}>
-											<SelectorTalla
-													tallas={data.stock_por_talla || []}
-													onSelect={setTalla}
-													onClick={setNotSelected}
-											/>
-										</div>
+						<SelectorTalla
+								tallas={data.stock_por_talla || []}
+								onSelect={setTalla}
+								onClick={setNotSelected}
+						/>
+					</div>
                 </div>
                 <div className="mt-12 w-full">
                     <AddToCartButton 
-											onClick={handleAddToCart}
-											loading={loading}
+						onClick={handleAddToCart}
+						loading={loading}
                     />
                 </div>
 
