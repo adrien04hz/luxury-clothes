@@ -139,7 +139,9 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
                 </div>
 
                 <div className="mt-6 w-full">
-                    <button className="text-black bg-white py-2 px-4 rounded-[28px] w-full h-16 border border-[#E6E6E6] hover:border-black">
+                    <button 
+					onClick={() => handleAddToWishList(data.id)}
+					className="text-black bg-white py-2 px-4 rounded-[28px] w-full h-16 border border-[#E6E6E6] hover:border-black">
                         Añadir a lista de deseos
                     </button>
                 </div>
@@ -181,7 +183,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 							<div className="flex gap-2 items-center">
 								<CheckCircle2Icon className="text-green-500" />
 								<p className="font-semibold text-lg text-white">
-								Agregado al carrito
+								{isWishList ? "Agregado a la lista de deseos" : "Agregado al carrito"}
 								</p>
 							</div>
 
@@ -200,9 +202,9 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 
 							<div className="flex flex-col gap-1 w-3/4">
 								<p className="font-medium text-white">{data.nombre}</p>
-								<p className="text-sm text-white opacity-70">
+								{!isWishList && <p className="text-sm text-white opacity-70">
 									Talla: {tallaName}
-								</p>
+								</p>}
 								<p className="font-semibold text-white">
 									${Number(data.precio).toLocaleString()}
 								</p>
@@ -212,10 +214,13 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 						{/* BOTONES */}
 						<div className="p-4 flex flex-col gap-3">
 							<button
-								onClick={() => router.push("/carrito")}
+								onClick={() => {
+									isWishList ? router.push("/cuenta/listadedeseos") :
+									router.push("/carrito")
+								}}
 								className="border border-white text-white rounded-full py-3 hover:opacity-60 transition-colors duration-100"
 							>
-								Ver carrito
+								{isWishList ? "Ver lista de deseos" : "Ver carrito"}
 							</button>
 
 							<button
