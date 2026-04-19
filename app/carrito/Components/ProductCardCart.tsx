@@ -68,7 +68,7 @@ export default function ProductCardCart(
                 <p className="text-black font-medium opacity-70 underline underline-offset-6">{'Talla: ' + talla}</p>
               </div>
               {/* Precio */}
-              <div className="px-4 py-1">
+              <div className="px-4 py-1 h-full w-fit">
                 <p className="font-semibold">${Number(price).toLocaleString()}</p>
               </div>
             </div>

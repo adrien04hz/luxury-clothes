@@ -9,7 +9,7 @@ export default function CarritoPage() {
   const genero = 'Tenis para hombre';
 
   return (
-    <div className="w-full h-full p-24 flex justify-center gap-4">
+    <div className="w-full h-full p-24 flex justify-center gap-8">
       {/* Contenedor para la bolsa */}
       <div className="flex flex-col gap-4 items-start w-fit">
         <p className="text-3xl font-medium">Carrito de compra</p>

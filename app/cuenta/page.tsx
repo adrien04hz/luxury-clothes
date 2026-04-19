@@ -98,7 +98,7 @@ export default function PerfilPage() {
 
       <div className="flex flex-1 w-full max-w-7xl px-50">
         {/* Sidebar Izquierda */}
-        <div className="w-60 flex-shrink-0">
+        <div className="w-60 shrink-0">
           <nav className="flex flex-col">
             <a
               href="/"
