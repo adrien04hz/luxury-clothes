@@ -21,6 +21,7 @@ export default function FormularioDireccion(
   const [telefono, setTelefono] = useState("");
   const isEditing = !!selectedDireccion;
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isDirty, setIsDirty] = useState(false);
   
   const initialForm = {
     nombre: "",
@@ -35,9 +36,8 @@ export default function FormularioDireccion(
     estado: "",
   };
   
-  const [form, setForm] = useState(
-   initialForm
-  );
+  const [form, setForm] = useState(initialForm);
+  const [showConfirm, setShowConfirm] = useState(false);
   //fetch para agregar una direccion de envio
   const createDireccion = async (direccion: any) => {
     try {
@@ -146,6 +146,7 @@ export default function FormularioDireccion(
       setForm(initialForm);
       setTelefono("");
     }
+    setIsDirty(false);
   }, [selectedDireccion]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -201,9 +202,10 @@ export default function FormularioDireccion(
                 id="nombre"
                 type="text"
                 value={form.nombre}
-                onChange={(e) =>
-                  setForm({ ...form, nombre: e.target.value })
-                }
+                onChange={(e) => {
+                  setForm({ ...form, nombre: e.target.value });
+                  setIsDirty(true);
+                }}
                 placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
               <label htmlFor="nombre"
@@ -219,9 +221,11 @@ export default function FormularioDireccion(
             <div className="relative">
               <input id="apellido" type="text" 
                 value={form.apellido}
-                onChange={(e) =>
-                  setForm({ ...form, apellido: e.target.value })
-                }
+                onChange={(e) => {
+                  setForm({ ...form, apellido: e.target.value });
+                  setIsDirty(true);
+
+                }}
                 placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
               <label htmlFor="apellido"
@@ -448,7 +452,7 @@ export default function FormularioDireccion(
             {isEditing && (
               <button
                 type="button"
-                onClick={deleteDireccion}
+                onClick={() => setShowConfirm(true)}
                 className="bg-white text-red-500 border border-red-500 px-6 py-3 rounded-full font-medium hover:bg-red-50 transition"
               >
                 Eliminar
@@ -460,7 +464,12 @@ export default function FormularioDireccion(
             {/* GUARDAR */}
             <button
               type="submit"
-              className="bg-black text-white px-8 py-3 rounded-full font-medium hover:opacity-80 transition"
+              disabled={isEditing && !isDirty}
+              className={`px-8 py-3 rounded-full font-medium transition
+                ${isEditing && !isDirty
+                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  : "bg-black text-white hover:opacity-80"
+                }`}
             >
               {isEditing ? "Actualizar" : "Guardar"}
             </button>
@@ -468,6 +477,41 @@ export default function FormularioDireccion(
           </div>
 
         </form>
+
+        {showConfirm && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
+            <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm">
+              
+              <h3 className="text-lg font-semibold mb-4">
+                ¿Eliminar dirección?
+              </h3>
+
+              <p className="text-gray-600 mb-6">
+                Esta acción no se puede deshacer.
+              </p>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="px-4 py-2 border rounded-md"
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  onClick={async () => {
+                    await deleteDireccion();
+                    setShowConfirm(false);
+                  }}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md"
+                >
+                  Sí, eliminar
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
