@@ -77,7 +77,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
                     <p>{data.descripcion}</p>
                 </div>
                 <div className="font-semibold text-[16px] mt-6">
-                    <p>${Number(data.precio).toLocaleString()}</p>
+                    <p>$ {Number(data.precio).toLocaleString()}</p>
                 </div>
                 <div className="flex items-center gap-4 text-[16px] mt-8">
                     <p className="font-bold">Color: </p>
