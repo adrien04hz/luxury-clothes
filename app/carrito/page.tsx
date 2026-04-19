@@ -118,6 +118,39 @@ export default function CarritoPage() {
     }
   }
 
+
+    const handleEliminarProducto = async (id: number, id_talla: number)  => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/auth/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/carrito`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_producto: id,
+          id_talla: id_talla,
+        }),
+      });
+
+      if (!res.ok) {
+        setLoading(false);
+        throw new Error('Error al eliminar el producto del carrito');
+      }
+
+      await getCart();
+    } catch (error) {
+      throw new Error('Error al eliminar el producto del carrito');
+    }
+  }
+
   return (
     <div className="w-full h-full p-24 flex justify-center gap-8">
       {/* Contenedor para la bolsa */}
@@ -148,6 +181,7 @@ export default function CarritoPage() {
                     id_talla={item.id_talla}
                     onDecrease={handleDisminuirCantidad}
                     onIncrease={handleAumentarCantidad}
+                    onDelete={handleEliminarProducto}
                   />
                 ))
               )

@@ -15,6 +15,7 @@ export default function ProductCardCart(
         id_talla,
         onDecrease,
         onIncrease,
+        onDelete,
     } : { 
         name: string; 
         price: number; 
@@ -27,6 +28,7 @@ export default function ProductCardCart(
         cantidad: number;
         onDecrease: (id: number, cantidad: number, id_talla: number) => void;
         onIncrease: (id: number, cantidad: number, id_talla: number) => void;
+        onDelete: (id: number, id_talla: number) => void;
     }) {
     return (
         <div className="relative h-fit w-180 flex flex-col space-y-7">
@@ -63,7 +65,10 @@ export default function ProductCardCart(
                 </div>
                 {/* Boton para favoritos */}
                 <div className="rounded-full flex justify-center items-center w-10 h-10 border border-gray-200">
-                  <button className="h-full w-full flex hover:bg-gray-200 justify-center items-center rounded-full">
+                  <button 
+                    onClick={() => onDelete(id, id_talla)}
+                    className="h-full w-full flex hover:bg-gray-200 justify-center items-center rounded-full"
+                  >
                     <LucideTrash2 className="h-4.5 w-4.5" color="black"/>
                   </button>
                 </div>

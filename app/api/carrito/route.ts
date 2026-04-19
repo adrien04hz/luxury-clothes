@@ -86,9 +86,18 @@ export async function POST(req: Request) {
  */
 export async function DELETE(req: Request) {
   try {
-    const { id_usuario, id_producto, id_talla } = await req.json();
+    const user = getUserFromToken(req);
+
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    const { id_producto, id_talla } = await req.json();
+
+    const result = await CarritoCompras.deleteProduct({ id_usuario: user.id, id_producto, id_talla });
+    // const { id_usuario, id_producto, id_talla } = await req.json();
     
-    const result = await CarritoCompras.deleteProduct({ id_usuario, id_producto, id_talla });
+    // const result = await CarritoCompras.deleteProduct({ id_usuario, id_producto, id_talla });
 
     if (!result) {
       return NextResponse.json({ ok: false, message: 'No se pudo eliminar el producto del carrito' }, { status: 400 });
