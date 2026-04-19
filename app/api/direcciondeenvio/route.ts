@@ -96,9 +96,19 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { clientId, addressId, data } = await req.json();
 
-    if (!clientId || !addressId || !data) {
+    const user = getUserFromToken(req);
+    if (!user) {
+      return NextResponse.json(
+        { error: "clientId is required" },
+        { status: 400 }
+      );
+    }
+    const clientId = user.id;
+
+    const { addressId, data } = await req.json();
+
+    if (!addressId || !data) {
       return NextResponse.json(
         { error: "Faltan datos (clientId, addressId o data)" },
         { status: 400 }
@@ -124,9 +134,19 @@ export async function PUT(req: Request) {
 //endpoint que permite eliminar una dirección de envío de un cliente
 export async function DELETE(req: Request) {
   try {
-    const { clientId, addressId } = await req.json();
+    
+    const user = getUserFromToken(req);
+    if (!user) {
+      return NextResponse.json(
+        { error: "clientId is required" },
+        { status: 400 }
+      );
+    }
+    const clientId = user.id;
+    
+    const { addressId } = await req.json();
 
-    if (!clientId || !addressId) {
+    if (!addressId) {
       return NextResponse.json(
         { error: "Faltan datos (clientId o addressId)" },
         { status: 400 }
