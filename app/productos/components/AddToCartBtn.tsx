@@ -12,7 +12,7 @@ export default function AddToCartButton({
   return (
     <button
       onClick={onClick}
-      className="bg-black text-white py-2 px-4 rounded-[28px] w-full h-16 hover:opacity-60"
+      className={`bg-black text-white py-2 px-4 rounded-[28px] w-full h-16 hover:opacity-60 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       {loading ? "Agregando..." : "Agregar al carrito"}
     </button>

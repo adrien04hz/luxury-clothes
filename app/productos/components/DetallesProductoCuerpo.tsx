@@ -10,13 +10,14 @@ import { useRouter } from "next/navigation";
 export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
     const [talla, setTalla] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
+		const [notSelected, setNotSelected] = useState(false);
     const router = useRouter();
 
     const handleAddToCart = async () => {
 			setLoading(true);
 			if (!talla) {
 				setLoading(false);
-				alert("Selecciona una talla");
+				setNotSelected(true);
 				return;
 			}
 
@@ -75,11 +76,14 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
                     </div>
                 </div>
                 <div className="mt-6 flex flex-col gap-4">
-                    <p className={"font-semibold"}>Selecciona tu talla:</p>
-                    <SelectorTalla 
-                        tallas={data.stock_por_talla || []}
-                        onSelect={setTalla}
-                    />
+                    <p className={`font-semibold ${notSelected ? 'text-red-500' : ''}`}>Selecciona tu talla:</p>
+                    <div className={`w-fit ${notSelected ? 'border border-red-500' : ''} py-2 rounded-md`}>
+											<SelectorTalla
+													tallas={data.stock_por_talla || []}
+													onSelect={setTalla}
+													onClick={setNotSelected}
+											/>
+										</div>
                 </div>
                 <div className="mt-12 w-full">
                     <AddToCartButton 
