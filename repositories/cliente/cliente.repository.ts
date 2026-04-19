@@ -42,7 +42,7 @@ export class ClienteRepository {
       VALUES($1,$2,$3,$4,$5,$6,$7)
       RETURNING id`,
       [
-        2, // rol cliente
+        1, // rol cliente
         data.nombre,
         data.apellidos,
         data.correo,
