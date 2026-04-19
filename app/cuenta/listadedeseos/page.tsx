@@ -20,10 +20,10 @@ export default function ListadeseosPage() {
   const [loading, setLoading] = useState(true);
   const [idTalla, setIdTalla] = useState<number | null>(null);
   const [tallaName, setTallaName] = useState<string>("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [notSelected, setNotSelected] = useState(false);
   const [producto, setProducto] = useState<Producto | null>(null);
-  const [showSelector, setShowSelector] = useState(false);
+  const [showSelector, setShowSelector] = useState(true);
 
   const router = useRouter();
 
@@ -197,7 +197,7 @@ export default function ListadeseosPage() {
 
     <div className={`  fixed inset-0 z-50 flex justify-end
     transition-all duration-300
-    ${showModal 
+    ${showModal
       ? "visible opacity-100 pointer-events-auto" 
       : "invisible opacity-0 pointer-events-none"}
     `}>
@@ -218,7 +218,7 @@ export default function ListadeseosPage() {
         mt-26 mr-12
         transform transition-all duration-300 ease-in-out
         rounded-xl
-        ${showModal 
+        ${showModal && !showSelector
           ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0"}`}
       >
@@ -275,6 +275,20 @@ export default function ListadeseosPage() {
             Seguir comprando
           </button>
         </div>
+      </div>
+
+      {/* Selector de tallas */}
+      <div className={`
+        relative w-100 h-fit bg-black shadow-xl
+        mt-26 mr-12
+        transform transition-all duration-300 ease-in-out
+        rounded-xl
+        ${showModal && showSelector
+          ? "translate-y-0 opacity-100" 
+          : "-translate-y-10 opacity-0"}`}
+      >
+
+
       </div>
     </div>
     </>
