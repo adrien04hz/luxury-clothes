@@ -14,6 +14,7 @@ export default function ProductCardCart(
         cantidad,
         id_talla,
         onDecrease,
+        onIncrease,
     } : { 
         name: string; 
         price: number; 
@@ -25,6 +26,7 @@ export default function ProductCardCart(
         id_talla: number;
         cantidad: number;
         onDecrease: (id: number, cantidad: number, id_talla: number) => void;
+        onIncrease: (id: number, cantidad: number, id_talla: number) => void;
     }) {
     return (
         <div className="relative h-fit w-180 flex flex-col space-y-7">
@@ -35,7 +37,6 @@ export default function ProductCardCart(
               <div className="h-42 w-42 overflow-hidden relative">
                 <Link href={`/productos/${id}`}>
                     <Image
-                      key={id}
                       src={image}
                       alt={name}
                       fill
@@ -53,7 +54,10 @@ export default function ProductCardCart(
                   </button>
                   <p>{cantidad}</p>
           
-                  <button className="h-10 w-10 hover:bg-gray-200 flex justify-center items-center rounded-full">
+                  <button 
+                    onClick={() => onIncrease(id, cantidad, id_talla)}
+                    className="h-10 w-10 hover:bg-gray-200 flex justify-center items-center rounded-full"
+                  >
                     <Plus className="h-4.5 w-4.5" />
                   </button>
                 </div>
@@ -78,7 +82,7 @@ export default function ProductCardCart(
               </div>
               {/* Precio */}
               <div className="px-4 py-1 h-full w-fit">
-                <p className="font-semibold">${Number(price).toLocaleString()}</p>
+                <p className="font-semibold">${Number(price * cantidad).toLocaleString()}</p>
               </div>
             </div>
           </div>

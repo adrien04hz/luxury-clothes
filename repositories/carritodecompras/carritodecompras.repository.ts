@@ -50,7 +50,7 @@ export class Carrito {
   static async getCartByCustomerId(customerId: number) {
     const { rows } = await pool.query(
       `
-      SELECT DISTINCT ON (P.id) 
+      SELECT 
         P.id as id_producto, 
         P.nombre as nombre, 
         P.precio as precio,
@@ -58,16 +58,21 @@ export class Carrito {
         C.cantidad as cantidad,
         G.nombre as genero,
         CC.nombre as color,
-        C.cantidad as cantidad,
         C.id_talla as id_talla,
         I.url as imagen
       FROM "CarritoCompras" C 
       INNER JOIN "Producto" P ON C.id_producto = P.id
       INNER JOIN "Talla" T ON C.id_talla = T.id
-      INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
       INNER JOIN "Genero" G ON P.id_genero = G.id
       INNER JOIN "Color" CC ON P.id_color = CC.id
+      INNER JOIN LATERAL (
+        SELECT url 
+        FROM "ImagenProducto" 
+        WHERE id_producto = P.id 
+        LIMIT 1
+      ) I ON true
       WHERE C.id_usuario = $1
+      ORDER BY P.id, C.id_talla;
       `,
       [customerId]
     );

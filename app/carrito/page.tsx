@@ -84,6 +84,40 @@ export default function CarritoPage() {
     }
   }
 
+  const handleAumentarCantidad = async (id: number, cantidad: number, id_talla: number)  => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/auth/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/carrito`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_producto: id,
+          cantidad: cantidad,
+          id_talla: id_talla,
+          flag: "increase",
+        }),
+      });
+
+      if (!res.ok) {
+        setLoading(false);
+        throw new Error('Error al aumentar la cantidad');
+      }
+
+      await getCart();
+    } catch (error) {
+      throw new Error('Error al aumentar la cantidad');
+    }
+  }
+
   return (
     <div className="w-full h-full p-24 flex justify-center gap-8">
       {/* Contenedor para la bolsa */}
@@ -98,7 +132,7 @@ export default function CarritoPage() {
               </div>
             ) : (
               cartItems.length === 0 ? (
-                <p className="text-xl font-medium opacity-70">Tu carrito está vacío</p>
+                <p className="text-xl font-medium opacity-70">Aquí aparecerán los productos que agregues al carrito</p>
               ) : (
                 cartItems.map((item) => (
                   <ProductCardCart
@@ -113,6 +147,7 @@ export default function CarritoPage() {
                     cantidad={item.cantidad}
                     id_talla={item.id_talla}
                     onDecrease={handleDisminuirCantidad}
+                    onIncrease={handleAumentarCantidad}
                   />
                 ))
               )
