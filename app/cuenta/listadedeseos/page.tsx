@@ -7,10 +7,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import ProductCard from "@/app/components/ProductCard";
 import { ListaDeDeseos } from "@/types/listadedeseos/ListaDeDeseos";
-import { Loader } from "lucide-react";
-import { useRouter } from "next/dist/client/components/navigation";
+import { CheckCircle2Icon, Loader } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Producto } from "@/types/producto/Producto";
 import SelectorTalla from "@/app/productos/components/SelectorTalla";
 
@@ -166,7 +167,9 @@ export default function ListadeseosPage() {
     );
   }
 
+
   return (
+    <>
     <div className="pl-16 pt-12 pr-16 pb-12">
 
       <p className="mb-6 text-3xl font-normal">Productos deseados</p>
@@ -190,5 +193,90 @@ export default function ListadeseosPage() {
         ))}
       </div>
     </div>
+
+
+    <div className={`  fixed inset-0 z-50 flex justify-end
+    transition-all duration-300
+    ${showModal 
+      ? "visible opacity-100 pointer-events-auto" 
+      : "invisible opacity-0 pointer-events-none"}
+    `}>
+      
+      {/* OVERLAY */}
+      <div 
+        className={`
+          absolute inset-0 bg-black/30
+          transition-opacity duration-300
+          ${showModal ? "opacity-100" : "opacity-0"}
+        `}
+        onClick={() => setShowModal(false)}
+      />
+
+      {/* PANEL DERECHO */}
+      <div className={`
+        relative w-100 h-fit bg-black shadow-xl
+        mt-26 mr-12
+        transform transition-all duration-300 ease-in-out
+        rounded-xl
+        ${showModal 
+          ? "translate-y-0 opacity-100" 
+          : "-translate-y-10 opacity-0"}`}
+      >
+
+        {/* HEADER */}
+        <div className="flex justify-between items-center p-4">
+          
+          <div className="flex gap-2 items-center">
+            <CheckCircle2Icon className="text-green-500" />
+            <p className="font-semibold text-lg text-white">
+            Agregado al carrito
+            </p>
+          </div>
+
+          <div className="text-white text-2xl cursor-pointer hover:text-gray-300 transition-colors duration-200 flex items-center justify-center">
+            <button onClick={() => setShowModal(false)}>
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* PRODUCTO */}
+        <div className="p-4 flex gap-4 w-full h-full">
+          <div className="relative h-20 w-20 overflow-hidden">
+            <Image src={producto?.imagenes?.[0] || "/placeholder.png"} alt={producto?.nombre || "Producto"} className="object-cover rounded" fill/>
+          </div>
+
+          <div className="flex flex-col gap-1 w-3/4">
+            <p className="font-medium text-white">{producto?.nombre}</p>
+            <p className="text-sm text-white opacity-70">
+              Talla: {tallaName}
+            </p>
+            <p className="font-semibold text-white">
+              ${Number(producto?.precio).toLocaleString()}
+            </p>
+          </div>
+        </div>
+
+        {/* BOTONES */}
+        <div className="p-4 flex flex-col gap-3">
+          <button
+            onClick={() => {
+              router.push("/carrito")
+            }}
+            className="border border-white text-white rounded-full py-3 hover:opacity-60 transition-colors duration-100"
+          >
+            Ver carrito
+          </button>
+
+          <button
+          onClick={() => setShowModal(false)}
+            className="bg-white text-black rounded-full py-3 hover:opacity-60 transition-opacity duration-100"
+          >
+            Seguir comprando
+          </button>
+        </div>
+      </div>
+    </div>
+    </>
   );
 }

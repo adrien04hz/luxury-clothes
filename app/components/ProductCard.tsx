@@ -114,6 +114,7 @@ export default function ProductCard(
           
           {showToCart && (
             <button
+            onClick={() => onViewTallas?.(product!.id)}
               className="bg-black text-white py-2 px-4 rounded-full w-full h-12 hover:opacity-60 transition-all duration-100 mt-5"
             >
               Agregar al carrito
