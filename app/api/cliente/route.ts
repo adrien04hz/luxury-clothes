@@ -18,15 +18,15 @@ export async function PATCH(req: Request) {
     const body = await req.json();
     const updates: Record<string, any> = {};
 
-    // Campos permitidos para actualizar
     const camposPermitidos = ["nombre", "apellidos", "telefono", "foto_perfil"];
+
     for (const campo of camposPermitidos) {
       if (body[campo] !== undefined) {
         updates[campo] = body[campo];
       }
     }
 
-    // Cambio de correo → validar unicidad
+    // Cambio de correo
     if (body.correo !== undefined && body.correo !== user.correo) {
       const existe = await ClienteRepository.existsByCorreo(body.correo);
       if (existe.rows.length > 0) {
@@ -38,7 +38,7 @@ export async function PATCH(req: Request) {
       updates.correo = body.correo;
     }
 
-    // Cambio de contraseña → requiere contraseña actual
+    // Cambio de contraseña
     if (body.nueva_contrasena) {
       if (!body.contrasena_actual) {
         return NextResponse.json(
@@ -48,13 +48,13 @@ export async function PATCH(req: Request) {
       }
 
       const clienteResult = await ClienteRepository.findById(user.id);
-      if (clienteResult.rows.length === 0) {
+      if (!clienteResult) {
         return NextResponse.json({ error: "Cliente no encontrado" }, { status: 404 });
       }
 
       const match = await bcrypt.compare(
         body.contrasena_actual,
-        clienteResult.rows[0].contrasena
+        clienteResult.contrasena   // ← Cambiado aquí también
       );
 
       if (!match) {
@@ -67,7 +67,6 @@ export async function PATCH(req: Request) {
       updates.contrasena = await bcrypt.hash(body.nueva_contrasena, 10);
     }
 
-    // Validar que haya al menos un campo para actualizar
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(
         { error: "No se enviaron campos válidos para actualizar" },
@@ -75,9 +74,10 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const result = await ClienteRepository.updateById(user.id, updates);
+    // === AQUÍ ESTÁ EL CAMBIO PRINCIPAL ===
+    const updatedClient = await ClienteRepository.updateById(user.id, updates);
 
-    if (result.rowCount === 0) {
+    if (!updatedClient) {
       return NextResponse.json(
         { error: "No se pudo actualizar el perfil (cliente no encontrado o inactivo)" },
         { status: 404 }
@@ -86,7 +86,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json({
       message: "Perfil actualizado correctamente",
-      datosActualizados: result.rows[0] || null,
+      datosActualizados: updatedClient,   // ← Ahora es el objeto directamente
     });
   } catch (error: any) {
     console.error("Error en PATCH /api/Cliente:", error);
