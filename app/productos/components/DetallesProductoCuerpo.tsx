@@ -14,6 +14,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
     const [loading, setLoading] = useState(false);
 	const [notSelected, setNotSelected] = useState(false);
 	const [showModal, setShowModal] = useState(false);
+	const [tallaName, setTallaName] = useState<string>("");
     const router = useRouter();
 
 	useEffect(() => {
@@ -92,6 +93,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 								tallas={data.stock_por_talla || []}
 								onSelect={setTalla}
 								onClick={setNotSelected}
+								onSelectedTalla={setTallaName}
 						/>
 					</div>
                 </div>
@@ -165,7 +167,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 							<div className="flex flex-col gap-1 w-3/4">
 								<p className="font-medium text-white">{data.nombre}</p>
 								<p className="text-sm text-white opacity-70">
-									Talla: {talla}
+									Talla: {tallaName}
 								</p>
 								<p className="font-semibold text-white">
 									${Number(data.precio).toLocaleString()}

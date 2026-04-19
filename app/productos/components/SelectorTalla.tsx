@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Talla } from "@/types/producto/Producto";
 import { on } from "events";
 
-export default function SelectorTalla({ tallas, onSelect, onClick } : { tallas: Talla[], onSelect: (talla: number | null) => void, onClick: (notSelected: boolean) => void }) {
+export default function SelectorTalla({ tallas, onSelect, onClick, onSelectedTalla } : { tallas: Talla[], onSelect: (talla: number | null) => void, onClick: (notSelected: boolean) => void, onSelectedTalla: (tallaName: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
@@ -18,10 +18,12 @@ export default function SelectorTalla({ tallas, onSelect, onClick } : { tallas: 
               setSelected(null);
               onSelect(null);
               onClick(false);
+              onSelectedTalla("");
             } else {
               setSelected(item.talla);
               onSelect(item.id);
               onClick(false);
+              onSelectedTalla(item.talla);
             }
           }}
           className={`

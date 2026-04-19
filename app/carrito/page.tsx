@@ -151,6 +151,34 @@ export default function CarritoPage() {
     }
   }
 
+
+  const handleVaciarCarrito = async (id: number)  => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.push("/auth/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/carrito`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        setLoading(false);
+        throw new Error('Error al vaciar el carrito');
+      }
+
+      await getCart();
+    } catch (error) {
+      throw new Error('Error al vaciar el carrito');
+    }
+  }
+
   return (
     <div className="w-full h-full p-24 flex justify-center gap-8">
       {/* Contenedor para la bolsa */}
