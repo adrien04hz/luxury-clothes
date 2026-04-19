@@ -21,22 +21,27 @@ export default function FormularioDireccion(
   const [telefono, setTelefono] = useState("");
   const isEditing = !!selectedDireccion;
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
-  const [form, setForm] = useState({
+  
+  const initialForm = {
     nombre: "",
     apellido: "",
     telefono: "",
     calle: "",
     colonia: "",
-    numero_exterior:"",
+    numero_exterior: "",
     numero_interior: "",
     ciudad: "",
     codigo_postal: "",
     estado: "",
-  })
+  };
+  
+  const [form, setForm] = useState(
+   initialForm
+  );
   //fetch para agregar una direccion de envio
   const createDireccion = async (direccion: any) => {
     try {
+      setErrors({});
       const res = await fetch("/api/direcciondeenvio", {
         method: "POST",
         headers: {
@@ -46,14 +51,17 @@ export default function FormularioDireccion(
         body: JSON.stringify(direccion),
       });
 
-      if (!res.ok) {
-        const text = await res.text();
-        console.error("RAW ERROR:", text);
-        return;
-      }
-
       const result = await res.json();
 
+    if (!res.ok) {
+      setErrors({
+        general:
+          result.error === "Duplicate address for the same client is not allowed"
+            ? "Esta dirección ya está registrada."
+            : "Error al guardar la dirección",
+      });
+      return;
+    }
       onSubmit(result);
       onClose();
 
@@ -62,13 +70,10 @@ export default function FormularioDireccion(
     }
   };
 
-  console.log("SELECTED COMPLETO:", selectedDireccion);
-  console.log("ID QUE ESTÁS USANDO:", selectedDireccion?.id);
-
-
-    //fetch para actualizar una direccion de envio
+  //fetch para actualizar una direccion de envio
   const updateDireccion = async (addressId: number, data: any) => {
     try {
+      setErrors({});
       const res = await fetch("/api/direcciondeenvio", {
         method: "PUT",
         headers: {
@@ -84,7 +89,12 @@ export default function FormularioDireccion(
       const result = await res.json();
 
       if (!res.ok) {
-        console.error("PUT ERROR:", result);
+        setErrors({
+          general:
+            result.message === "Esta dirección ya está registrada."
+              ? result.message
+              : "Error al actualizar la dirección",
+        });
         return;
       }
       onSubmit(result);
@@ -131,6 +141,10 @@ export default function FormularioDireccion(
 
         setTelefono(clean);
       }
+    }else {
+      
+      setForm(initialForm);
+      setTelefono("");
     }
   }, [selectedDireccion]);
 
@@ -144,9 +158,7 @@ export default function FormularioDireccion(
     };
 
     const id = selectedDireccion?.addressId ?? selectedDireccion?.id;
-    console.log("ID FINAL:", id);
-  console.log("PAYLOAD:", payload);
-
+    
     if (isEditing && id) {
       updateDireccion(id, payload);
     } else {
@@ -173,13 +185,13 @@ export default function FormularioDireccion(
         <h2 className="text-2xl font-medium mt-4 mb-8">
           {isEditing ? "Editar dirección" : "Agregar dirección" }
         </h2>
-
+          
         
 
-       <form
-  className="space-y-6"
-  onSubmit={handleSubmit}
->
+          <form
+            className="space-y-6"
+            onSubmit={handleSubmit}
+          >
 
           {/* Nombre / Apellido */}
           <div className="grid grid-cols-2 gap-4">
@@ -280,7 +292,7 @@ export default function FormularioDireccion(
             </div>
             <div className="relative">
               <input id="numero_interior" type="text"
-              value={form.numero_interior}
+              value={form.numero_interior || ""}
               onChange={(e) =>
                 setForm({ ...form, numero_interior: e.target.value })
               }
@@ -407,10 +419,9 @@ export default function FormularioDireccion(
             />
             
           </div>
-          {errors.telefono && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.telefono}
-              aquiii estoy 
+          {errors.general && (
+            <p className="text-red-500 text-sm">
+              {errors.general}
             </p>
           )}
           {/* LABEL FLOATING */}

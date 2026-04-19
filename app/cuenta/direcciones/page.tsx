@@ -10,6 +10,8 @@ import { DireccionesEnvio, ListaDireccionEnvio } from "@/types/direccionesenvio/
 export default function DireccionesPage() {
   const [direcciones, setDirecciones] = useState<ListaDireccionEnvio[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedDireccion, setSelectedDireccion] =
+  useState<ListaDireccionEnvio | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -55,7 +57,7 @@ export default function DireccionesPage() {
       {hasDirecciones && (
         <div className="flex justify-end mt-4">
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => {setSelectedDireccion(null);setIsModalOpen(true)}}
             className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition"
           >
             Agregar nueva
@@ -64,9 +66,9 @@ export default function DireccionesPage() {
       )}
       
       {!hasDirecciones ? (
-        <div className="bg-gray-50 rounded-lg p-6 text-center pb-40 border border-gray-300 mt-6">
+        <div className="bg-gray-50 rounded-lg p-6 text-center pb-40 mt-6">
           <p className="text-gray-700 mt-2 mb-6">
-            Actualmente no tienes ninguna dirección de envío guardada. Agrega
+            Actualmente no tienes ninguna dirección de envío guardada. <br /> Agrega
             una dirección aquí para que se complete automáticamente y puedas
             finalizar la compra más rápido.
           </p>
