@@ -20,10 +20,9 @@ export default function ListadeseosPage() {
   const [loading, setLoading] = useState(true);
   const [idTalla, setIdTalla] = useState<number | null>(null);
   const [tallaName, setTallaName] = useState<string>("");
-  const [showModal, setShowModal] = useState(true);
   const [notSelected, setNotSelected] = useState(false);
   const [producto, setProducto] = useState<Producto | null>(null);
-  const [showSelector, setShowSelector] = useState(true);
+  const [view, setView] = useState<"none" | "selector" | "modal">("none");
 
   const router = useRouter();
 
@@ -167,7 +166,6 @@ export default function ListadeseosPage() {
     );
   }
 
-
   return (
     <>
     <div className="pl-16 pt-12 pr-16 pb-12">
@@ -189,13 +187,14 @@ export default function ListadeseosPage() {
             onSelectTalla={setIdTalla}
             onSelectTallaName={setTallaName}
             onSetNotSelected={setNotSelected}
+
           />
         ))}
       </div>
     </div>
 
 
-    <div className={`  fixed inset-0 z-50 flex justify-end
+    <div className={`fixed inset-0 z-50 flex ${showSelector ? "justify-center items-center" : "justify-end"}
     transition-all duration-300
     ${showModal
       ? "visible opacity-100 pointer-events-auto" 
@@ -217,7 +216,7 @@ export default function ListadeseosPage() {
         relative w-100 h-fit bg-black shadow-xl
         mt-26 mr-12
         transform transition-all duration-300 ease-in-out
-        rounded-xl
+        rounded-xl ${showSelector ? "hidden": ""}
         ${showModal && !showSelector
           ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0"}`}
@@ -279,15 +278,22 @@ export default function ListadeseosPage() {
 
       {/* Selector de tallas */}
       <div className={`
-        relative w-100 h-fit bg-black shadow-xl
-        mt-26 mr-12
+        relative w-200 h-100 bg-white shadow-xl
         transform transition-all duration-300 ease-in-out
         rounded-xl
-        ${showModal && showSelector
+        ${showSelector
           ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0"}`}
       >
+        <div>
+          <Image 
+            src={producto?.imagenes?.[0] || "/placeholder.png"}
+            alt={producto?.nombre || "Producto"}
+            className="object-cover rounded-tl-xl rounded-tr-xl"
+            fill
+          />
 
+        </div>
 
       </div>
     </div>
