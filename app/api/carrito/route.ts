@@ -40,13 +40,12 @@ export async function GET(req: Request) {
  */
 export async function POST(req: Request) {
   try {
-
     const clientId = getUserFromToken(req);
 
     if (!clientId) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
-    
+
     const { id_usuario, id_producto, id_talla, cantidad } = await req.json();
 
     const result = await CarritoCompras.addProduct({ id_usuario, id_producto, id_talla, cantidad });
