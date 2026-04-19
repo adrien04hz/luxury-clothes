@@ -20,6 +20,7 @@ export default function FormularioDireccion(
 
   const [telefono, setTelefono] = useState("");
   const isEditing = !!selectedDireccion;
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const [form, setForm] = useState({
     nombre: "",
@@ -34,32 +35,90 @@ export default function FormularioDireccion(
     estado: "",
   })
   //fetch para agregar una direccion de envio
- const createDireccion = async (direccion: any) => {
-  try {
+  const createDireccion = async (direccion: any) => {
+    try {
+      const res = await fetch("/api/direcciondeenvio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(direccion),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("RAW ERROR:", text);
+        return;
+      }
+
+      const result = await res.json();
+
+      onSubmit(result);
+      onClose();
+
+    } catch (error) {
+      console.error("Error fetch:", error);
+    }
+  };
+
+  console.log("SELECTED COMPLETO:", selectedDireccion);
+  console.log("ID QUE ESTÁS USANDO:", selectedDireccion?.id);
+
+
+    //fetch para actualizar una direccion de envio
+  const updateDireccion = async (addressId: number, data: any) => {
+    try {
+      const res = await fetch("/api/direcciondeenvio", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          addressId,
+          data,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        console.error("PUT ERROR:", result);
+        return;
+      }
+      onSubmit(result);
+      onClose(); 
+
+    return result;
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  //fetch para eliminar una direccion de envio
+  const deleteDireccion = async () => {
     const res = await fetch("/api/direcciondeenvio", {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify(direccion),
+      body: JSON.stringify({
+        addressId: selectedDireccion.id,
+      }),
     });
 
+    const data = await res.json();
+
     if (!res.ok) {
-  const text = await res.text();
-  console.error("RAW ERROR:", text);
-  return;
-}
+      console.error("ERROR DELETE:", data);
+      return;
+    }
 
-    const newDireccion = await res.json();
-
-    onSubmit(newDireccion);
+    onSubmit({ deleted: true, id: selectedDireccion.id });
     onClose();
-
-  } catch (error) {
-    console.error("Error fetch:", error);
-  }
-};
+  };
 
   useEffect(() => {
     if (selectedDireccion) {
@@ -75,10 +134,32 @@ export default function FormularioDireccion(
     }
   }, [selectedDireccion]);
 
+  const handleSubmit = (e: React.FormEvent) => {
+    
+    e.preventDefault();
+
+    const payload = {
+      ...form,
+      telefono,
+    };
+
+    const id = selectedDireccion?.addressId ?? selectedDireccion?.id;
+    console.log("ID FINAL:", id);
+  console.log("PAYLOAD:", payload);
+
+    if (isEditing && id) {
+      updateDireccion(id, payload);
+    } else {
+      createDireccion(payload);
+    }
+  };
+
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      
       
       <div className="bg-white w-full max-w-lg rounded-2xl p-8 relative max-h-[80vh] overflow-y-auto shadow-2xl">
         
@@ -93,19 +174,12 @@ export default function FormularioDireccion(
           {isEditing ? "Editar dirección" : "Agregar dirección" }
         </h2>
 
-        <form 
-          className="space-y-6" 
-          onSubmit={(e) => {
-              e.preventDefault();
+        
 
-              const data = {
-                ...form
-              };
-              console.log("DATA ENVIADA:", data);
-
-              createDireccion(data);
-            }}
-        >
+       <form
+  className="space-y-6"
+  onSubmit={handleSubmit}
+>
 
           {/* Nombre / Apellido */}
           <div className="grid grid-cols-2 gap-4">
@@ -331,8 +405,14 @@ export default function FormularioDireccion(
               placeholder="953 174 2001"
               className="peer p-3 w-full outline-none"
             />
+            
           </div>
-
+          {errors.telefono && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.telefono}
+              aquiii estoy 
+            </p>
+          )}
           {/* LABEL FLOATING */}
           <label
             htmlFor="telefono"
@@ -342,13 +422,13 @@ export default function FormularioDireccion(
           </label>
         </div>
 
-          {/* Checkbox */}
+          {/* Checkbox
           <div className="flex items-start gap-3 pt-2">
             <input type="checkbox" id="default" className="mt-1 h-4 w-4 accent-black" />
             <label htmlFor="default" className="text-sm text-gray-600 cursor-pointer">
               Establecer como dirección de envío predeterminada
             </label>
-          </div>
+          </div> */}
 
          {/* BOTONES */}
           <div className="flex justify-end  items-center pt-6">
@@ -357,7 +437,7 @@ export default function FormularioDireccion(
             {isEditing && (
               <button
                 type="button"
-                onClick={() => console.log("Eliminar dirección")}
+                onClick={deleteDireccion}
                 className="bg-white text-red-500 border border-red-500 px-6 py-3 rounded-full font-medium hover:bg-red-50 transition"
               >
                 Eliminar

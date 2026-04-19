@@ -1,4 +1,5 @@
 export interface ListaDireccionEnvio {
+  id:number;
   nombre: string;
   apellido: string;
   telefono: string;

@@ -42,45 +42,60 @@ export default function DireccionesPage() {
     setDirecciones((prev) => [...prev, newDir.direccion]);
   };
 
+  const hasDirecciones = direcciones.length > 0;
+
   return (
     <div className="pl-16 pt-12 pr-16 pb-12 min-h-screen">
       <h1 className="mb-6 text-2xl font-medium">
         Direcciones de entrega guardadas
       </h1>
       
-      {direcciones.length === 0 ? (
-        <>
-        <div className="bg-gray-50 rounded-lg p-6 text-center pb-40 border-gray-300">
+
+      {/* BOTÓN ARRIBA SOLO SI HAY DIRECCIONES */}
+      {hasDirecciones && (
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition"
+          >
+            Agregar nueva
+          </button>
+        </div>
+      )}
+      
+      {!hasDirecciones ? (
+        <div className="bg-gray-50 rounded-lg p-6 text-center pb-40 border border-gray-300 mt-6">
           <p className="text-gray-700 mt-2 mb-6">
             Actualmente no tienes ninguna dirección de envío guardada. Agrega
             una dirección aquí para que se complete automáticamente y puedas
             finalizar la compra más rápido.
           </p>
 
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="mt-6 bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition"
-          >
-            Agregar dirección
+           <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition"
+            >
+              Agregar dirección
           </button>
         </div>
-
-        <FormularioDireccion 
-          isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={handleAddDireccion}
-        />
-        </>
-      ):(
-        <>
-        <p>Si tenemos direcciones</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {direcciones.map((dir, index) => (
-            <DireccionEnvio key={index} direccion={dir} />
+            <DireccionEnvio
+              key={index}
+              direccion={dir}
+              onRefresh={loadDireccion}
+            />
           ))}
         </div>
-        </>
       )}
+
+      <FormularioDireccion
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddDireccion}
+      />
+
 
     </div>
   );

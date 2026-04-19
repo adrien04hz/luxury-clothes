@@ -6,9 +6,10 @@ import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
 
 type Props = {
   direccion: ListaDireccionEnvio;
+  onRefresh: () => void;
 };
 
-export default function DireccionEnvio({ direccion }: Props) {
+export default function DireccionEnvio({ direccion, onRefresh }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDireccion, setSelectedDireccion] =
     useState<ListaDireccionEnvio | null>(null);
@@ -22,6 +23,9 @@ export default function DireccionEnvio({ direccion }: Props) {
     setSelectedDireccion(null);
     setIsOpen(true);
   };
+
+console.log("📍 DIRECCIÓN COMPLETA:", direccion);
+console.log("🆔 ID DE DIRECCIÓN:", direccion.id);
 
   return (
     <div className="max-w-xl p-6 border border-gray-200 ">
@@ -56,20 +60,14 @@ export default function DireccionEnvio({ direccion }: Props) {
 
       </div>
 
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={handleCreate}
-          className="bg-black text-white px-4 py-2 rounded-full text-sm"
-        >
-          Agregar nueva
-        </button>
-      </div>
+      
 
       <FormularioDireccion
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
           setSelectedDireccion(null);
+          onRefresh();
         }}
         onSubmit={(data) => {
           console.log("guardar:", data);
