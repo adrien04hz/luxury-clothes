@@ -9,6 +9,7 @@
 import { useEffect, useRef, useState } from "react";
 import ProductCard from "@/app/components/ProductCard";
 import { ListaDeDeseos } from "@/types/listadedeseos/ListaDeDeseos";
+import { Loader } from "lucide-react";
 
 export default function ListadeseosPage() {
   const [products, setProducts] = useState<ListaDeDeseos[]>([]);
@@ -81,7 +82,14 @@ export default function ListadeseosPage() {
     setPendingDeleteId(null);
   };
 
-  if (loading) return <p className="p-10">Cargando favoritos...</p>;
+  if ( loading ) {
+    return (
+      <div className="h-180 w-full flex flex-col items-center justify-center gap-4">
+        <Loader className="h-20 w-20 animate-spin" />
+        <p className="font-medium text-lg">Cargando favoritos...</p>
+      </div>
+    );
+  }
 
   if (products.length === 0) {
     return (
@@ -99,7 +107,7 @@ export default function ListadeseosPage() {
   return (
     <div className="pl-16 pt-12 pr-16 pb-12">
 
-      <h1 className="mb-6 text-xl">Favoritos</h1>
+      <p className="mb-6 text-3xl font-normal">Productos deseados</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
