@@ -10,10 +10,11 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import ProductCard from "@/app/components/ProductCard";
 import { ListaDeDeseos } from "@/types/listadedeseos/ListaDeDeseos";
-import { CheckCircle2Icon, Loader } from "lucide-react";
+import { CheckCircle2Icon, Loader, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Producto } from "@/types/producto/Producto";
 import SelectorTalla from "@/app/productos/components/SelectorTalla";
+import Link from "next/link";
 
 export default function ListadeseosPage() {
   const [products, setProducts] = useState<ListaDeDeseos[]>([]);
@@ -23,6 +24,7 @@ export default function ListadeseosPage() {
   const [notSelected, setNotSelected] = useState(false);
   const [producto, setProducto] = useState<Producto | null>(null);
   const [view, setView] = useState<"none" | "selector" | "modal">("none");
+  const [modalLoading, setModalLoading] = useState(false);
 
   const router = useRouter();
 
@@ -102,7 +104,7 @@ export default function ListadeseosPage() {
     setPendingDeleteId(null);
   };
 
-  const handleAddToCart = async (productId: number) => {
+  const handleAddToCart = async () => {
     setLoading(true);
     if (!idTalla) {
       setLoading(false);
@@ -126,7 +128,7 @@ export default function ListadeseosPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id_producto: productId,
+          id_producto: producto?.id,
           id_talla: idTalla,
           cantidad: 1,    
         }),
@@ -141,11 +143,20 @@ export default function ListadeseosPage() {
   };
 
   const getProducto = async (id_producto : number) => {
+    setModalLoading(true);
     try {
       const res = await fetch(`/api/producto/${id_producto}`);
+
+      if (!res.ok) {
+        setLoading(false);
+        throw new Error('Error al obtener el producto');
+      }
+
       const { data } : { data: Producto } = await res.json();
       setProducto(data);
+      setModalLoading(false);
     } catch (error) {
+      setModalLoading(false);
       setProducto(null);
       console.error(error);
     }
@@ -294,8 +305,8 @@ export default function ListadeseosPage() {
             ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0 pointer-events-none absolute"}`}
       >
-        <div className="border flex items-center justify-between w-full h-full">
-          <div className="relative h-full w-1/2 flex items-center justify-center rounded-l-xl border overflow-hidden">
+        <div className="flex items-center justify-between w-full h-full">
+          <div className="relative h-full w-1/2 flex items-center justify-center rounded-l-xl border border-gray-200 overflow-hidden">
             <Image
               src={producto?.imagenes?.[0] || "/placeholder.png"}
               alt={producto?.nombre || "Producto"}
@@ -303,22 +314,65 @@ export default function ListadeseosPage() {
               fill
             />
           </div>
-          <div className=" flex flex-col jutify-center items-center gap-4 border w-1/2 h-full">
-            <div className="w-full flex items-center">
-              <p>{producto?.nombre}</p>
-            </div>
-            <div className="w-full flex">
-              <p>{producto?.color}</p>
-            </div>
-            <p>$ {Number(producto?.precio).toLocaleString()}</p>
-            <div className="flex items-center justify-center border">
-              <SelectorTalla
-                tallas={producto?.stock_por_talla || []}
-                onSelect= {setIdTalla}
-                onSelectedTalla={setTallaName}
-                onClick={setNotSelected}
-              />
-            </div>
+          <div className=" flex flex-col jutify-center items-center w-1/2 h-full">
+            {modalLoading ? (
+              <div className="w-full h-full flex items-center justify-center flex-col gap-3">
+                <Loader className="h-10 w-10 animate-spin" />
+                <p className="font-medium text-lg">Cargando detalles...</p>
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center flex-col px-10 gap-8">
+                <div className="flex items-start justify-between w-full">
+                  <div className="flex flex-col gap-0.5">
+                    <div className="w-full flex items-center justify-start text-lg font-semibold">
+                      <p>{producto?.nombre}</p>
+                    </div>
+                    <div className="w-full flex items-center justify-start text-md font-medium opacity-80">
+                      <p>Color: {producto?.color}</p>
+                    </div>
+                    <div className="w-full flex items-center justify-start text-md font-semibold opacity-90 mt-2">
+                      <p>$ {Number(producto?.precio).toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:opacity-60 transition-colors duration-200">
+                    <button>
+                      <X color="black"/>
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center h-fit w-fit">
+                  <SelectorTalla
+                    tallas={producto?.stock_por_talla || []}
+                    onSelect= {setIdTalla}
+                    onSelectedTalla={setTallaName}
+                    onClick={setNotSelected}
+                  />
+                </div>
+              </div>
+            )
+          }
+
+          {
+            !modalLoading && (
+              <div className="flex items-center border border-b-0 border-l-0 border-r-0 border-t-gray-200 w-full justify-around h-18">
+                <div>
+                  <Link
+                    href={`/producto/${producto?.id}`}>
+                    <p className="hover:underline">Ver todo el producto</p>
+                  </Link>
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <button
+                    className="bg-black text-white py-2 px-4 rounded-full w-full h-10 hover:opacity-60 transition-all duration-100"
+                  >
+                    Agregar al carrito
+                  </button>
+                </div>
+              </div>
+            ) 
+          }
           </div>
         </div>
 
