@@ -123,7 +123,7 @@ export default function ListadeseosPage() {
         }),
       });
 
-      setShowModal(true);
+      setView("modal");
     } catch (error) {
       console.error(error);
     }
@@ -194,9 +194,9 @@ export default function ListadeseosPage() {
     </div>
 
 
-    <div className={`fixed inset-0 z-50 flex ${showSelector ? "justify-center items-center" : "justify-end"}
+    <div className={`fixed inset-0 z-50 flex ${view === "selector" ? "justify-center items-center" : "justify-end"}
     transition-all duration-300
-    ${showModal
+    ${view !== "none"
       ? "visible opacity-100 pointer-events-auto" 
       : "invisible opacity-0 pointer-events-none"}
     `}>
@@ -206,9 +206,9 @@ export default function ListadeseosPage() {
         className={`
           absolute inset-0 bg-black/30
           transition-opacity duration-300
-          ${showModal ? "opacity-100" : "opacity-0"}
+          ${view !== "none" ? "opacity-100" : "opacity-0"}
         `}
-        onClick={() => setShowModal(false)}
+        onClick={() => setView("none")}
       />
 
       {/* PANEL DERECHO */}
@@ -216,8 +216,8 @@ export default function ListadeseosPage() {
         relative w-100 h-fit bg-black shadow-xl
         mt-26 mr-12
         transform transition-all duration-300 ease-in-out
-        rounded-xl ${showSelector ? "hidden": ""}
-        ${showModal && !showSelector
+        rounded-xl ${view === "selector" ? "hidden": ""}
+        ${view === "modal"
           ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0"}`}
       >
@@ -233,7 +233,7 @@ export default function ListadeseosPage() {
           </div>
 
           <div className="text-white text-2xl cursor-pointer hover:text-gray-300 transition-colors duration-200 flex items-center justify-center">
-            <button onClick={() => setShowModal(false)}>
+            <button onClick={() => setView("none")}>
               ✕
             </button>
           </div>
@@ -268,7 +268,7 @@ export default function ListadeseosPage() {
           </button>
 
           <button
-          onClick={() => setShowModal(false)}
+          onClick={() => setView("none")}
             className="bg-white text-black rounded-full py-3 hover:opacity-60 transition-opacity duration-100"
           >
             Seguir comprando
@@ -281,7 +281,7 @@ export default function ListadeseosPage() {
         relative w-200 h-100 bg-white shadow-xl
         transform transition-all duration-300 ease-in-out
         rounded-xl
-        ${showSelector
+        ${view === "selector"
           ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0"}`}
       >
