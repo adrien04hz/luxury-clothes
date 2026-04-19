@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Talla } from "@/types/producto/Producto";
-import { on } from "events";
 
 export default function SelectorTalla({ tallas, onSelect, onClick, onSelectedTalla } : { tallas: Talla[], onSelect: (talla: number | null) => void, onClick: (notSelected: boolean) => void, onSelectedTalla: (tallaName: string) => void }) {
   const [selected, setSelected] = useState<string | null>(null);

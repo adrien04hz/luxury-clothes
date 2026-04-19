@@ -18,7 +18,7 @@ import Link from "next/link";
 
 export default function ListadeseosPage() {
   const [products, setProducts] = useState<ListaDeDeseos[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [idTalla, setIdTalla] = useState<number | null>(null);
   const [tallaName, setTallaName] = useState<string>("");
   const [notSelected, setNotSelected] = useState(false);
@@ -41,6 +41,12 @@ export default function ListadeseosPage() {
 
     loadWishlist();
   }, []);
+
+  useEffect(() => {
+		setTimeout(() => {
+			if (view === "modal") setView("none");
+		}, 8000);
+	}, [view]);
 
   const loadWishlist = async () => {
     try {
@@ -105,9 +111,7 @@ export default function ListadeseosPage() {
   };
 
   const handleAddToCart = async () => {
-    setLoading(true);
     if (!idTalla) {
-      setLoading(false);
       setNotSelected(true);
       return;
     }
@@ -115,7 +119,6 @@ export default function ListadeseosPage() {
     const token = localStorage.getItem("token");
 
     if (!token) {
-      setLoading(false);
       router.push("/auth/login");
       return;
     }
@@ -138,8 +141,6 @@ export default function ListadeseosPage() {
     } catch (error) {
       console.error(error);
     }
-
-    setLoading(false);
   };
 
   const getProducto = async (id_producto : number) => {
@@ -262,7 +263,7 @@ export default function ListadeseosPage() {
         {/* PRODUCTO */}
         <div className="p-4 flex gap-4 w-full h-full">
           <div className="relative h-20 w-20 overflow-hidden">
-            <Image src={producto?.imagenes?.[0] || "/placeholder.png"} alt={producto?.nombre || "Producto"} className="object-cover rounded" fill/>
+            <Image src={producto?.imagenes?.[0] || "/assets/images/bag.svg"} alt={producto?.nombre || "Producto"} className="object-cover rounded" fill/>
           </div>
 
           <div className="flex flex-col gap-1 w-3/4">
@@ -300,15 +301,15 @@ export default function ListadeseosPage() {
       <div className={`
           w-230 h-130 bg-white shadow-xl
           transform transition-all duration-300 ease-in-out
-           rounded-xl absolute top-0 left-0 right-0 bottom-0 m-auto
+           rounded-4xl absolute top-0 left-0 right-0 bottom-0 m-auto
           ${view === "selector"
             ? "translate-y-0 opacity-100" 
           : "-translate-y-10 opacity-0 pointer-events-none absolute"}`}
       >
         <div className="flex items-center justify-between w-full h-full">
-          <div className="relative h-full w-1/2 flex items-center justify-center rounded-l-xl border border-gray-200 overflow-hidden">
+          <div className="relative h-full w-1/2 flex items-center justify-center rounded-l-4xl border border-gray-200 overflow-hidden">
             <Image
-              src={producto?.imagenes?.[0] || "/placeholder.png"}
+              src={producto?.imagenes?.[0] || "/assets/images/bag.svg"}
               alt={producto?.nombre || "Producto"}
               className="object-cover"
               fill
@@ -325,7 +326,7 @@ export default function ListadeseosPage() {
                 <div className="flex items-start justify-between w-full">
                   <div className="flex flex-col gap-0.5">
                     <div className="w-full flex items-center justify-start text-lg font-semibold">
-                      <p>{producto?.nombre}</p>
+                      <p className="max-w-75 overflow-hidden text-ellipsis whitespace-nowrap">{producto?.nombre}</p>
                     </div>
                     <div className="w-full flex items-center justify-start text-md font-medium opacity-80">
                       <p>Color: {producto?.color}</p>
@@ -336,12 +337,14 @@ export default function ListadeseosPage() {
                   </div>
 
                   <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:opacity-60 transition-colors duration-200">
-                    <button>
+                    <button
+                      onClick={() => setView("none")}
+                    >
                       <X color="black"/>
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center justify-center h-fit w-fit">
+                <div className={`flex items-center justify-center h-fit w-fit ${notSelected ? "border border-red-500 rounded-md" : ""}`}>
                   <SelectorTalla
                     tallas={producto?.stock_por_talla || []}
                     onSelect= {setIdTalla}
@@ -358,13 +361,14 @@ export default function ListadeseosPage() {
               <div className="flex items-center border border-b-0 border-l-0 border-r-0 border-t-gray-200 w-full justify-around h-18">
                 <div>
                   <Link
-                    href={`/producto/${producto?.id}`}>
+                    href={`/productos/${producto?.id}`}>
                     <p className="hover:underline">Ver todo el producto</p>
                   </Link>
                 </div>
 
                 <div className="flex items-center justify-center">
                   <button
+                    onClick={handleAddToCart}
                     className="bg-black text-white py-2 px-4 rounded-full w-full h-10 hover:opacity-60 transition-all duration-100"
                   >
                     Agregar al carrito
