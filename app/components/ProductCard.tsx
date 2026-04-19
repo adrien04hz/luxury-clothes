@@ -20,11 +20,7 @@ export default function ProductCard(
     showIcon = true,    //mostrar icono de favorito
     onRemoveFavorite,     //funcion para eliminar de favoritos
     onUndo,
-    onAddToCart,
     onViewTallas,
-    onSelectTalla,
-    onSelectTallaName,
-    onSetNotSelected,
     onSetView,
     pendingDelete,
     item,
@@ -36,11 +32,7 @@ export default function ProductCard(
     showIcon?: boolean,
     onRemoveFavorite?: (productId: number) => void,
     onUndo?: () => void,
-    onAddToCart?: (productId: number) => void,
     onViewTallas?: (productId: number) => void,
-    onSelectTalla?: (idTalla: number) => void,
-    onSelectTallaName?: (tallaName: string) => void,
-    onSetNotSelected?: (value: boolean) => void,
     onSetView?: (view: "none" | "selector" | "modal") => void;
     pendingDelete?: boolean,
     item?: Producto

@@ -43,6 +43,12 @@ export default function ListadeseosPage() {
   }, []);
 
   useEffect(() => {
+    if (view === "selector") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
 		setTimeout(() => {
 			if (view === "modal") setView("none");
 		}, 8000);
@@ -196,20 +202,16 @@ export default function ListadeseosPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
 
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            showIcon={true}
-            pendingDelete={pendingDeleteId === product.id}
-            onRemoveFavorite={handleRemoveFavorite}
-            onUndo={handleUndo}
-            onAddToCart={handleAddToCart}
-            onViewTallas={getProducto}
-            onSelectTalla={setIdTalla}
-            onSelectTallaName={setTallaName}
-            onSetNotSelected={setNotSelected}
-            onSetView={setView}
-          />
+            <ProductCard
+              key={product.id}
+              product={product}
+              showIcon={true}
+              pendingDelete={pendingDeleteId === product.id}
+              onRemoveFavorite={handleRemoveFavorite}
+              onUndo={handleUndo}
+              onViewTallas={getProducto}
+              onSetView={setView}
+            />
         ))}
       </div>
     </div>
@@ -338,7 +340,13 @@ export default function ListadeseosPage() {
 
                   <div className="h-8 w-8 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer hover:opacity-60 transition-colors duration-200">
                     <button
-                      onClick={() => setView("none")}
+                      onClick={() => {
+                        setView("none");
+                        setProducto(null);
+                        setTallaName("");
+                        setIdTalla(null);
+                        setNotSelected(false);
+                      }}
                     >
                       <X color="black"/>
                     </button>
