@@ -10,10 +10,18 @@ import { useEffect, useRef, useState } from "react";
 import ProductCard from "@/app/components/ProductCard";
 import { ListaDeDeseos } from "@/types/listadedeseos/ListaDeDeseos";
 import { Loader } from "lucide-react";
+import { useRouter } from "next/dist/client/components/navigation";
+import { Producto } from "@/types/producto/Producto";
 
 export default function ListadeseosPage() {
   const [products, setProducts] = useState<ListaDeDeseos[]>([]);
   const [loading, setLoading] = useState(true);
+  const [idTalla, setIdTalla] = useState<number | null>(null);
+  const [tallaName, setTallaName] = useState<string>("");
+  const [showModal, setShowModal] = useState(false);
+  const [notSelected, setNotSelected] = useState(false);
+
+  const router = useRouter();
 
   const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -81,6 +89,46 @@ export default function ListadeseosPage() {
     }
     setPendingDeleteId(null);
   };
+
+  const handleAddToCart = async () => {
+    setLoading(true);
+    if (!idTalla) {
+      setLoading(false);
+      setNotSelected(true);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      setLoading(false);
+      router.push("/auth/login");
+      return;
+    }
+
+    try {
+      await fetch("/api/carrito", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_producto: data.id,
+          id_talla: idTalla,
+          cantidad: 1,
+        }),
+      });
+
+      setShowModal(true);
+    } catch (error) {
+      console.error(error);
+    }
+
+    setLoading(false);
+  };
+
+  
 
   if ( loading ) {
     return (
