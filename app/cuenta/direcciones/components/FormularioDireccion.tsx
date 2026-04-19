@@ -38,6 +38,9 @@ export default function FormularioDireccion(
   
   const [form, setForm] = useState(initialForm);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [initialData, setInitialData] = useState(initialForm);
+  
+
   //fetch para agregar una direccion de envio
   const createDireccion = async (direccion: any) => {
     try {
@@ -131,9 +134,10 @@ export default function FormularioDireccion(
   };
 
   useEffect(() => {
+
     if (selectedDireccion) {
       setForm(selectedDireccion);
-
+      setInitialData(selectedDireccion);
       if (selectedDireccion.telefono) {
         const clean = selectedDireccion.telefono
           .replace("+52", "")
@@ -141,14 +145,22 @@ export default function FormularioDireccion(
 
         setTelefono(clean);
       }
-    }else {
-      
+
+    } else {
       setForm(initialForm);
+      setInitialData(initialForm);
       setTelefono("");
-    }
-    setIsDirty(false);
+
+    }setIsDirty(false);
   }, [selectedDireccion]);
 
+  useEffect(() => {
+  const isEqual = JSON.stringify(form) === JSON.stringify(initialData);
+  setIsDirty(!isEqual);
+}, [form, initialData]);
+
+  
+    
   const handleSubmit = (e: React.FormEvent) => {
     
     e.preventDefault();
@@ -204,7 +216,6 @@ export default function FormularioDireccion(
                 value={form.nombre}
                 onChange={(e) => {
                   setForm({ ...form, nombre: e.target.value });
-                  setIsDirty(true);
                 }}
                 placeholder=" " required
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
@@ -223,7 +234,6 @@ export default function FormularioDireccion(
                 value={form.apellido}
                 onChange={(e) => {
                   setForm({ ...form, apellido: e.target.value });
-                  setIsDirty(true);
 
                 }}
                 placeholder=" " required
@@ -453,7 +463,7 @@ export default function FormularioDireccion(
               <button
                 type="button"
                 onClick={() => setShowConfirm(true)}
-                className="bg-white text-red-500 border border-red-500 px-6 py-3 rounded-full font-medium hover:bg-red-50 transition"
+                className="bg-white text-black border border-black px-6 py-3 rounded-full font-medium hover:bg-gray-100 transition"
               >
                 Eliminar
               </button>
@@ -479,21 +489,21 @@ export default function FormularioDireccion(
         </form>
 
         {showConfirm && (
-          <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/40">
-            <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm">
-              
-              <h3 className="text-lg font-semibold mb-4">
-                ¿Eliminar dirección?
+          <div className=" fixed inset-0 z-60 flex items-center justify-center bg-black/40">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg min-h-63 flex flex-col justify-between relative"> 
+              <h3 className="text-2xl font-bold mb-4">
+                Eliminar dirección de entrega
               </h3>
-
+               
               <p className="text-gray-600 mb-6">
-                Esta acción no se puede deshacer.
+                ¿Seguro que deseas eliminar esta dirección? <br />
+                 Esta acción no se puede deshacer
               </p>
 
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowConfirm(false)}
-                  className="px-4 py-2 border rounded-md"
+                  className="px-4 py-2 border rounded-full"
                 >
                   Cancelar
                 </button>
@@ -503,7 +513,7 @@ export default function FormularioDireccion(
                     await deleteDireccion();
                     setShowConfirm(false);
                   }}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md"
+                  className="px-4 py-2 bg-black text-white rounded-full"
                 >
                   Sí, eliminar
                 </button>

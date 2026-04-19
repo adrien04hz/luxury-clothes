@@ -46,6 +46,23 @@ export default function DireccionesPage() {
 
   const hasDirecciones = direcciones.length > 0;
 
+  const handleSubmit = (data: any) => {
+    if (data.deleted) {
+      setDirecciones((prev) =>
+        prev.filter((dir) => dir.id !== data.id)
+
+      );
+    } else if (data.id) {
+      setDirecciones((prev) =>
+        prev.map((dir) =>
+          dir.id === data.id ? data : dir
+        )
+      );
+    } else {
+      setDirecciones((prev) => [...prev, data.direccion]);
+    }
+  };
+
   return (
     <div className="pl-16 pt-12 pr-16 pb-12 min-h-screen">
       <h1 className="mb-6 text-2xl font-medium">
@@ -95,7 +112,7 @@ export default function DireccionesPage() {
       <FormularioDireccion
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddDireccion}
+        onSubmit={handleSubmit}
       />
 
 
