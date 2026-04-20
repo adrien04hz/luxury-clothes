@@ -61,7 +61,6 @@ export default function DireccionesPage() {
       <h1 className="mb-6 text-2xl font-medium">
         Direcciones de entrega guardadas
       </h1>
-      
 
       {/* BOTÓN ARRIBA SOLO SI HAY DIRECCIONES */}
       {hasDirecciones && (
