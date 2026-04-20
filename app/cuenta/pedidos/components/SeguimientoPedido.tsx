@@ -18,6 +18,18 @@ export default function SeguimientoPedido({
   historial: HistorialItem[];
 }) {
 
+  const formatearFecha = (fecha: string) => {
+    const d = new Date(fecha);
+
+    const dia = d.getDate();
+    const mes = d.toLocaleString("es-MX", { month: "short" });
+    const año = d.getFullYear();
+    const hora = d.getHours();
+    const min = d.getMinutes().toString().padStart(2, "0");
+
+    return `${dia} ${mes} ${año}, ${hora}:${min}`;
+  };
+
   // Estado pedido (solo toma el último que tenga valor)
   const estadoPedido =
     [...historial].reverse().find(h => h.estado_pedido)?.estado_pedido || "Pendiente";
@@ -46,7 +58,10 @@ export default function SeguimientoPedido({
         <div>
           <h3 className="text-lg font-bold">Estado del pedido</h3>
           <p className="text-sm text-gray-500">
-            Última actualización: {historial.at(-1)?.fecha || "Sin datos"}
+            Última actualización:{" "}
+            {historial.length > 0
+              ? formatearFecha(historial.at(-1)!.fecha)
+              : "Sin datos"}
           </p>
         </div>
 
@@ -80,8 +95,10 @@ export default function SeguimientoPedido({
               <div key={paso.id} className="flex flex-col items-center">
 
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition ${
-                    paso.id <= pasoActual
+                 className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                    paso.id < pasoActual
+                      ? "bg-green-500 text-white border-green-500"
+                      : paso.id === pasoActual
                       ? "bg-black text-white border-black"
                       : "bg-white text-gray-300 border-gray-300"
                   }`}
@@ -103,7 +120,6 @@ export default function SeguimientoPedido({
         </div>
       </div>
 
-      {/* 📜 HISTORIAL */}
       <div className="bg-gray-50 p-4 rounded-lg">
         <h4 className="text-sm font-bold mb-2">Historial</h4>
 
@@ -113,7 +129,7 @@ export default function SeguimientoPedido({
           historial.map((h, i) => (
             <p key={i} className="text-sm text-gray-600">
               • {h.estado_pedido && `Pedido: ${h.estado_pedido}`}
-              {h.estado_envio && ` | Envío: ${h.estado_envio}`} — {h.fecha}
+              {h.estado_envio && ` | Envío: ${h.estado_envio}`} — {formatearFecha(h.fecha)}
             </p>
           ))
         )}

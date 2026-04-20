@@ -10,6 +10,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import SeguimientoPedido from "../components/SeguimientoPedido";
+import { X } from "lucide-react";
 
 export default function DetallePedidoPage() {
     const { id } = useParams();
@@ -78,21 +79,24 @@ export default function DetallePedidoPage() {
 
     console.log("Historial:", historialPedido);
     console.log("Detalle:", detalle);
+
+
+
     return (
-        <div className="p-6 max-w-7xl mx-auto">
+        <div className="p-6     max-w-7xl mx-auto">
 
         {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
-            <button
-            onClick={() => router.push("/cuenta/pedidos")}
-            className="text-blue-600 hover:underline text-sm"
-            >
-            ← Volver a pedidos
-            </button>
-
             <h1 className="text-lg font-bold">
             Detalles de pedido #{id}
             </h1>
+
+            <button
+            onClick={() => router.push("/cuenta/pedidos")}
+            className="text-gray-900  rounded-full hover:bg-gray-100  hover:text-gray-600 transition text-sm"
+            >
+              <X size={24} />
+            </button>
         </div>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -102,10 +106,10 @@ export default function DetallePedidoPage() {
         )}
 
         {/* GRID PRINCIPAL */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="flex  gap-6">
 
             {/* 🧾 DETALLE DEL PEDIDO */}
-            <div className="sm:col-span-2 bg-white  p-6">
+            <div className="w-1/3 sm:col-span-2 bg-white  p-6">
 
             <h2 className="text-2xl font-bold mb-4">
                 Productos del pedido
@@ -152,7 +156,7 @@ export default function DetallePedidoPage() {
             </div>
             </div>
 
-            <div className="bg-white p-6 shadow-sm h-fit">
+            <div className="w-2/3 bg-white p-6 shadow-sm h-fit">
             <SeguimientoPedido historial={historialPedido} />
             </div>
 
