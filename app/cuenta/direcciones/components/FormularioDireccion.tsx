@@ -204,11 +204,7 @@ export default function FormularioDireccion(
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      
-      
-    <div className="bg-white w-full max-w-lg rounded-2xl p-8 relative max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-hide">
-  
-        
+      <div className="bg-white w-full max-w-lg rounded-2xl p-8 relative max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-hide">
         <button 
           onClick={onClose}
           className="absolute top-12 right-8 text-gray-900 hover:text-gray-600 transition"
@@ -219,59 +215,55 @@ export default function FormularioDireccion(
         <h2 className="text-2xl font-medium mt-4 mb-8">
           {isEditing ? "Editar dirección" : "Agregar dirección" }
         </h2>
-          
         
+        <form
+          className="space-y-6"
+          onSubmit={handleSubmit}
+        >
 
-          <form
-            className="space-y-6"
-            onSubmit={handleSubmit}
-          >
+        {/* Nombre / Apellido */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="relative">
+            <input
+              id="nombre"
+              type="text"
+              value={form.nombre}
+              onChange={(e) => {
+                setForm({ ...form, nombre: e.target.value });
+              }}
+              placeholder=" " required
+              className="peer border border-gray-600 p-3 rounded-md w-full" />
+            <label htmlFor="nombre"
+              className="absolute left-3 top-3 text-gray-400 transition-all
+              peer-placeholder-shown:top-3
+              peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+              peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+              bg-white px-1">
+              Nombre*
+            </label>
+          </div>
 
-          {/* Nombre / Apellido */}
-          <div className="grid grid-cols-2 gap-4">
-            
-            <div className="relative">
-              <input
-                id="nombre"
-                type="text"
-                value={form.nombre}
-                onChange={(e) => {
-                  setForm({ ...form, nombre: e.target.value });
-                }}
-                placeholder=" " required
-                className="peer border border-gray-600 p-3 rounded-md w-full" />
-              <label htmlFor="nombre"
-                className="absolute left-3 top-3 text-gray-400 transition-all
-                peer-placeholder-shown:top-3
-                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
-                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
-                bg-white px-1">
-                Nombre*
-              </label>
-            </div>
+          <div className="relative">
+            <input id="apellido" type="text" 
+              value={form.apellido}
+              onChange={(e) => {
+                setForm({ ...form, apellido: e.target.value });
 
-            <div className="relative">
-              <input id="apellido" type="text" 
-                value={form.apellido}
-                onChange={(e) => {
-                  setForm({ ...form, apellido: e.target.value });
-
-                }}
-                placeholder=" " required
-                className="peer border border-gray-600 p-3 rounded-md w-full" />
-              <label htmlFor="apellido"
-                className="absolute left-3 top-3 text-gray-400 transition-all
-                peer-placeholder-shown:top-3
-                peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
-                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
-                bg-white px-1">
-                Apellido*
-              </label>
-            </div>
-
+              }}
+              placeholder=" " required
+              className="peer border border-gray-600 p-3 rounded-md w-full" />
+            <label htmlFor="apellido"
+              className="absolute left-3 top-3 text-gray-400 transition-all
+              peer-placeholder-shown:top-3
+              peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
+              peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
+              bg-white px-1">
+              Apellido*
+            </label>
+          </div>
           </div>
           
-           {/* Calle */}
+          {/* Calle */}
           <div className="relative">
             <input id="calle" type="text" 
               value={form.calle}
@@ -308,6 +300,7 @@ export default function FormularioDireccion(
                 Colonia*
               </label>
             </div>
+
             <div className="relative">
               <input id="numero_exterior" type="text"
               value={form.numero_exterior}
@@ -325,6 +318,7 @@ export default function FormularioDireccion(
                 No. exterior*
               </label>
             </div>
+
             <div className="relative">
               <input id="numero_interior" type="text"
               value={form.numero_interior || ""}
@@ -347,7 +341,6 @@ export default function FormularioDireccion(
 
           {/* Ciudad / codigo_postal */}
           <div className="grid grid-cols-2 gap-6">
-
             <div className="relative">
               <input id="ciudad" type="text" 
               value={form.ciudad}
@@ -388,7 +381,6 @@ export default function FormularioDireccion(
 
           {/* Estado / País */}
           <div className="grid grid-cols-2 gap-4">
-
            <select
               value={form.estado}
               onChange={(e) =>
@@ -408,80 +400,75 @@ export default function FormularioDireccion(
             <div className="border border-gray-600 p-3 rounded-md bg-gray-50 text-gray-500">
               México
             </div>
-
           </div>
 
           {/* Teléfono */}
-         <div className="relative pt-4">
-  
-          {/* input con prefijo */}
-          <div className="flex items-center border border-gray-600 rounded-md overflow-hidden">
-            
-            <span className="px-3 text-gray-600 bg-gray-100 border-r border-gray-300">
-              +52
-            </span>
+          <div className="relative pt-4">
+            <div className="flex items-center border border-gray-600 rounded-md overflow-hidden">
+              <span className="px-3 text-gray-600 bg-gray-100 border-r border-gray-300">
+                +52
+              </span>
 
-            <input
-              id="telefono"
-              type="tel"
-              value={telefono}
-              onChange={(e) => {
-                if (errors.telefono) {
-                  setErrors(prev => {
-                    const { telefono, ...rest } = prev; // Extraemos 'telefono' y dejamos el resto
-                    return rest;
+              <input
+                id="telefono"
+                type="tel"
+                value={telefono}
+                onChange={(e) => {
+                  if (errors.telefono) {
+                    setErrors(prev => {
+                      const { telefono, ...rest } = prev; // Extraemos 'telefono' y dejamos el resto
+                      return rest;
+                    });
+                  }
+
+                  let value = e.target.value.replace(/\D/g, ""); // solo números
+                  value = value.slice(0, 10); // máximo 10 dígitos
+
+                  // formato 3-3-4 => 953 174 2001
+                  let formatted = value;
+
+                  if (value.length > 3 && value.length <= 6) {
+                    formatted = value.slice(0, 3) + " " + value.slice(3);
+                  } else if (value.length > 6) {
+                    formatted =
+                      value.slice(0, 3) +
+                      " " +
+                      value.slice(3, 6) +
+                      " " +
+                      value.slice(6);
+                  }
+
+                  setTelefono(formatted);
+                  setForm({
+                    ...form,
+                    telefono: value,
                   });
-                }
+                }}
+                placeholder="953 174 2001"
+                className="peer p-3 w-full outline-none"
+              />
+            </div>
+              
+            {errors.telefono && (
+              <p className="text-red-500 text-xs mt-1 font-bold animate-pulse">
+                {errors.telefono}
+              </p>
+            )}
 
-                let value = e.target.value.replace(/\D/g, ""); // solo números
-                value = value.slice(0, 10); // máximo 10 dígitos
-
-                // formato 3-3-4 => 953 174 2001
-                let formatted = value;
-
-                if (value.length > 3 && value.length <= 6) {
-                  formatted = value.slice(0, 3) + " " + value.slice(3);
-                } else if (value.length > 6) {
-                  formatted =
-                    value.slice(0, 3) +
-                    " " +
-                    value.slice(3, 6) +
-                    " " +
-                    value.slice(6);
-                }
-
-                setTelefono(formatted);
-                setForm({
-                  ...form,
-                  telefono: value,
-                });
-              }}
-              placeholder="953 174 2001"
-              className="peer p-3 w-full outline-none"
-            />
-
-  
+            {errors.general && (
+              <p className="text-red-500 text-sm">
+                {errors.general}
+              </p>
+            )}
             
+            {/* LABEL FLOATING */}
+            <label
+              htmlFor="telefono"
+              className="absolute left-3 -top-2 text-sm text-black bg-white px-1"
+            >
+              Número de teléfono*
+            </label>
           </div>
-          {/* 2. EL ERROR DEBE IR AQUÍ (FUERA DEL DIV DEL INPUT) */}
-        {errors.telefono && (
-          <p className="text-red-500 text-xs mt-1 font-bold animate-pulse">
-            {errors.telefono}
-          </p>
-        )}
-          {errors.general && (
-            <p className="text-red-500 text-sm">
-              {errors.general}
-            </p>
-          )}
-          {/* LABEL FLOATING */}
-          <label
-            htmlFor="telefono"
-            className="absolute left-3 -top-2 text-sm text-black bg-white px-1"
-          >
-            Número de teléfono*
-          </label>
-        </div>
 
           {/* Checkbox
           <div className="flex items-start gap-3 pt-2">
