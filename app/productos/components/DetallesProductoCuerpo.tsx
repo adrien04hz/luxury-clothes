@@ -25,6 +25,10 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 		}, 8000);
 	}, [showModal]);
 
+	useEffect(() => {
+		checkProduct();
+	}, []);
+
 	const checkProduct = async () => {
 		const token = localStorage.getItem("token");
 
@@ -115,8 +119,6 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 		setLoading(false);
 	};
 
-
-
     return (
 			<>
         <div className="p-24 w-full h-full flex gap-8 justify-center">
@@ -161,9 +163,15 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 
                 <div className="mt-6 w-full">
                     <button 
-					onClick={() => handleAddToWishList(data.id)}
+					onClick={() => {
+						if (inWishlist) {
+							// Handle removal from wishlist
+						} else {
+							handleAddToWishList(data.id);
+						}
+					}}
 					className="text-black bg-white py-2 px-4 rounded-[28px] w-full h-16 border border-[#E6E6E6] hover:border-black">
-                        Añadir a lista de deseos
+                        {inWishlist ? "Eliminar de lista de deseos" : "Añadir a lista de deseos"}
                     </button>
                 </div>
             </div>

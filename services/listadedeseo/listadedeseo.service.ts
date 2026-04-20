@@ -61,10 +61,10 @@ export class ListaDeseos {
         const listId = await DetalleListaDeseos.findWishlistIdByClientId(clientId);
 
         if(!listId){
-            return false; // Si el cliente no tiene lista de deseos, el producto no puede estar en ella
+            throw new Error("Client does not have a wishlist");
         }
 
-        return await DetalleListaDeseos.isProductInWishlist(listId, productId);
+        return await DetalleListaDeseos.isProductInWishlist(productId, clientId);
     }
 
 }
