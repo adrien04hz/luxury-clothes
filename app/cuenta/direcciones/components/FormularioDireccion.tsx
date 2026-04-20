@@ -155,26 +155,35 @@ export default function FormularioDireccion(
   // }, [selectedDireccion]);
 
   useEffect(() => {
-  if (isOpen) { // Solo actuar cuando el modal se abre
-    if (selectedDireccion) {
-      setForm(selectedDireccion);
-      setInitialData(selectedDireccion);
-      if (selectedDireccion.telefono) {
-        const clean = selectedDireccion.telefono
-          .replace("+52", "")
-          .replace(/\s/g, "");
-        setTelefono(clean);
+    if (isOpen) {
+      setErrors({});
+      if (isOpen) { // Solo actuar cuando el modal se abre
+        if (selectedDireccion) {
+          setForm(selectedDireccion);
+          setInitialData(selectedDireccion);
+          if (selectedDireccion.telefono) {
+            const clean = selectedDireccion.telefono
+              .replace("+52", "")
+              .replace(/\s/g, "");
+            setTelefono(clean);
+          }
+          document.body.style.overflow = "hidden";
+        } else {
+          
+          setForm(initialForm);
+          setInitialData(initialForm);
+          setTelefono("");
+          setErrors({}); // Limpia errores previos 
+        }
+        setIsDirty(false);
       }
-    } else {
-      
-      setForm(initialForm);
-      setInitialData(initialForm);
-      setTelefono("");
-      setErrors({}); // Limpia errores previos 
+    }else{
+      document.body.style.overflow = "auto";
     }
-    setIsDirty(false);
-  }
-}, [selectedDireccion, isOpen]); 
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [selectedDireccion, isOpen]); 
 
 
 
@@ -186,18 +195,18 @@ export default function FormularioDireccion(
   
     
   const handleSubmit = (e: React.FormEvent) => {
-     e.preventDefault();
+    e.preventDefault();
     e.stopPropagation();
     const telefonoLimpio = telefono.replace(/\s/g, "");
 
-if (telefonoLimpio.length !== 10) {
-    setErrors({
-      ...errors,
-      telefono: "El número debe tener exactamente 10 dígitos."
-    });
-   
-    return; 
-  }
+    if (telefonoLimpio.length !== 10) {
+        setErrors({
+          ...errors,
+          telefono: "El número debe tener exactamente 10 dígitos."
+        });
+    
+      return; 
+    }
    
 
     const payload = {
@@ -221,7 +230,8 @@ if (telefonoLimpio.length !== 10) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       
       
-      <div className="bg-white w-full max-w-lg rounded-2xl p-8 relative max-h-[80vh] overflow-y-auto shadow-2xl">
+    <div className="bg-white w-full max-w-lg rounded-2xl p-8 relative max-h-[90vh] overflow-y-auto shadow-2xl scrollbar-hide">
+  
         
         <button 
           onClick={onClose}
@@ -426,7 +436,7 @@ if (telefonoLimpio.length !== 10) {
           </div>
 
           {/* Teléfono */}
-         <div className="relative">
+         <div className="relative pt-4">
   
           {/* input con prefijo */}
           <div className="flex items-center border border-gray-600 rounded-md overflow-hidden">
@@ -440,6 +450,13 @@ if (telefonoLimpio.length !== 10) {
               type="tel"
               value={telefono}
               onChange={(e) => {
+                if (errors.telefono) {
+                  setErrors(prev => {
+                    const { telefono, ...rest } = prev; // Extraemos 'telefono' y dejamos el resto
+                    return rest;
+                  });
+                }
+
                 let value = e.target.value.replace(/\D/g, ""); // solo números
                 value = value.slice(0, 10); // máximo 10 dígitos
 
@@ -490,13 +507,13 @@ if (telefonoLimpio.length !== 10) {
           </label>
         </div>
 
-          {/* Checkbox
+          {/* Checkbox */}
           <div className="flex items-start gap-3 pt-2">
             <input type="checkbox" id="default" className="mt-1 h-4 w-4 accent-black" />
             <label htmlFor="default" className="text-sm text-gray-600 cursor-pointer">
               Establecer como dirección de envío predeterminada
             </label>
-          </div> */}
+          </div>
 
          {/* BOTONES */}
           <div className="flex justify-end  items-center pt-6">
