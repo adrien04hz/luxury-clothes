@@ -8,6 +8,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
+import DireccionEnvio from "../cuenta/direcciones/components/DireccionEnvio";
 
 interface ItemCarrito {
   id_producto: number;
@@ -119,6 +121,33 @@ export default function CheckoutPage() {
       setLoading(false);
     }
   };
+  //Comienza el apartado de Maggita
+  const [direcciones, setDirecciones] = useState<ListaDireccionEnvio[]>([]);
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if(!token) {
+      window.location.href = "/cuenta"; //redireccionamiento a page cuenta
+      return;
+    }
+    loadDireccion();
+  }, []);
+
+  const loadDireccion = async () => {
+    try {
+      const res = await fetch("/api/direcciondeenvio", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      
+      const data   = await res.json();
+      setDirecciones(data.direcciones);
+    } catch (error) {
+      console.error(error);
+    } 
+  }
 
   if (isLoadingData) {
     return <div className="p-10 text-center">Cargando resumen del pedido...</div>;
@@ -195,8 +224,22 @@ export default function CheckoutPage() {
             </div>
           ))}
         </div>
+        <div>
+           
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    {direcciones.map((dir, index) => (
+                      <DireccionEnvio
+                        key={index}
+                        direccion={dir}
+                        onRefresh={loadDireccion}
+                      />
+                    ))}
+                  </div>
+        </div>
         <hr className="border-black" />
         {/* Aqui va el diseño para direccion de envio */}
+
+
         <h6 className="text-3xl py-8 text-gray-800">Direccion de envio</h6>
         <hr className="border-black" />
         {/* Aqui va el diseño para metodo de pago */}
