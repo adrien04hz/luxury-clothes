@@ -77,33 +77,86 @@ export default function DetallePedidoPage() {
     }, [id]);
 
     console.log("Historial:", historialPedido);
-console.log("Detalle:", detalle);
+    console.log("Detalle:", detalle);
     return (
-        <div className="p-5">
+        <div className="p-6 max-w-7xl mx-auto">
 
-            <button onClick={() => router.push("/cuenta/pedidos")} className="mb-4 text-blue-600 hover:underline">
-                Volver a pedidos
-            </button>  
-            <h1 className="text-2xl mb-4">Detalle del Pedido #{id}</h1>
+        {/* HEADER */}
+        <div className="flex justify-between items-center mb-6">
+            <button
+            onClick={() => router.push("/cuenta/pedidos")}
+            className="text-blue-600 hover:underline text-sm"
+            >
+            ← Volver a pedidos
+            </button>
 
-            {error && <p className="text-red-500">{error}</p>}
+            <h1 className="text-lg font-bold">
+            Detalles de pedido #{id}
+            </h1>
+        </div>
 
-            {detalle.length === 0 && !error && (
-                <p>Cargando...</p>
-            )}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
-            {detalle.map((item, index) => (
-                <div key={index} className="border p-3 mb-2">
-                <p><strong>Producto:</strong> {item.producto}</p>
-                <p><strong>Talla:</strong> {item.talla}</p>
-                <p><strong>Cantidad:</strong> {item.cantidad}</p>
-                <p><strong>Precio:</strong> ${item.precio_unitario}</p>
+        {detalle.length === 0 && !error && (
+            <p>Cargando...</p>
+        )}
+
+        {/* GRID PRINCIPAL */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {/* 🧾 DETALLE DEL PEDIDO */}
+            <div className="sm:col-span-2 bg-white  p-6">
+
+            <h2 className="text-2xl font-bold mb-4">
+                Productos del pedido
+            </h2>
+
+            <div className="space-y-4">
+                {detalle.map((item, index) => (
+                <div
+                    key={index}
+                    className="flex justify-between items-center border-b pb-3"
+                >
+                    <div>
+                    <p className="font-semibold">{item.producto}</p>
+                    <p className="text-sm text-gray-500">
+                        Talla: {item.talla}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                        Cantidad: {item.cantidad}
+                    </p>
+                    </div>
+
+                    <div className="text-right">
+                    <p className="font-bold">
+                        ${item.precio_unitario}
+                    </p>
+                    </div>
                 </div>
-            ))}
-
-            <div>
-                <SeguimientoPedido historial={historialPedido} />
+                ))}
             </div>
+
+            {/* TOTAL */}
+            <div className="mt-6 flex justify-end">
+                <div className="text-right">
+                <p className="text-sm text-gray-500">Total</p>
+                <p className="text-xl font-bold">
+                    $
+                    {detalle.reduce(
+                    (acc, item) =>
+                        acc + item.precio_unitario * item.cantidad,
+                    0
+                    )}
+                </p>
+                </div>
+            </div>
+            </div>
+
+            <div className="bg-white p-6 shadow-sm h-fit">
+            <SeguimientoPedido historial={historialPedido} />
+            </div>
+
+        </div>
         </div>
     );
 }
