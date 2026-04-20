@@ -33,6 +33,7 @@ export default function DireccionEnvio({ direccion, onRefresh }: Props) {
       <h2 className="text-black font-semibold text-lg mb-2">
         Dirección de entrega
       </h2>
+      
 
       <div className="flex justify-between items-start">
 

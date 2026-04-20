@@ -18,11 +18,6 @@ export default function FormularioDireccion(
     selectedDireccion
   }: Props) {
 
-  const [telefono, setTelefono] = useState("");
-  const isEditing = !!selectedDireccion;
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [isDirty, setIsDirty] = useState(false);
-  
   const initialForm = {
     nombre: "",
     apellido: "",
@@ -34,13 +29,18 @@ export default function FormularioDireccion(
     ciudad: "",
     codigo_postal: "",
     estado: "",
+    is_default: false,
   };
   
+  const [telefono, setTelefono] = useState("");
+  const isEditing = !!selectedDireccion;
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isDirty, setIsDirty] = useState(false);
   const [form, setForm] = useState(initialForm);
   const [showConfirm, setShowConfirm] = useState(false);
   const [initialData, setInitialData] = useState(initialForm);
   
-
+  
   //fetch para agregar una direccion de envio
   const createDireccion = async (direccion: any) => {
     try {
@@ -109,6 +109,7 @@ export default function FormularioDireccion(
       console.error(error);
     }
   };
+
   //fetch para eliminar una direccion de envio
   const deleteDireccion = async () => {
     const res = await fetch("/api/direcciondeenvio", {
@@ -132,27 +133,6 @@ export default function FormularioDireccion(
     onSubmit({ deleted: true, id: selectedDireccion.id });
     onClose();
   };
-
-  // useEffect(() => {
-
-  //   if (selectedDireccion) {
-  //     setForm(selectedDireccion);
-  //     setInitialData(selectedDireccion);
-  //     if (selectedDireccion.telefono) {
-  //       const clean = selectedDireccion.telefono
-  //         .replace("+52", "")
-  //         .replace(/\s/g, "");
-
-  //       setTelefono(clean);
-  //     }
-
-  //   } else {
-  //     setForm(initialForm);
-  //     setInitialData(initialForm);
-  //     setTelefono("");
-
-  //   }setIsDirty(false);
-  // }, [selectedDireccion]);
 
   useEffect(() => {
     if (isOpen) {
@@ -488,11 +468,11 @@ export default function FormularioDireccion(
             
           </div>
           {/* 2. EL ERROR DEBE IR AQUÍ (FUERA DEL DIV DEL INPUT) */}
-  {errors.telefono && (
-    <p className="text-red-500 text-xs mt-1 font-bold animate-pulse">
-      {errors.telefono}
-    </p>
-  )}
+        {errors.telefono && (
+          <p className="text-red-500 text-xs mt-1 font-bold animate-pulse">
+            {errors.telefono}
+          </p>
+        )}
           {errors.general && (
             <p className="text-red-500 text-sm">
               {errors.general}
@@ -507,13 +487,13 @@ export default function FormularioDireccion(
           </label>
         </div>
 
-          {/* Checkbox */}
+          {/* Checkbox
           <div className="flex items-start gap-3 pt-2">
             <input type="checkbox" id="default" className="mt-1 h-4 w-4 accent-black" />
             <label htmlFor="default" className="text-sm text-gray-600 cursor-pointer">
               Establecer como dirección de envío predeterminada
             </label>
-          </div>
+          </div> */}
 
          {/* BOTONES */}
           <div className="flex justify-end  items-center pt-6">
