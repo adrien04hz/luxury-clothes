@@ -16,6 +16,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 	const [showModal, setShowModal] = useState(false);
 	const [isWishList, setIsWishList] = useState(false);
 	const [tallaName, setTallaName] = useState<string>("");
+	const [inWishlist, setInWishlist] = useState(false);
     const router = useRouter();
 
 	useEffect(() => {
@@ -23,6 +24,25 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 			if (showModal) setShowModal(false);
 		}, 8000);
 	}, [showModal]);
+
+	const checkProduct = async () => {
+		const token = localStorage.getItem("token");
+
+		if (!token) return;
+
+		try {
+			const res = await fetch(`/api/listadeseos/check?id_producto=${data.id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const json = await res.json();
+			setInWishlist(json.exists);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 
     const handleAddToCart = async () => {
@@ -86,6 +106,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 			});
 
 			setIsWishList(true);
+			setInWishlist(true);
 			setShowModal(true);
 		} catch (error) {
 			console.error(error);
