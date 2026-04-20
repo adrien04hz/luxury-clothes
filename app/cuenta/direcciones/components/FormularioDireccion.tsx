@@ -135,6 +135,7 @@ export default function FormularioDireccion(
 
   useEffect(() => {
     if (isOpen) {
+      document.body.style.overflow = "hidden";
       setErrors({});
       if (isOpen) { // Solo actuar cuando el modal se abre
         if (selectedDireccion) {
@@ -324,16 +325,20 @@ export default function FormularioDireccion(
               onChange={(e) =>
                 setForm({ ...form, numero_interior: e.target.value })
               }
-              placeholder=" "
+              placeholder=" " 
                 className="peer border border-gray-600 p-3 rounded-md w-full" />
-              <label htmlFor="numero_interior"
-                className="absolute left-3 top-3 text-gray-400 transition-all
-                peer-placeholder-shown:top-3
+              <label
+              htmlFor="numero_interior"
+              className={`
+                absolute left-3 transition-all bg-white px-1
+                ${form.numero_interior
+                  ? "-top-2 text-sm text-black"
+                  : "top-3 text-gray-400"}
                 peer-focus:-top-2 peer-focus:text-sm peer-focus:text-black
-                peer-valid:-top-2 peer-valid:text-sm peer-valid:text-black
-                bg-white px-1">
-                No. interior*
-              </label>
+              `}
+            >
+              No. interior
+            </label>
             </div>
 
           </div>
