@@ -369,6 +369,7 @@ export default function ListadeseosPage() {
               <div className="flex items-center border border-b-0 border-l-0 border-r-0 border-t-gray-200 w-full justify-around h-18">
                 <div>
                   <Link
+                    onClick={() => setView("none")}
                     href={`/productos/${producto?.id}`}>
                     <p className="hover:underline">Ver todo el producto</p>
                   </Link>

@@ -248,6 +248,9 @@ export default function CarritoPage() {
         {/* Boton */}
         <div className="w-full mt-4">
           <button 
+          onClick={ () => {
+            router.push("/checkout");
+          }}
           disabled={cartItems.length === 0}
           className="bg-black text-white py-2 px-4 rounded-full w-full h-16 hover:opacity-60 font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
               Realizar compra

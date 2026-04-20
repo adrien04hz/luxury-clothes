@@ -1,6 +1,6 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Autor de la clase: Cervantes Rosales Abdiel, Ramos Bello Jose Luis*/
 //* Fecha: 10/04/2026 */
 //**********/
 "use client";
@@ -27,9 +27,8 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // Simulación de carrito (en el futuro vendrá del contexto o localStorage)
+  // Simulación de carrito
   useEffect(() => {
-    // Aquí deberías cargar el carrito real desde un contexto o API
     const carritoEjemplo: ItemCarrito[] = [
       {
         id_producto: 1,
@@ -37,7 +36,7 @@ export default function CheckoutPage() {
         talla: "24",
         precio: 21533.30,
         cantidad: 2,
-        imagen_url: "/images/zapatos/mules-black.png", // cambia por tu ruta real
+        imagen_url: "/images/zapatos/mules-black.png",
       },
       {
         id_producto: 2,
@@ -154,75 +153,72 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold p-10">Resumen de pedido</h1>
-      <div className="max-w-5xl mx-auto p-6">
-        <h6 className="text-3xl mb-8 text-gray-800">Articulos</h6>
-        <hr className="border-black" />
-        <hr className="my-1 border-black" />
-        <div className="">
-          {/* Cabecera de la tabla */}
-          <div className="grid grid-cols-12 font-medium text-sm py-3 px-1">
-            <div className="col-span-4">Artículo</div>
-            <div className="col-span-4">Nombre</div>
-            <div className="col-span-1 text-left">Talla</div>
-            <div className="col-span-2 text-center">Costo</div>
-            <div className="col-span-1 text-center">Cantidad</div>
-          </div>
-          <hr className="border-black" />
+  <div>
+    <h1 className="text-3xl font-bold p-10">Resumen de pedido</h1>
+    <div className="max-w-6xl mx-auto p-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="lg:col-span-8 space-y-12">
 
-          {/* Filas de productos */}
-          {items.map((item) => (
-            <div
-              key={item.id_producto}
-              className="grid grid-cols-12 last:border-b-0 py-6 px-6 items-center hover:bg-gray-50"
-            >
-              {/* Imagen del artículo */}
-              <div className="col-span-4 flex items-center gap-4">
-                <div className="w-24 h-24 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
+          {/* Aqui va la logica de datos de envío */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Datos de envío</h2>
+            <hr className="border-gray-800 mb-6" />
+          </div>
+
+          {/* Aqui va la logica de metodo de pago */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Método de pago</h2>
+            <hr className="border-gray-800 mb-6" />
+          </div>
+        </div>
+
+        <div className="lg:col-span-4">
+          <h2 className="text-xl font-semibold mb-4">Artículos</h2>
+          <hr className="border-gray-800 mb-6" />
+          <div className="space-y-8">
+            {items.map((item) => (
+              <div key={item.id_producto} className="flex gap-6">
+                <div className="flex-shrink-0 w-28 h-28 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
                   {item.imagen_url ? (
                     <Image
                       src={item.imagen_url}
                       alt={item.nombre}
-                      width={96}
-                      height={96}
-                      className="object-cover w-full h-full"
+                      width={112}
+                      height={112}
+                      className="object-contain w-full h-full p-2"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
                       Sin imagen
                     </div>
                   )}
                 </div>
+                <div className="flex-1 pt-2">
+                  <p className="font-medium text-base">
+                    100 mm Mules - Silk taffetas
+                  </p>
+                  <div className="mt-3 space-y-1 text-sm text-gray-600">
+                    <p><span className="font-medium">Talla:</span> {item.talla}</p>
+                    <p><span className="font-medium">Cantidad:</span> {item.cantidad}</p>
+                    <p className="font-medium text-black">
+                      ${item.precio.toLocaleString("es-MX")}
+                    </p>
+                  </div>
+                </div>
               </div>
-
-              {/* Nombre */}
-              <div className="col-span-4">
-                <p className="font-medium">{item.nombre}</p>
-              </div>
-
-              {/* Talla */}
-              <div className="col-span-1 text-left font-medium">
-                {item.talla}
-              </div>
-
-              {/* Costo */}
-              <div className="col-span-2 text-center font-medium">
-                ${item.precio.toLocaleString("es-MX")}
-              </div>
-
-              {/* Cantidad */}
-              <div className="col-span-1 text-center">
-                  {item.cantidad}
-                  <button>
-                    -{/* Aquí puedes agregar botones para aumentar/disminuir cantidad si lo deseas */}
-                  </button>
-                  <button>
-                    +{/* Aquí puedes agregar un botón para eliminar el artículo del carrito si lo deseas */}
-                  </button>
+            ))}
+          </div>
+          <hr className="border-gray-800 my-8" />
+          <div className="flex justify-end">
+            <div className="text-right">
+              <div className="flex justify-between items-baseline gap-8 text-lg">
+                <span className="font-medium">Total a pagar</span>
+                <span className="font-bold text-2xl">
+                  ${subtotal.toLocaleString("es-MX")}
+                </span>
               </div>
             </div>
-          ))}
+        
         </div>
         <div>
            
@@ -255,20 +251,23 @@ export default function CheckoutPage() {
               </span>
             </div>
 
+          </div>
+          <div className="flex justify-end mt-8">
             <button
               onClick={realizarCompra}
               disabled={loading || items.length === 0}
-              className="mt-8 w-full bg-black text-white py-4 rounded-xl font-semibold text-lg hover:bg-gray-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="bg-black text-white px-16 py-4 rounded-md font-semibold text-lg hover:bg-gray-900 transition disabled:bg-gray-400 disabled:cursor-not-allowed w-full lg:w-auto"
             >
               {loading ? "Procesando compra..." : "Comprar"}
             </button>
-
-            {error && (
-              <p className="text-red-600 text-center mt-4 font-medium">{error}</p>
-            )}
           </div>
+          {error && (
+            <p className="text-red-600 text-center mt-4 font-medium">{error}</p>
+          )}
         </div>
       </div>
     </div>
+  </div>
+  </div>
   );
 }
