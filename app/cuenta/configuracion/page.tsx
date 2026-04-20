@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 
 export default function EditarPerfilPage() {
   const router = useRouter();
+
   const [form, setForm] = useState({
     nombre: "",
     apellidos: "",
@@ -17,6 +18,7 @@ export default function EditarPerfilPage() {
     telefono: "",
     foto_perfil: "",
   });
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,9 +34,7 @@ export default function EditarPerfilPage() {
         }
 
         const res = await fetch("/api/cliente/perfil", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         const data = await res.json();
@@ -66,8 +66,7 @@ export default function EditarPerfilPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setLoading(true);
     setError("");
     setSuccess("");
@@ -97,7 +96,7 @@ export default function EditarPerfilPage() {
       setSuccess("Perfil actualizado correctamente");
 
       setTimeout(() => {
-        router.push("/perfil");
+        router.push("/cuenta");
       }, 1500);
     } catch (err: any) {
       setError(err.message);
@@ -107,69 +106,157 @@ export default function EditarPerfilPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-6">
-      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-center mb-6">Editar Perfil</h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Header */}
+        <div className="max-w-7xl mx-auto px-8 py-6">
+        <h1 className="text-3xl font-semibold text-center">Editar Perfil</h1>
+        <p className="text-gray-600 mt-2 text-center">Actualiza tu información personal</p>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <input
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-            placeholder="Nombre"
-            required
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black"
-          />
-          <input
-            name="apellidos"
-            value={form.apellidos}
-            onChange={handleChange}
-            placeholder="Apellidos"
-            required
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black"
-          />
-          <input
-            name="correo"
-            type="email"
-            value={form.correo}
-            onChange={handleChange}
-            placeholder="Correo electrónico"
-            required
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black"
-          />
-          <input
-            name="telefono"
-            value={form.telefono}
-            onChange={handleChange}
-            placeholder="Teléfono"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black"
-          />
-          <input
-            name="foto_perfil"
-            value={form.foto_perfil}
-            onChange={handleChange}
-            placeholder="URL de foto de perfil (opcional)"
-            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:border-black"
-          />
+      <div className="flex flex-1 w-full max-w-7xl mx-50">
+        {/* Sidebar Izquierda */}
+        <div className="w-60 flex-shrink-0 hidden lg:block">
+          <nav className="flex flex-col">
+            <a href="/" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Inicio
+            </a>
+            <a href="/cuenta/" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Mi información
+            </a>
+            <a href="/cuenta/pedidos" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Mis compras
+            </a>
+            <a href="/cuenta/listadedeseos" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Mi lista de deseo
+            </a>
+            <a href="/cuenta/direcciones" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Mis direcciones
+            </a>
+            <a href="/cuenta/metodosdepago" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Mis métodos de pago
+            </a>
+            <a href="/cuenta/configuracion" className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition">
+              Configuracion
+            </a>
+            <button
+              onClick={() => {
+                localStorage.removeItem("token");
+                localStorage.removeItem("userID");
+                router.push("/");
+              }}
+              className="px-2 py-3 text-left text-red-600 border-b hover:bg-red-50 font-medium transition"
+            >
+              Cerrar sesión
+            </button>
+          </nav>
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 disabled:opacity-70"
-          >
-            {loading ? "Guardando cambios..." : "Guardar Cambios"}
-          </button>
+        <div className="flex-1 px-40 bg-gray-50">
+          <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-10">
+            <div className="space-y-10 text-lg">
 
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          {success && <p className="text-green-600 text-center">{success}</p>}
-        </form>
+              {form.foto_perfil && (
+                <div className="flex justify-center mb-10">
+                  <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-md ring-1 ring-gray-200">
+                    <img
+                      src={form.foto_perfil}
+                      alt="Vista previa"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
-        <button
-          onClick={() => router.push("/cuenta")}
-          className="mt-6 w-full border border-gray-400 py-3 rounded-lg hover:bg-gray-100"
-        >
-          Cancelar
-        </button>
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-lg font-semibold text-gray-900 mb-3">Nombre</label>
+                    <input
+                      name="nombre"
+                      value={form.nombre}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-gray-300 rounded-2xl px-6 py-4 text-base focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all duration-200"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-lg font-semibold text-gray-900 mb-3">Apellidos</label>
+                    <input
+                      name="apellidos"
+                      value={form.apellidos}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-gray-300 rounded-2xl px-6 py-4 text-base focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all duration-200"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-lg font-semibold text-gray-900 mb-3">Correo electrónico</label>
+                  <input
+                    name="correo"
+                    type="email"
+                    value={form.correo}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded-2xl px-6 py-4 text-base focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all duration-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-lg font-semibold text-gray-900 mb-3">Teléfono</label>
+                  <input
+                    name="telefono"
+                    value={form.telefono}
+                    onChange={handleChange}
+                    placeholder="Ej: 951 123 4567"
+                    className="w-full border border-gray-300 rounded-2xl px-6 py-4 text-base focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all duration-200"
+                  />
+                </div>
+
+                <div className="pt-4">
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="w-full bg-black hover:bg-gray-900 active:bg-gray-950 text-white font-semibold py-4 rounded-2xl transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-base"
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        Guardando cambios...
+                      </>
+                    ) : (
+                      "Guardar Cambios"
+                    )}
+                  </button>
+                </div>
+
+                {error && (
+                  <p className="text-red-600 bg-red-50 border border-red-100 text-center py-3.5 rounded-2xl font-medium">
+                    {error}
+                  </p>
+                )}
+                {success && (
+                  <p className="text-green-600 bg-green-50 border border-green-100 text-center py-3.5 rounded-2xl font-medium">
+                    {success}
+                  </p>
+                )}
+              </div>
+
+              {/* Botón Cancelar */}
+              <button
+                onClick={() => router.push("/cuenta")}
+                className="mt-4 w-full border border-gray-300 hover:bg-gray-50 active:bg-gray-100 py-4 rounded-2xl font-medium transition-all duration-200 text-gray-700"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

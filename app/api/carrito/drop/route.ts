@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.service";
+import { getUserFromToken } from "@/lib/auth";
 
 /**
  * Función para eliminar todos los productos del carrito de compras de un cliente.
@@ -9,9 +10,16 @@ import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.ser
  */
 export async function DELETE (req : Request) {
   try {
-    const { id_usuario } = await req.json();
+    // const { id_usuario } = await req.json();
 
-    const result = await CarritoCompras.dropCart(id_usuario);
+    // const result = await CarritoCompras.dropCart(id_usuario);
+    const user = getUserFromToken(req);
+
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    const result = await CarritoCompras.dropCart(user.id);
 
     if (!result) {
       return NextResponse.json({ ok: false, message: 'No se pudo vaciar el carrito' }, { status: 400 });
@@ -20,8 +28,6 @@ export async function DELETE (req : Request) {
     return NextResponse.json({ ok: true, message: 'Carrito vaciado' });
 
   } catch (error: any) {
-    console.error('DELETE /api/carrito/drop', error);
-
     return NextResponse.json(
       {
         ok: false,

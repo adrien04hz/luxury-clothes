@@ -6,21 +6,27 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { X, Plus, Minus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { CategoriaPorGenero } from "@/types/producto/Categoria";
 
 interface Props {
-    categorias: any[];
+    categorias: CategoriaPorGenero;
     generos: any[];
     colores: any[];
     marcas: any[];
     title?: string;
     count?: number;
+    titulos?: {
+        categoria: string;
+        subcategoria?: string;
+        genero?: string;
+    };
 }
 
-export default function Filtros({ categorias, generos, colores, marcas, title, count }: Props) {
+export default function Filtros({ categorias, generos, colores, marcas, title, count, titulos }: Props) {
     const [open, setOpen] = useState(false);
     const [activo, setActivo] = useState<string | null>(null);
 
@@ -88,9 +94,17 @@ export default function Filtros({ categorias, generos, colores, marcas, title, c
 
         <>
 
-            <div className="flex w-full justify-between mb-4 items-end">
+            <div className="flex w-full justify-between items-end">
                 <div className="text-3xl font-medium">
-                    <p>{"Resultados para: \"" + title + "\" (" + count + ")"}</p>
+                    {
+                        titulos && (<p>{titulos?.categoria ? ((titulos.subcategoria ? titulos.subcategoria : titulos.categoria) + " " + (titulos.genero ? "para " + titulos.genero + " (" + count + ")" : "(" + count + ")")) : "Todos los productos (" + count + ")"}</p>)
+                    }
+
+                    {
+                        title && (
+                            <p>{"Resultados para: \"" + title + "\" (" + count + ")"}</p>
+                        )
+                    }
                 </div>
         
                 <button onClick={() => setOpen(true)} className="text-sm font-regular hover:underline">
@@ -111,99 +125,180 @@ export default function Filtros({ categorias, generos, colores, marcas, title, c
                 </button>
             </div>
 
-            {open && (
-                <div className="fixed inset-0 bg-black/30 z-50 flex justify-end">
-                    <div className="w-87.5 bg-white h-full p-6 overflow-y-auto">
+    
+            <div
+            className={`
+                fixed inset-0 flex justify-end
+                transition-all duration-300
+                ${open ? "visible opacity-100" : "invisible opacity-0"}
+            `}
+            >
+                <div className={`
+                    absolute inset-0 bg-black/30
+                    transition-opacity duration-300
+                    ${open ? "opacity-100" : "opacity-0"}
+                `}
+                onClick={() => setOpen(false)}
+                />
+                <div
+                className={`
+                    relative w-87.5 bg-white h-full p-6 overflow-y-auto
+                    transform transition-transform duration-300 ease-in-out
+                    ${open ? "translate-x-0" : "translate-x-full"}
+                `}
+                >
 
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-lg font-semibold">
-                                Filtrar y ordenar
-                            </h2>
-                            <button onClick={() => setOpen(false)}>
-                                <X />
-                            </button>
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-lg font-semibold">
+                            Filtrar y ordenar
+                        </h2>
+                        <button onClick={() => setOpen(false)}>
+                            <X />
+                        </button>
+                    </div>
+
+                    {/* SECCIONES */}
+                    {/* seccion de orden */}
+                    <FiltroItem title="Ordenar por" open={activo === "orden"} onToggle={() => setActivo(activo === "orden" ? null : "orden")}>
+                        <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_asc")}>
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" className="peer hidden" />
+
+                                <div className="
+                                    w-4 h-4 border border-gray-400
+                                    peer-checked:bg-black
+                                    peer-checked:border-black
+                                    transition rounded-sm
+                                "></div>
+
+                                <span>Precio menor a mayor</span>
+                            </label>
                         </div>
+                        <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_desc")}>
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" className="peer hidden" />
 
-                        {/* SECCIONES */}
-                        {/* seccion de orden */}
-                        <FiltroItem title="Ordenar por" open={activo === "orden"} onToggle={() => setActivo(activo === "orden" ? null : "orden")}>
-                            <p className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_asc")}>Precio menor a mayor</p>
-                            <p className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_desc")}>Precio mayor a menor</p>
-                        </FiltroItem>
+                                <div className="
+                                    w-4 h-4 border border-gray-400
+                                    peer-checked:bg-black
+                                    peer-checked:border-black
+                                    transition rounded-sm
+                                "></div>
 
-                        {/* seccion de categoria */}
-                        <FiltroItem title="Categoría" open={activo === "categoria"} onToggle={() => setActivo(activo === "categoria" ? null : "categoria")}>
-                            {
-                                categorias.map((c) => (
-                                    <div key={c.id}>
-                                        <p className="text-sm font-medium">
-                                            {c.name}
-                                        </p>
-                                        {
-                                            c.subcategories.map((s: any) => (
-                                                <p key={s.id} className="text-xs ml-3 text-gray-500 cursor-pointer" onClick={() => aplicarFiltro("categoria", s.id)}>
-                                                    {s.nombre}
-                                                </p>
-                                            ))
-                                        }
-                                    </div>
-                                ))
-                            }
-                        </FiltroItem>
+                                <span>Precio mayor a menor</span>
+                            </label>
+                        </div>
+                    </FiltroItem>
 
-                        {/* seccion de genero */}
-                        <FiltroItem title="Género" open={activo === "género"} onToggle={() => setActivo(activo === "género" ? null : "género")}>
-                            {generos?.map((c) => (
-                                <div key={c.id}>
-                                    <p className="text-sm font-medium cursor-pointer" onClick={() => aplicarFiltro("genero", c.id.toString())}>
-                                        {c.nombre}
+                    {/* seccion de categoria */}
+                    <FiltroItem title="Categoría" open={activo === "categoria"} onToggle={() => setActivo(activo === "categoria" ? null : "categoria")}>
+                        {
+                            categorias.data.map((c) => (
+                                <div key={c.id_categoria}>
+                                    <p className="text-sm font-medium mb-1">
+                                        {c.categoria}
                                     </p>
-                                </div>
-                            ))}
-                        </FiltroItem>
+                                    {
+                                        c.subcategorias.map((s) => (
+                                            <div key={s.id} className="text-sm ml-3 text-gray-500 cursor-pointer" onClick={() => aplicarFiltro("categoria", s.id.toString())}>
 
-                        {/* seccion de Color */}
-                        <FiltroItem title="Color" open={activo === "color"} onToggle={() => setActivo(activo === "color" ? null : "color")}>
-                            <div className=" px-8 mt-4 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
-                                {colores?.map((color) => (
-                                    <div key={color.id} className="flex flex-col items-center  w-fit">
-                                        <div
-                                            className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition"
-                                            style={{ backgroundColor: getColor(color.nombre) }}
-                                            onClick={() => aplicarFiltro("color", color.id.toString())}
-                                        ></div>
-                                        <span className="text-xs mt-2 text-gray-700">
-                                            {color.nombre}
-                                        </span>
-                                    </div>
-                                ))}
+                                                <label className="flex items-center space-x-2 cursor-pointer">
+                                                    <input type="checkbox" className="peer hidden" />
+
+                                                    <div className="
+                                                        w-4 h-4 border border-gray-400
+                                                        peer-checked:bg-black
+                                                        peer-checked:border-black
+                                                        transition rounded-sm
+                                                    "></div>
+
+                                                    <span>{s.nombre}</span>
+                                                </label>
+                                                
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            ))
+                        }
+                    </FiltroItem>
+
+                    {/* seccion de genero */}
+                    <FiltroItem title="Género" open={activo === "género"} onToggle={() => setActivo(activo === "género" ? null : "género")}>
+                        {generos?.map((c) => (
+                            <div key={c.id}>
+                                <div className="text-sm font-normal cursor-pointer" onClick={() => aplicarFiltro("genero", c.id.toString())}>
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input type="checkbox" className="peer hidden" />
+
+                                        <div className="
+                                            w-4 h-4 border border-gray-400
+                                            peer-checked:bg-black
+                                            peer-checked:border-black
+                                            transition rounded-sm
+                                        "></div>
+
+                                        <span>{c.nombre}</span>
+                                    </label>
+                                </div>
                             </div>
-                        </FiltroItem>
+                        ))}
+                    </FiltroItem>
 
-                        <FiltroItem title="Marcas" open={activo === "marca"} onToggle={() => setActivo(activo === "marca" ? null : "marca")}>
-                            {marcas?.map((c) => (
-                                <div key={c.id}>
-                                    <p className="text-sm font-medium cursor-pointer" onClick={() => aplicarFiltro("marca", c.id.toString())}>
-                                        {c.nombre}
-                                    </p>
+                    {/* seccion de Color */}
+                    <FiltroItem title="Color" open={activo === "color"} onToggle={() => setActivo(activo === "color" ? null : "color")}>
+                        <div className=" px-8 mt-4 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
+                            {colores?.map((color) => (
+                                <div key={color.id} className="flex flex-col items-center  w-fit">
+                                    <div
+                                        className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition"
+                                        style={{ backgroundColor: getColor(color.nombre) }}
+                                        onClick={() => aplicarFiltro("color", color.id.toString())}
+                                    ></div>
+                                    <span className="text-xs mt-2 text-gray-700">
+                                        {color.nombre}
+                                    </span>
                                 </div>
                             ))}
-                        </FiltroItem>
-
-                        <div className="mt-6 space-y-4">
-                            <button onClick={limpiarFiltros} className="text-sm underline">
-                                Borrar todo
-                            </button>
                         </div>
+                    </FiltroItem>
+
+                    <FiltroItem title="Marcas" open={activo === "marca"} onToggle={() => setActivo(activo === "marca" ? null : "marca")}>
+                        {marcas?.map((c) => (
+                            <div key={c.id}>
+                                <div className="text-sm font-normal cursor-pointer" onClick={() => aplicarFiltro("marca", c.id.toString())}>
+                                    <label className="flex items-center space-x-2 cursor-pointer">
+                                        <input type="checkbox" className="peer hidden" />
+
+                                        <div className="
+                                            w-4 h-4 border border-gray-400
+                                            peer-checked:bg-black
+                                            peer-checked:border-black
+                                            transition rounded-sm
+                                        "></div>
+
+                                        <span>{c.nombre}</span>
+                                    </label>
+                                </div>
+                            </div>
+                        ))}
+                    </FiltroItem>
+
+                    <div className="mt-6 space-y-4">
+                        <button onClick={limpiarFiltros} className="text-sm underline">
+                            Borrar todo
+                        </button>
                     </div>
                 </div>
-            )}
+            </div>
         </>
     );
 }
 
 /* componente del debplegable de los campos de filtro */
 function FiltroItem({ title, open, onToggle, children }: any) {
+    const contentRef = useRef<HTMLDivElement>(null);
+    
     return (
         <div className="border-b py-4">
 
@@ -213,14 +308,26 @@ function FiltroItem({ title, open, onToggle, children }: any) {
                 onClick={onToggle}
             >
                 <span>{title}</span>
-                {open ? <Minus size={16} /> : <Plus size={16} />}
+                <div className="transition-transform duration-300">
+                    {open ? <Minus size={16} /> : <Plus size={16} />}
+                </div>
             </div>
 
-            {open && (
-                <div className="mt-3 space-y-2">
+            {/* Contenido animado */}
+
+            <div
+                style={{
+                    height: open
+                        ? contentRef.current?.scrollHeight
+                        : 0,
+                    marginTop: open ? "0.75rem" : 0,
+                }}
+                className="overflow-hidden transition-all duration-300 ease-in-out"
+            >
+                <div ref={contentRef} className=" space-y-2">
                     {children}
                 </div>
-            )}
+            </div>
         </div>
     );
 }

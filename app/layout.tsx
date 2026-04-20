@@ -7,6 +7,7 @@ import { getCategorias, getCategoriasDefault, getTodasLasCategorias } from "@/cl
 import { getGeneros } from "@/client/genero.client";
 import { getProveedoresBancarios } from "@/client/proveedor.client";
 import { getMarcas } from "@/client/marca.client";
+import { getColores } from "@/client/color.client";
 
 
 const geistMontserrat = Montserrat({

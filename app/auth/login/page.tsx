@@ -8,6 +8,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import type { LoginRequest, LoginResponse } from "@/types/auth/login/login";
 
 export default function LoginPage() {
@@ -21,6 +22,7 @@ export default function LoginPage() {
 
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mostrarPassword, setMostrarPassword] = useState(false);
 
   const handleLogin = async () => {
     setMensaje("");
@@ -88,7 +90,7 @@ export default function LoginPage() {
             onChange={(e) =>
               setForm({ ...form, correo: e.target.value })
             }
-            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="peer w-full p-3 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
           />
 
           <label
@@ -112,14 +114,14 @@ export default function LoginPage() {
 
         <div className="relative mb-4">
           <input
-            type="password"
+            type={mostrarPassword ? "text" : "password"}
             id="contrasena"
             placeholder=" "
             value={form.contrasena}
             onChange={(e) =>
               setForm({ ...form, contrasena: e.target.value })
             }
-            className="peer w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="peer w-full p-3 pr-12 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black"
           />
 
           <label
@@ -139,6 +141,19 @@ export default function LoginPage() {
           >
             Contraseña
           </label>
+
+          <button
+            type="button"
+            onClick={() => setMostrarPassword(!mostrarPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-black"
+          >
+            {mostrarPassword ? (
+              <EyeOff size={20} />
+            ) : (
+              <Eye size={20} />
+            )}
+          </button>
+
         </div>
 
         <button

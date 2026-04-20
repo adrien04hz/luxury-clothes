@@ -20,6 +20,8 @@ export default function ProductCard(
     showIcon = true,    //mostrar icono de favorito
     onRemoveFavorite,     //funcion para eliminar de favoritos
     onUndo,
+    onViewTallas,
+    onSetView,
     pendingDelete,
     item,
   }
@@ -30,6 +32,8 @@ export default function ProductCard(
     showIcon?: boolean,
     onRemoveFavorite?: (productId: number) => void,
     onUndo?: () => void,
+    onViewTallas?: (productId: number) => void,
+    onSetView?: (view: "none" | "selector" | "modal") => void;
     pendingDelete?: boolean,
     item?: Producto
   }
@@ -41,14 +45,15 @@ export default function ProductCard(
       
       <div className="relative aspect-square w-full flex items-center justify-center overflow-hidden">
         
-        <Image
-          src={product?.imagenes?.[0] || item?.imagen_url || "/assets/images/bag.svg"}
-          width={400}
-          height={400}
-          alt={product?.nombre || item?.nombre || "Producto"}
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
+        <div className="relative h-full w-full">
+          <Image
+            src={product?.imagenes?.[0] || item?.imagen_url || "/assets/images/bag.svg"}
+            fill
+            alt={product?.nombre || item?.nombre || "Producto"}
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </div>
         {showIcon && (
           <button
             onClick={() => onRemoveFavorite?.(product!.id)}
@@ -67,15 +72,13 @@ export default function ProductCard(
           </button>
         ) }
         {pendingDelete && (
-           <div className="absolute inset-0 bg-white/30">
-          <div className="absolute bottom-0 left-0 w-full p-4 flex items-center justify-center text-white
-                          bg-black">
-
-            <div className="flex items-center pr-4">
-              <p className="text-base font-semibold tracking-tight">
-                Eliminando de favoritos...
-              </p>
-            </div>
+          <div className="absolute inset-0 bg-white/30">
+            <div className="absolute bottom-0 left-0 w-full p-4 flex items-center justify-center text-white bg-black rounded-md">
+              <div className="flex items-center pr-4">
+                <p className="text-base font-semibold tracking-tight">
+                  Eliminando de favoritos...
+                </p>
+              </div>
 
             <button
               onClick={onUndo}
@@ -101,11 +104,17 @@ export default function ProductCard(
 
         <div className="mt-auto">
           <p className="text-black font-medium">
-             ${Number(product?.precio || item?.precio).toLocaleString()}
+             $ {Number(product?.precio || item?.precio).toLocaleString()}
           </p>
           
           {showToCart && (
-            <button className="w-full mt-4 border border-gray-300 text-black py-2 rounded-lg hover:bg-black hover:text-white transition">
+            <button
+            onClick={() => {
+              onViewTallas?.(product!.id);
+              onSetView?.("selector");
+            }}
+              className="bg-black text-white py-2 px-4 rounded-full w-full h-12 hover:opacity-60 transition-all duration-100 mt-5"
+            >
               Agregar al carrito
             </button>
           )}

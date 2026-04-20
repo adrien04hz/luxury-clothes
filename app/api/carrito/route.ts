@@ -5,6 +5,7 @@
  */
 import { NextResponse } from 'next/server';
 import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.service";
+import { getUserFromToken } from "@/lib/auth";
 
 /**
  * 
@@ -12,10 +13,22 @@ import { CarritoCompras } from "@/services/carritodecompras/carritodecompras.ser
  */
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const id_usuario = Number(searchParams.get('id_usuario'));
+
+    const user = getUserFromToken(req);
+
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
   
-    const carrito = await CarritoCompras.getCart(id_usuario);
+    const carrito = await CarritoCompras.getCart(user.id);
+    // const { searchParams } = new URL(req.url);
+    // const id_usuario = Number(searchParams.get('id_usuario'));
+  
+    // const carrito = await CarritoCompras.getCart(id_usuario);
+
+    if (!carrito) {
+      return NextResponse.json({ ok: false, message: 'No se pudo obtener el carrito' }, { status: 400 });
+    }
   
     return NextResponse.json({
       ok: true,
@@ -39,9 +52,15 @@ export async function GET(req: Request) {
  */
 export async function POST(req: Request) {
   try {
-    const { id_usuario, id_producto, id_talla, cantidad } = await req.json();
+    const user = getUserFromToken(req);
 
-    const result = await CarritoCompras.addProduct({ id_usuario, id_producto, id_talla, cantidad });
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    const { id_producto, id_talla, cantidad } = await req.json();
+
+    const result = await CarritoCompras.addProduct({ id_usuario: user.id, id_producto, id_talla, cantidad });
 
     if (!result) {
       return NextResponse.json({ ok: false, message: 'No se pudo agregar el producto al carrito' }, { status: 400 });
@@ -67,9 +86,18 @@ export async function POST(req: Request) {
  */
 export async function DELETE(req: Request) {
   try {
-    const { id_usuario, id_producto, id_talla } = await req.json();
+    const user = getUserFromToken(req);
+
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    const { id_producto, id_talla } = await req.json();
+
+    const result = await CarritoCompras.deleteProduct({ id_usuario: user.id, id_producto, id_talla });
+    // const { id_usuario, id_producto, id_talla } = await req.json();
     
-    const result = await CarritoCompras.deleteProduct({ id_usuario, id_producto, id_talla });
+    // const result = await CarritoCompras.deleteProduct({ id_usuario, id_producto, id_talla });
 
     if (!result) {
       return NextResponse.json({ ok: false, message: 'No se pudo eliminar el producto del carrito' }, { status: 400 });
@@ -99,12 +127,19 @@ export async function PUT(
 ) {
   let result = false;
   try {
-    const { id_usuario, id_producto, id_talla, cantidad, flag } = await req.json();
+
+    const user = getUserFromToken(req);
+
+    if (!user) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    const { id_producto, id_talla, cantidad, flag } = await req.json();
 
     if (flag === 'increase') {
-      result = await CarritoCompras.increaseQuantityProduct({id_usuario, id_producto, id_talla, cantidad});
+      result = await CarritoCompras.increaseQuantityProduct({id_usuario: user.id, id_producto, id_talla, cantidad});
     } else if (flag === 'decrease') {
-      result = await CarritoCompras.decreaseQuantityProduct({id_usuario, id_producto, id_talla, cantidad});
+      result = await CarritoCompras.decreaseQuantityProduct({id_usuario: user.id, id_producto, id_talla, cantidad});
     } else {
         throw new Error('Flag inválida. Debe ser "increase" o "decrease".');
     }

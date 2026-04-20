@@ -1,1 +1,0 @@
-//  # Tipos de datos que se usaran (Pueden depender de las necesidases). Esta parte va depender de que se vaya ocupando, se pueden ir agregando mas cosas

@@ -29,7 +29,7 @@ export default async function NavBar({
         />
       </Link>
         
-      <nav className="z-50 *:h-full flex items-center">
+      <nav className="*:h-full flex items-center">
         <ul className="h-full flex justify-center items-center text-sm space-x-9">
           <li className="h-full text-white group hover:underline" key={12312}>
             <div className="h-full w-auto flex items-center justify-center">
@@ -40,7 +40,7 @@ export default async function NavBar({
 
             <div className="
               fixed left-0 top-28 w-full opacity-0 invisible
-              group-hover:opacity-100 group-hover:visible
+              group-hover:opacity-100 group-hover:visible z-20
               transition-all duration-300
               bg-white text-black shadow-xl py-10
             ">
@@ -83,7 +83,7 @@ export default async function NavBar({
                 
                   <div className="
                   fixed left-0 top-28 w-full opacity-0 invisible
-                  group-hover:opacity-100 group-hover:visible
+                  group-hover:opacity-100 group-hover:visible z-20
                   transition-all duration-300
                   bg-white text-black shadow-xl py-10
                 ">
