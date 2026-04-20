@@ -119,6 +119,40 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 		setLoading(false);
 	};
 
+	const handleDeleteFromWishList = async (id_producto: number) => {
+		setLoading(true);
+		const token = localStorage.getItem("token");
+
+		if (!token) {
+			setLoading(false);
+			router.push("/auth/login");
+			return;
+		}
+
+		try {
+			const res = await fetch("/api/listadeseos", {
+				method: "DELETE",
+				headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+				},
+				body: JSON.stringify({ 	productId: id_producto }),
+			});
+
+			if (!res.ok) {
+				throw new Error("Error al eliminar el producto de la lista de deseos");
+			}
+
+			setIsWishList(true);
+			setInWishlist(false);
+			setShowModal(false);
+		} catch (error) {
+			console.error(error);
+		}
+
+		setLoading(false);
+	};
+
     return (
 			<>
         <div className="p-24 w-full h-full flex gap-8 justify-center">
