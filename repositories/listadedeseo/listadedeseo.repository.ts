@@ -104,4 +104,25 @@ export class DetalleListaDeseos {
 
   return rows.length > 0;
 }
+
+  /**
+   * Función para verificar si un producto ya está en la lista de deseos de un cliente
+   * @author Adrien Hernández Sánchez
+   * @param id_producto - El ID del producto a verificar
+   * @param id_usuario - El ID del usuario para el cual se verifica la lista de deseos
+   * @returns {Promise<boolean>} - Devuelve true si el producto ya está en la lista de deseos, false en caso contrario
+   */
+  static async isProductInWishlist(productId: number, userId: number): Promise<boolean> {
+    const query = `
+     SELECT EXISTS (
+        SELECT 1
+        FROM "ListaDeseos" L
+        INNER JOIN "DetalleDeseos" D ON D.id_lista_deseos = L.id
+        WHERE L.id_usuario = $1
+        AND D.id_producto = $2
+      ) AS exists;
+    `;
+    const { rows } = await pool.query(query, [userId, productId]);
+    return rows[0].exists;
+  }
 }

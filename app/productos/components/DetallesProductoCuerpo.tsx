@@ -16,6 +16,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 	const [showModal, setShowModal] = useState(false);
 	const [isWishList, setIsWishList] = useState(false);
 	const [tallaName, setTallaName] = useState<string>("");
+	const [inWishlist, setInWishlist] = useState(false);
     const router = useRouter();
 
 	useEffect(() => {
@@ -23,6 +24,29 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 			if (showModal) setShowModal(false);
 		}, 8000);
 	}, [showModal]);
+
+	useEffect(() => {
+		checkProduct();
+	}, []);
+
+	const checkProduct = async () => {
+		const token = localStorage.getItem("token");
+
+		if (!token) return;
+
+		try {
+			const res = await fetch(`/api/listadeseos/check?id_producto=${data.id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+
+			const json = await res.json();
+			setInWishlist(json.exists);
+		} catch (error) {
+			console.error(error);
+		}
+	};
 
 
     const handleAddToCart = async () => {
@@ -86,6 +110,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 			});
 
 			setIsWishList(true);
+			setInWishlist(true);
 			setShowModal(true);
 		} catch (error) {
 			console.error(error);
@@ -94,7 +119,39 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 		setLoading(false);
 	};
 
+	const handleDeleteFromWishList = async (id_producto: number) => {
+		setLoading(true);
+		const token = localStorage.getItem("token");
 
+		if (!token) {
+			setLoading(false);
+			router.push("/auth/login");
+			return;
+		}
+
+		try {
+			const res = await fetch("/api/listadeseos", {
+				method: "DELETE",
+				headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${localStorage.getItem("token")}`,
+				},
+				body: JSON.stringify({ 	productId: id_producto }),
+			});
+
+			if (!res.ok) {
+				throw new Error("Error al eliminar el producto de la lista de deseos");
+			}
+
+			setIsWishList(true);
+			setInWishlist(false);
+			setShowModal(true);
+		} catch (error) {
+			console.error(error);
+		}
+
+		setLoading(false);
+	};
 
     return (
 			<>
@@ -140,9 +197,15 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 
                 <div className="mt-6 w-full">
                     <button 
-					onClick={() => handleAddToWishList(data.id)}
+					onClick={() => {
+						if (inWishlist) {
+							handleDeleteFromWishList(data.id);
+						} else {
+							handleAddToWishList(data.id);
+						}
+					}}
 					className="text-black bg-white py-2 px-4 rounded-[28px] w-full h-16 border border-[#E6E6E6] hover:border-black">
-                        Añadir a lista de deseos
+                        {inWishlist ? "Eliminar de lista de deseos" : "Añadir a lista de deseos"}
                     </button>
                 </div>
             </div>
@@ -183,7 +246,7 @@ export default function DetallesProductoCuerpo({ data }: { data: Producto }) {
 							<div className="flex gap-2 items-center">
 								<CheckCircle2Icon className="text-green-500" />
 								<p className="font-semibold text-lg text-white">
-								{isWishList ? "Agregado a la lista de deseos" : "Agregado al carrito"}
+								{isWishList ? (!inWishlist ? "Eliminado de la lista de deseos" : "Agregado a la lista de deseos" ): "Agregado al carrito"}
 								</p>
 							</div>
 
