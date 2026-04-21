@@ -1,4 +1,5 @@
 "use client"
+import { useEffect } from "react";
 import React, { useState } from 'react';
 import { MapPin, Clock, RefreshCcw } from 'lucide-react';
 import { EnvioPendiente } from '@/types/logistica/envio_pendiente';
@@ -9,49 +10,115 @@ export default function EnviosPendientes(){
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const getEstadoColor = (estado: EnvioPendiente["estado_envio"]): string => {
+    switch (estado) {
+      case "Pendiente": return "bg-green-500 text-white";
+      case "Preparado": return "bg-green-700 text-white";
+      case "Enviado": return "bg-blue-700 text-white";
+      case "En Camino": return "bg-black text-white";
+      default: return "bg-black text-white";
+    }
+  };
 
-  const loadEnviosPendientes = async () => {
-    try{
 
-      const token = localStorage.getItem("token");
-      const respuesta = await fetch("/api/logistica/envios", {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+ const loadEnviosPendientes = async () => {
+  try {
+    const token = localStorage.getItem("token");
 
-      const data = await respuesta.json();
-
-      if (!respuesta.ok) {
-        throw new Error(data.error || "Error al obtener pedidos");
+    const respuesta = await fetch("/api/logistica/envios", {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
+    });
 
-      const estadoenvios = data.data || [];
+    const data = await respuesta.json();
 
-      const resultado = await Promise.all(
-        estadoenvios.map((p: any) =>
-          fetch(`/api/pedido/${p.id_pedido}/estado`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }).then(res => res.json())
-        )
-      );
+    if (!respuesta.ok) {
+      throw new Error(data.error || "Error al obtener pedidos");
+    }
 
-      setEnvioPendiente(resultado);
+    const estadoenvios = data.data || [];
 
-    }catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    // quitar duplicados por id_pedido
+    const unicos = estadoenvios.filter(
+      (envio: EnvioPendiente, index: number, self: EnvioPendiente[]) =>
+        index === self.findIndex(e => e.id_pedido === envio.id_pedido)
+    );
+  console.log(respuesta);
+
+    setEnvioPendiente(unicos);
+
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
   }
+};
+  useEffect(() => {
+    loadEnviosPendientes();
+  }, []);
   return (
-    <div>
-      holita
+    <div className="min-h-screen bg-gray-50 font-sans pb-10">
+      <main className="p-6 max-w-2xl mx-auto">
+        <header className="mb-8 text-center">
+          <h2 className="text-4xl font-bold uppercase tracking-tighter">Envios pendientes</h2>
+        </header>
+
+        <section className="space-y-6">
+          {envioPendiente.map((envio) => (
+          <div key={envio.id_pedido} className="bg-white p-6 shadow-sm border border-gray-100 relative overflow-hidden">
+            
+    {/* Estado */}
+    <div className={`absolute top-0 right-0 px-4 py-1 text-[10px] font-semibold uppercase tracking-widest ${getEstadoColor(envio.estado_envio)}`}>
+      {envio.estado_envio}
+    </div>
+
+    <div className="flex justify-between items-start mb-4">
+      <div>
+        <span className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+          ID: {envio.numero_guia}
+        </span>
+
+        <h3 className="text-2xl font-black uppercase mt-1 tracking-tight">
+          {envio.cliente_nombre} {envio.cliente_apellido}
+        </h3>
+      </div>
+    </div>
+
+    <div className="space-y-2 mb-6 border-l-2 border-gray-100 pl-4">
+      <div className="flex items-center gap-2 text-gray-600">
+        <MapPin size={14} className="text-black" />
+        <p className="text-sm font-medium">
+          {/* Aquí aún no tienes dirección */}
+          Dirección no disponible
+        </p>
+      </div>
+
+      <div className="flex items-center gap-2 text-gray-600">
+        <Clock size={14} className="text-black" />
+        <p className="text-sm font-bold uppercase tracking-tighter">
+          Ventana: <span className="text-black font-black">{envio.fecha_estimada}</span>
+        </p>
+      </div>
+    </div>
+
+    <button 
+      disabled={envio.estado_envio === "Entregado"}
+      className={`flex items-center justify-center gap-2 font-black py-4 text-xs uppercase tracking-widest transition shadow-lg rounded-full ${
+        envio.estado_envio === "Entregado" 
+        ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
+        : "bg-black text-white hover:bg-gray-800 active:scale-95"
+      }`}
+    >
+      Confirmar Entrega
+    </button>
+  </div>
+))}
+        </section>
+      </main>
     </div>
   );
-}
+};
 
 
 // // 1. Definimos la estructura exacta basada en tu DB
