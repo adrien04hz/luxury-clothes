@@ -1,7 +1,7 @@
 // # Gestion de direcciones (Agregar, Modificar, Eliminar)
 //datos estaticos para probar información de direcciones, se eliminaran cuando se integre con la base de datos
 "use client";
-
+import { getDirecciones } from "@/client/direccionesenvio";
 import { useEffect, useState } from "react";
 import FormularioDireccion from "@/app/cuenta/direcciones/components/FormularioDireccion";
 import DireccionEnvio from "./components/DireccionEnvio";
@@ -22,20 +22,40 @@ export default function DireccionesPage() {
     loadDireccion();
   }, []);
 
+
   const loadDireccion = async () => {
     try {
-      const res = await fetch("/api/direcciondeenvio", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      
-      const data   = await res.json();
+      const data = await getDirecciones();
       setDirecciones(data.direcciones);
     } catch (error) {
       console.error(error);
-    } 
-  }
+    }
+  };
+
+  // const loadDireccion = async () => {
+  //   try {
+  //     const res = await fetch("/api/direcciondeenvio", {
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //     })
+      
+  //     const data   = await res.json();
+  //     setDirecciones(data.direcciones);
+  //   } catch (error) {
+  //     console.error(error);
+  //   } 
+  // }
+
+//   const loadDireccion = async () => {
+//   try {
+//     const token = localStorage.getItem("token")!;
+//     const dirs = await getDirecciones(token);
+//     setDirecciones(dirs);
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
   const hasDirecciones = direcciones.length > 0;
 
