@@ -272,4 +272,31 @@ export class LogisticaRepository {
 
     return rows;
   }
+
+  /**
+   * Función para obtener los pedidos que no tengan estado
+   * de pedido completado
+   * @author Hernández Sánchez Adrien
+   * @returns Lista de pedidos sin estado completado
+   */
+  static async obtenerPedidosSinEstadoCompletado() {
+    const query = `
+      SELECT
+        P.id as id_pedido,
+        U.nombre as cliente_nombre,
+        U.apellidos as cliente_apellido,
+        EP.nombre as estado_pedido
+      FROM "Pedido" P
+      
+      JOIN "Usuario" U ON P.id_usuario = U.id
+      JOIN "Rol" R ON U.id_rol = R.id
+      JOIN "EstadoPedido" EP ON P.id_estado_pedido = EP.id
+
+      WHERE R.id = 1
+      AND P.id_estado_pedido != 5;
+    `;
+
+    const { rows } = await pool.query(query);
+    return rows;
+  }
 }
