@@ -1,7 +1,7 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
 //* Autor de la clase: Ramos Bello Jose Luis */
-//* Fecha: 13/03/2026 */
+//* Fecha: 20/04/2026 */
 //**********/
 import { pool } from '@/lib/db';
 import { QueryResult } from 'pg';
@@ -10,14 +10,44 @@ interface ProductoInput {
   nombre: string;
   descripcion: string;
   precio: number;
-  id_color: number;
-  id_genero: number;
-  id_subcategoria: number;
-  id_marca: number;
+  id_color?: number;        // ← Cambiado a opcional
+  id_genero?: number;       // ← Cambiado a opcional
+  id_subcategoria?: number; // ← Cambiado a opcional
+  id_marca?: number;        // ← Cambiado a opcional
   activo?: boolean;
 }
 
 export class AdministradorRepository {
+
+    // ==================== LISTAR PRODUCTOS CON IMÁGENES ====================
+  static async obtenerProductos(): Promise<QueryResult> {
+    return pool.query(`
+      SELECT 
+        p.id,
+        p.nombre,
+        p.descripcion,
+        p.precio,
+        p.activo,
+        COALESCE(SUM(s.stock), 0) AS stock,
+        c.nombre AS color,
+        g.nombre AS genero,
+        sc.nombre AS subcategoria,
+        m.nombre AS marca,
+        ARRAY_AGG(DISTINCT ip.url) FILTER (WHERE ip.url IS NOT NULL) AS imagenes
+      FROM "Producto" p
+      LEFT JOIN "StockPorTalla" s ON p.id = s.id_producto
+      LEFT JOIN "Color" c ON p.id_color = c.id
+      LEFT JOIN "Genero" g ON p.id_genero = g.id
+      LEFT JOIN "Subcategoria" sc ON p.id_subcategoria = sc.id
+      LEFT JOIN "Marca" m ON p.id_marca = m.id
+      LEFT JOIN "ImagenProducto" ip ON p.id = ip.id_producto
+      GROUP BY 
+        p.id, p.nombre, p.descripcion, p.precio, p.activo,
+        c.nombre, g.nombre, sc.nombre, m.nombre
+      ORDER BY p.id DESC
+    `);
+  }
+
   static async desactivarProducto(id: number): Promise<QueryResult> {
     return pool.query(
       `UPDATE "Producto"
@@ -33,10 +63,10 @@ export class AdministradorRepository {
       nombre,
       descripcion,
       precio,
-      id_color,
-      id_genero,
-      id_subcategoria,
-      id_marca,
+      id_color = 1,      // valor por defecto
+      id_genero = 1,
+      id_subcategoria = 1,
+      id_marca = 1,
       activo = true,
     } = data;
 
@@ -45,8 +75,7 @@ export class AdministradorRepository {
          nombre, descripcion, precio,
          id_color, id_genero, id_subcategoria, id_marca, activo
        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-       RETURNING id, nombre, descripcion, precio,
-                 id_color, id_genero, id_subcategoria, id_marca, activo`,
+       RETURNING id, nombre, descripcion, precio, activo`,
       [nombre, descripcion, precio, id_color, id_genero, id_subcategoria, id_marca, activo]
     );
   }
@@ -87,9 +116,8 @@ export class AdministradorRepository {
     const query = `
       UPDATE "Producto"
       SET ${fields.join(', ')}
-      WHERE id = $${paramIndex} AND activo = true
-      RETURNING id, nombre, descripcion, precio,
-                id_color, id_genero, id_subcategoria, id_marca, activo
+      WHERE id = $${paramIndex}
+      RETURNING id, nombre, descripcion, precio, activo
     `;
 
     return pool.query(query, values);
@@ -103,11 +131,12 @@ export class AdministradorRepository {
         u.apellidos, 
         u.correo, 
         u.telefono,
-        u.foto_perfil
+        u.foto_perfil,
+        u.activo
       FROM "Usuario" u
       JOIN "Rol" r ON u.id_rol = r.id
       WHERE u.activo = true 
-        AND r.nombre = 'cliente'
+        AND r.id = 1
       ORDER BY u.nombre, u.apellidos ASC
     `);
   }
