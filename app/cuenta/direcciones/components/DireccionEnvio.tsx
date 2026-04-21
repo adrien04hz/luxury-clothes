@@ -21,25 +21,36 @@ export default function DireccionEnvio({ direccion, onRefresh }: Props) {
   // console.log("📍 DIRECCIÓN COMPLETA:", direccion);
   // console.log("🆔 ID DE DIRECCIÓN:", direccion.id);
 
-  return (
-    <div className="max-w-xl p-6 border border-gray-200 ">
-      <h2 className="text-black font-semibold text-lg mb-2">
+ return (
+    <div className="p-5 border border-gray-200 rounded-xl hover:shadow-md transition">
+
+      {/* HEADER */}
+      <h2 className="text-black font-semibold text-lg mb-3">
         Dirección de entrega
       </h2>
 
-      <div className="flex justify-between items-start">
-        <div className="text-[#757575] text-[16px] space-y-1">
-          <p>
-            {direccion.nombre} {direccion.apellido} {direccion.telefono}
+      {/* CONTENT */}
+      <div className="flex justify-between items-start gap-4">
+
+        <div className="text-sm text-gray-700 space-y-1">
+          <p className="font-semibold text-black">
+            {direccion.nombre} {direccion.apellido}
           </p>
+
           <p>
-            {direccion.calle} {direccion.numero_exterior}
-            {direccion.numero_interior && ` Int. ${direccion.numero_interior}`} {direccion.colonia}
+            Calle {direccion.calle} {direccion.numero_exterior}
+            {direccion.numero_interior && ` Int. ${direccion.numero_interior}`},  {direccion.colonia}
           </p>
+
           <p>
-            {direccion.codigo_postal} {direccion.ciudad}, {direccion.estado}
+            CP: {direccion.codigo_postal} {direccion.ciudad}, {direccion.estado}
+          </p>
+
+          <p className="text-gray-500">
+            Tel: {direccion.telefono}
           </p>
         </div>
+
 
         <button
           onClick={handleEdit}
