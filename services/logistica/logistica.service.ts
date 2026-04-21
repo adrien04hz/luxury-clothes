@@ -132,4 +132,14 @@ export class LogisticaService {
   static async obtenerEnviosNoEntregados() {
     return await LogisticaRepository.obtenerEnviosSinEntregar();
   }
+
+  /**
+   * Función para obtener los pedidos con estado de pedido
+   * no completados
+   * @author Hernández Sánchez Adrien
+   * @return Lista de pedidos sin estado completado
+   */
+  static async obtenerPedidosSinEstadoCompletado() {
+    return await LogisticaRepository.obtenerPedidosSinEstadoCompletado();
+  }
 }

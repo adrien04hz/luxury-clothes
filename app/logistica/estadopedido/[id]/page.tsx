@@ -15,31 +15,32 @@ export default function EstadoPedidoPage() {
   const [mensaje, setMensaje] = useState("");
 
   useEffect(() => {
-    const fetchEstado = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(`/api/pedido/${id}/estado`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.error);
-        }
-
-        setPedido(data);
-
-      } catch (err: any) {
-        setError(err.message);
-      }
-    };
-
     if (id) fetchEstado();
   }, [id]);
+
+
+  const fetchEstado = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`/api/pedido/${id}/estado`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+
+      setPedido(data);
+
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
 
   const actualizarEstado = async () => {
     try {
@@ -75,8 +76,11 @@ export default function EstadoPedidoPage() {
   
       setMensaje("Estado actualizado correctamente");
   
-      // 🔥 recargar datos sin recargar página
-      window.location.reload();
+      /**
+       * @author Adrien H. S. - 2024-06-21
+       * Cambié esta parte eliminando el reload window.
+       */
+      await fetchEstado();
   
     } catch (err: any) {
       setMensaje(err.message);
@@ -149,9 +153,11 @@ export default function EstadoPedidoPage() {
         >
           <option value="">Selecciona estado</option>
           <option value="1">Pendiente</option>
-          <option value="2">En proceso</option>
-          <option value="3">Enviado</option>
-          <option value="4">Entregado</option>
+          <option value="2">Pagado</option>
+          <option value="3">En preparación</option>
+          <option value="4">Listo para envío</option>
+          <option value="5">Completado</option>
+          <option value="6">Cancelado</option>
         </select>
 
         <button
