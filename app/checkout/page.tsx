@@ -169,57 +169,91 @@ export default function CheckoutPage() {
             {/* Aqui va la logica de datos de envío */}
             <div>
               <h2 className="text-xl font-semibold mb-4">Datos de envío</h2>
-              <hr className="border-gray-800 mb-6" />
+              <hr className=" mb-6" />
 
-                <div className="p-4">
-                  <p className="text-md font-semibold">Enviar a domicilio</p>
-                  {selectedDireccion ? (
-                    <div>
-                    <div className="flex justify-between items-start">
-                      <div className="text-[#757575] text-[16px] space-y-1">
-                        <p>
-                          {selectedDireccion.nombre} {selectedDireccion.apellido} {selectedDireccion.telefono}
+              <div className="p-5 border border-gray-200 rounded-xl space-y-4">
+                
+                <p className="text-sm text-gray-500 font-medium">
+                  Enviar a domicilio
+                </p>
+
+                {selectedDireccion ? (
+                  <>
+                    {/* DIRECCIÓN */}
+                    <div className="flex justify-between items-start gap-4">
+                      
+                      <div className="text-sm text-gray-700 space-y-1">
+                        <p className="font-semibold text-black">
+                          {selectedDireccion.nombre} {selectedDireccion.apellido}
                         </p>
+
                         <p>
-                          {selectedDireccion.calle} {selectedDireccion.numero_exterior}
-                          {selectedDireccion.numero_interior && ` Int. ${selectedDireccion.numero_interior}`} {selectedDireccion.colonia}
+                          Calle {selectedDireccion.calle} No. {selectedDireccion.numero_exterior}
+                          {selectedDireccion.numero_interior && ` Int. ${selectedDireccion.numero_interior}`}, {selectedDireccion.colonia}
                         </p>
+
                         <p>
-                          {selectedDireccion.codigo_postal} {selectedDireccion.ciudad}, {selectedDireccion.estado}
+                          CP {selectedDireccion.codigo_postal} {selectedDireccion.ciudad}, {selectedDireccion.estado}
+                        </p>
+
+                        <p className="text-gray-500">
+                          Tel: {selectedDireccion.telefono}
                         </p>
                       </div>
+
+                      {/* EDITAR */}
                       <button
-                        onClick={() => { setDireccionEnEdicion(selectedDireccion);setIsModalOpen(true)}}
-                          className="text-black text-sm font-bold underline">
+                        onClick={() => {
+                          setDireccionEnEdicion(selectedDireccion);
+                          setIsModalOpen(true);
+                        }}
+                        className="text-sm underline font-semibold hover:opacity-70"
+                      >
                         Editar
                       </button>
                     </div>
 
-                    <div className="flex justify-between   pt-4">
-                       <button
-                        onClick={() => {
-                          setIsSelectModalOpen(true);
-                        }}
-                        className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition">
-                        Elegir dirección
+                    {/* BOTONES */}
+                    <div className="flex flex-wrap gap-3 pt-2">
+                      
+                      <button
+                        onClick={() => setIsSelectModalOpen(true)}
+                        className="border border-black px-5 py-2 rounded-full text-sm font-medium hover:bg-black hover:text-white transition"
+                      >
+                        Elegir otra dirección
                       </button>
+
                       <button
                         onClick={() => {
                           setDireccionEnEdicion(null);
                           setIsModalOpen(true);
                         }}
-                      className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition">
-                      Agregar dirección
+                        className="bg-black text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-80 transition"
+                      >
+                        Agregar nueva
                       </button>
 
                     </div>
-                    
+                  </>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <p className="text-gray-500 text-sm">
+                      No tienes una dirección seleccionada
+                    </p>
+
+                    <button
+                      onClick={() => {
+                        setDireccionEnEdicion(null);
+                        setIsModalOpen(true);
+                      }}
+                      className="bg-black text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-80 transition w-fit"
+                    >
+                      Agregar dirección
+                    </button>
                   </div>
-                  ) : (
-                    <p className="text-gray-500">No hay dirección seleccionada</p>
-                  )}
-                </div>
+                )}
               </div>
+            </div>
 
             {/* Aqui va la logica de metodo de pago */}
             <div>
