@@ -8,6 +8,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { getDirecciones } from "@/client/direccionesenvio";
+import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
 
 interface ItemCarrito {
   id_producto: number;
@@ -119,6 +121,38 @@ export default function CheckoutPage() {
     }
   };
 
+  //Haciendo lista de direcciones 
+    const [direcciones, setDirecciones] = useState<ListaDireccionEnvio[]>([]);
+    const [selectedDireccion, setSelectedDireccion] =
+  useState<ListaDireccionEnvio | null>(null);
+  
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if(!token) {
+        window.location.href = "/cuenta"; //redireccionamiento a page cuenta
+        return;
+      }
+      loadDireccion();
+    }, []);
+  
+  
+   const loadDireccion = async () => {
+  try {
+    const data = await getDirecciones();
+    const dirs = data.direcciones;
+
+    setDirecciones(dirs);
+
+    // 👉 última dirección agregada
+    if (dirs.length > 0) {
+      setSelectedDireccion(dirs[dirs.length - 1]);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+  
+
   if (isLoadingData) {
     return <div className="p-10 text-center">Cargando resumen del pedido...</div>;
   }
@@ -133,7 +167,27 @@ export default function CheckoutPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Datos de envío</h2>
             <hr className="border-gray-800 mb-6" />
-          </div>
+
+              <div className="p-4">
+                <p className="text-md font-semibold">Enviar a domicilio</p>
+                {selectedDireccion ? (
+                  <div>
+                    <p>Calle {selectedDireccion.calle} {selectedDireccion.numero_exterior} - {selectedDireccion.colonia}</p>
+                    <p>{selectedDireccion.ciudad}, {selectedDireccion.estado}</p>
+                    <p>CP {selectedDireccion.codigo_postal}</p>
+
+                    <button
+                      onClick={() => console.log("abrir modal de direcciones")}
+                      className="mt-3 text-sm underline text-blue-600"
+                    >
+                      Cambiar dirección
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No hay dirección seleccionada</p>
+                )}
+              </div>
+            </div>
 
           {/* Aqui va la logica de metodo de pago */}
           <div>
