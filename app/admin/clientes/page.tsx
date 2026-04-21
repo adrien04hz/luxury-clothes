@@ -15,7 +15,6 @@ interface Cliente {
     correo: string;
     telefono?: string;
     activo: boolean;
-    fecha_registro?: string;
 }
 
 export default function AdminClientesPage() {
@@ -26,7 +25,7 @@ export default function AdminClientesPage() {
 
     const cargarClientes = async () => {
         try {
-            const res = await fetch("/api/administrador/lista_cliente");
+            const res = await fetch("/api/administrador/lista-cliente");
             if (!res.ok) throw new Error("Error al cargar clientes");
             const data = await res.json();
             setClientes(data.clientes || []);
@@ -56,7 +55,7 @@ export default function AdminClientesPage() {
                     </div>
 
                     <nav className="flex gap-6 text-sm">
-                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Dashboard</button>
+                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Inicio</button>
                         <button onClick={() => router.push("/admin/categorias")} className="hover:text-black">Categorías</button>
                         <button onClick={() => router.push("/admin/clientes")} className="font-semibold text-black">Clientes</button>
                         <button onClick={() => router.push("/admin/marcas")} className="hover:text-black">Marcas</button>
