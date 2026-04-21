@@ -1,4 +1,5 @@
 export interface ListaDireccionEnvio {
+  id:number;
   nombre: string;
   apellido: string;
   telefono: string;
@@ -16,7 +17,6 @@ export interface DireccionesEnvio {
   cantidad: number;
   data: ListaDireccionEnvio[];
 }
-
 
 export interface State {
   id: number;

@@ -74,6 +74,7 @@ export class DireccionesEnvio{
             id_cliente: rows[0].id_usuario,
             cantidad: rows.length,
             direcciones: rows.map((row: any) => ({
+                id: row.id,
                 nombre: row.nombre,
                 apellido: row.apellido,
                 telefono: row.telefono,

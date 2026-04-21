@@ -6,46 +6,51 @@ import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
 
 type Props = {
   direccion: ListaDireccionEnvio;
+  onRefresh: () => void;
 };
 
-export default function DireccionEnvio({ direccion }: Props) {
+export default function DireccionEnvio({ direccion, onRefresh }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDireccion, setSelectedDireccion] =
-    useState<ListaDireccionEnvio | null>(null);
+  const [selectedDireccion, setSelectedDireccion] = useState<ListaDireccionEnvio | null>(null);
 
   const handleEdit = () => {
     setSelectedDireccion(direccion);
     setIsOpen(true);
   };
 
-  const handleCreate = () => {
-    setSelectedDireccion(null);
-    setIsOpen(true);
-  };
+  // console.log("📍 DIRECCIÓN COMPLETA:", direccion);
+  // console.log("🆔 ID DE DIRECCIÓN:", direccion.id);
 
-  return (
-    <div className="max-w-xl border-b py-6">
+ return (
+    <div className="p-5 border border-gray-200 rounded-xl hover:shadow-md transition">
 
-      <h2 className="text-black font-semibold text-lg mb-2">
+      {/* HEADER */}
+      <h2 className="text-black font-semibold text-lg mb-3">
         Dirección de entrega
       </h2>
 
-      <div className="flex justify-between items-start">
+      {/* CONTENT */}
+      <div className="flex justify-between items-start gap-4">
 
-        <div className="text-[#757575] text-[16px] space-y-1">
-          <p>
+        <div className="text-sm text-gray-700 space-y-1">
+          <p className="font-semibold text-black">
             {direccion.nombre} {direccion.apellido}
           </p>
+
           <p>
-            {direccion.calle} {direccion.numero_exterior}
-            {direccion.numero_interior && ` Int. ${direccion.numero_interior}`}
+            Calle {direccion.calle} {direccion.numero_exterior}
+            {direccion.numero_interior && ` Int. ${direccion.numero_interior}`},  {direccion.colonia}
           </p>
-          <p>{direccion.colonia}</p>
+
           <p>
-            {direccion.codigo_postal} {direccion.ciudad}
+            CP: {direccion.codigo_postal} {direccion.ciudad}, {direccion.estado}
           </p>
-          <p>{direccion.estado}</p>
+
+          <p className="text-gray-500">
+            Tel: {direccion.telefono}
+          </p>
         </div>
+
 
         <button
           onClick={handleEdit}
@@ -56,20 +61,12 @@ export default function DireccionEnvio({ direccion }: Props) {
 
       </div>
 
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={handleCreate}
-          className="bg-black text-white px-4 py-2 rounded-full text-sm"
-        >
-          Agregar nueva
-        </button>
-      </div>
-
       <FormularioDireccion
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
           setSelectedDireccion(null);
+          onRefresh();
         }}
         onSubmit={(data) => {
           console.log("guardar:", data);

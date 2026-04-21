@@ -6,7 +6,6 @@
 
 import { NextResponse } from "next/server";
 import { DireccionesEnvio } from "@/services/direcciondeenvio/direcciondeenvio.service";
-import { count } from "console";
 import { getUserFromToken } from "@/lib/auth";
 
 //endpoint que permite obtener las direcciones de envío de un cliente, recibe el id del cliente como query parameter
@@ -56,19 +55,35 @@ export async function GET(req: Request) {
 //endpoint que permite agregar una dirección de envío de un cliente, recibe el id del cliente como query parameter
 export async function POST(req: Request) {
   try {
-    const { clientId, data } = await req.json();
 
-    if (!clientId || !data) {
+    const user = getUserFromToken(req);
+    if (!user) {
+      return NextResponse.json(
+        { error: "clientId is required" },
+        { status: 400 }
+      );
+    }
+    const clientId = user.id;
+    const data = await req.json();
+
+    // console.log("USER:", user);
+    // console.log("CLIENT_ID:", clientId);
+    // console.log("DATA:", data);
+
+    if (!data) {
       return NextResponse.json(
         { error: "Faltan datos (clientId, addressId o data)" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const address = await DireccionesEnvio.addAddress(clientId, data);
 
-    return NextResponse.json(address, { status: 201 });
+    
+
+    return NextResponse.json({direccion: address}, { status: 201 });
   } catch (error: any) {
+    console.log("❌ ERROR POST:", error);
     return NextResponse.json(
       { error: error.message },
       { status: 400 }
@@ -80,13 +95,28 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { clientId, addressId, data } = await req.json();
 
-    if (!clientId || !addressId || !data) {
+    const user = getUserFromToken(req);
+    if (!user) {
       return NextResponse.json(
-        { error: "Faltan datos (clientId, addressId o data)" },
-        { status: 400 }
+        { error: "clientId is required" },
+        { status: 401 }
       );
+    }
+    const clientId = user.id;
+
+    const { addressId, data } = await req.json();
+
+    if (!clientId) {
+      return NextResponse.json({ error: "No hay token válido" }, { status: 401 });
+    }
+
+    if (!addressId) {
+      return NextResponse.json({ error: "Falta addressId" }, { status: 400 });
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: "Falta data" }, { status: 400 });
     }
 
     const updatedAddress = await DireccionesEnvio.updateAddress(
@@ -99,8 +129,11 @@ export async function PUT(req: Request) {
 
   } catch (error: any) {
     return NextResponse.json(
-      { error: error.message },
-      { status: 400 }
+      {
+        error: "DUPLICATE_ADDRESS",
+        message: "Esta dirección ya está registrada."
+      },
+      { status: 409 } 
     );
   }
 }
@@ -108,9 +141,19 @@ export async function PUT(req: Request) {
 //endpoint que permite eliminar una dirección de envío de un cliente
 export async function DELETE(req: Request) {
   try {
-    const { clientId, addressId } = await req.json();
+    
+    const user = getUserFromToken(req);
+    if (!user) {
+      return NextResponse.json(
+        { error: "clientId is required" },
+        { status: 400 }
+      );
+    }
+    const clientId = user.id;
+    
+    const { addressId } = await req.json();
 
-    if (!clientId || !addressId) {
+    if (!addressId) {
       return NextResponse.json(
         { error: "Faltan datos (clientId o addressId)" },
         { status: 400 }
