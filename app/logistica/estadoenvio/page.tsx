@@ -6,19 +6,45 @@ import { EnvioPendiente } from '@/types/logistica/envio_pendiente';
 export default function EnviosPendientes(){
 
   const [envioPendiente, setEnvioPendiente] = useState<EnvioPendiente[]>([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+
 
   const loadEnviosPendientes = async () => {
     try{
 
+      const token = localStorage.getItem("token");
       const respuesta = await fetch("/api/logistica/envios", {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("toke")}`
+          Authorization: `Bearer ${token}`
         }
-      })
+      });
 
-    }catch{
+      const data = await respuesta.json();
 
-    }
+      if (!respuesta.ok) {
+        throw new Error(data.error || "Error al obtener pedidos");
+      }
+
+      const estadoenvios = data.data || [];
+
+      const resultado = await Promise.all(
+        estadoenvios.map((p: any) =>
+          fetch(`/api/pedido/${p.id_pedido}/estado`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }).then(res => res.json())
+        )
+      );
+
+      setEnvioPendiente(resultado);
+
+    }catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
   }
   return (
     <div>
