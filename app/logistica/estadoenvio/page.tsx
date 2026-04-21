@@ -82,7 +82,7 @@ export default function EnviosPendientes(){
                     ID: {envio.numero_guia}
                   </span>
 
-                  <h3 className="text-2xl font-bold uppercase mt-1 tracking-tight">
+                  <h3 className="text-2xl font-bold uppercase mt-1 ">
                     {envio.cliente_nombre} {envio.cliente_apellido}
                   </h3>
                 </div>
@@ -90,18 +90,19 @@ export default function EnviosPendientes(){
 
               <div className="space-y-2 mb-6 border-l-2 border-gray-100 pl-4">
                 
-
                 <div className="flex items-center gap-2 text-gray-600">
                   <Clock size={14} className="text-black" />
                   <p className="text-sm font-bold uppercase tracking-tighter">
-                    Ventana: <span className="text-black font-black">{envio.fecha_estimada}</span>
+                    Estimación de entrega: <span className="text-black font-black">
+                      {new Date(envio.fecha_estimada).toLocaleString()}
+                      </span>
                   </p>
                 </div>
               </div>
 
               <button 
                 disabled={envio.estado_envio === "Entregado"}
-                className={`flex items-center justify-center gap-2 font-black py-4 text-xs uppercase tracking-widest transition shadow-lg rounded-full ${
+                className={`flex items-center justify-center gap-2 font-black p-4 text-xs uppercase tracking-widest transition shadow-lg rounded-full ${
                   envio.estado_envio === "Entregado" 
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed" 
                   : "bg-black text-white hover:bg-gray-800 active:scale-95"
