@@ -1,9 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import SearchOverlay from "./Search";
-import { GeneroResponse } from "@/types/producto/Genero";
-import { CategoriaPorGenero, CategoriasGeneroGeneral } from "@/types/producto/Categoria";
-
 
 export default async function NavBarRol() {
 
@@ -23,17 +19,14 @@ export default async function NavBarRol() {
         
       
       <div className="flex space-x-7 items-center">
-        <SearchOverlay/>
         <div className="flex space-x-5">
+          <Link href="/logistica/enviopendiente">
+          <p>Envio</p>
+          </Link>
           <Link href="/cuenta">
             <Image src="/assets/images/profile.svg" alt="User" width={30} height={30} />
           </Link>
-          <Link href="/cuenta/listadedeseos">
-            <Image src="/assets/images/wish.svg" alt="Wishlist" width={30} height={30} />
-          </Link>
-          <Link href="/carrito">
-            <Image src="/assets/images/bag.svg" alt="Cart" width={30} height={30} />
-          </Link>
+         
         </div>
       </div>
     </div>
