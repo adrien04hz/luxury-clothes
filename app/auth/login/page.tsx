@@ -1,7 +1,7 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
 //* Autor de la clase: Cervantes Rosales Abdiel */
-//* Fecha: 16/04/2026 */
+//* Fecha: 21/04/2026 */
 //**********/
 
 "use client";
@@ -56,6 +56,8 @@ export default function LoginPage() {
       }
   
       const payload = JSON.parse(atob(base64Payload));
+
+      console.log("Payload del token:", payload);
   
       if (!payload.id) {
         throw new Error("Token sin ID");
@@ -63,7 +65,24 @@ export default function LoginPage() {
   
       localStorage.setItem("userID", payload.id.toString());
   
-      router.push("/");
+      const rol = payload.rol;
+      localStorage.setItem("rol", rol.toString());
+
+      if (rol === 1) {
+        // Cliente
+        router.push("/");
+      } else if (rol === 2) {
+        // Administrador
+        router.push("/admin");
+      } else if (rol === 3) {
+        // Repartidor
+        router.push("/logistica");
+      } else if (rol === 4) {
+        // Empacador
+        router.push("/logistica");
+      } else {
+        router.push("/");
+      }
   
     } catch (error: any) {
       setMensaje(error.message);
