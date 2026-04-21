@@ -2,11 +2,12 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
 //* Autor: Ramos Bello Jose Luis */
-//* Fecha: 10/04/2026 */
+//* Fecha: 20/04/2026 */
 //**********/
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Producto {
     id: number;
@@ -15,6 +16,11 @@ interface Producto {
     stock: number;
     descripcion?: string;
     activo: boolean;
+    color?: string;
+    genero?: string;
+    subcategoria?: string;
+    marca?: string;
+    imagenes?: string[];        // array de URLs desde ImagenProducto
 }
 
 export default function AdminProductosPage() {
@@ -27,20 +33,25 @@ export default function AdminProductosPage() {
     const [form, setForm] = useState({
         nombre: "",
         precio: "",
-        stock: "",
         descripcion: "",
     });
 
-    // Cargar lista de productos
     const cargarProductos = async () => {
         try {
-            const res = await fetch("/api/administrador/lista_producto"); // Cambia si tu ruta es diferente
-            if (!res.ok) throw new Error("Error al cargar productos");
+            setLoading(true);
+            const res = await fetch("/api/administrador/lista-producto");
+
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || "Error al cargar productos");
+            }
+
             const data = await res.json();
-            setProductos(data);
-        } catch (error) {
+            setProductos(Array.isArray(data.productos) ? data.productos : []);
+        } catch (error: any) {
             console.error("Error cargando productos:", error);
-            alert("No se pudieron cargar los productos");
+            alert(error.message || "No se pudieron cargar los productos");
+            setProductos([]);
         } finally {
             setLoading(false);
         }
@@ -52,7 +63,7 @@ export default function AdminProductosPage() {
 
     const abrirCrear = () => {
         setEditando(null);
-        setForm({ nombre: "", precio: "", stock: "", descripcion: "" });
+        setForm({ nombre: "", precio: "", descripcion: "" });
         setShowModal(true);
     };
 
@@ -61,7 +72,6 @@ export default function AdminProductosPage() {
         setForm({
             nombre: producto.nombre,
             precio: producto.precio.toString(),
-            stock: producto.stock.toString(),
             descripcion: producto.descripcion || "",
         });
         setShowModal(true);
@@ -69,12 +79,10 @@ export default function AdminProductosPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         const payload = {
-            nombre: form.nombre,
+            nombre: form.nombre.trim(),
             precio: parseFloat(form.precio),
-            stock: parseInt(form.stock),
-            descripcion: form.descripcion || null,
+            descripcion: form.descripcion.trim() || "Sin descripción",
         };
 
         try {
@@ -94,7 +102,7 @@ export default function AdminProductosPage() {
             }
 
             if (!res.ok) {
-                const errorData = await res.json();
+                const errorData = await res.json().catch(() => ({}));
                 throw new Error(errorData.error || "Error en la operación");
             }
 
@@ -102,7 +110,7 @@ export default function AdminProductosPage() {
             setShowModal(false);
             cargarProductos();
         } catch (error: any) {
-            alert(error.message);
+            alert("Error: " + error.message);
         }
     };
 
@@ -110,16 +118,17 @@ export default function AdminProductosPage() {
         if (!confirm("¿Estás seguro de desactivar este producto?")) return;
 
         try {
-            const res = await fetch(`/api/administrador/eliminar_producto?id=${id}`, {
-                method: "DELETE",
-            });
+            const res = await fetch(`/api/administrador/eliminar_producto?id=${id}`, { method: "DELETE" });
 
-            if (!res.ok) throw new Error("No se pudo desactivar el producto");
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(errorData.error || "No se pudo desactivar el producto");
+            }
 
             alert("Producto desactivado correctamente");
             cargarProductos();
         } catch (error: any) {
-            alert(error.message);
+            alert("Error: " + error.message);
         }
     };
 
@@ -127,12 +136,10 @@ export default function AdminProductosPage() {
         <div className="min-h-screen bg-gray-100">
             <header className="bg-white shadow-sm border-b sticky top-0 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold text-gray-800">Gestión de Productos</h1>
-                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800">Gestión de Productos</h1>
 
                     <nav className="flex gap-6 text-sm">
-                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Dashboard</button>
+                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Inicio</button>
                         <button onClick={() => router.push("/admin/categorias")} className="hover:text-black">Categorías</button>
                         <button onClick={() => router.push("/admin/clientes")} className="hover:text-black">Clientes</button>
                         <button onClick={() => router.push("/admin/marcas")} className="hover:text-black">Marcas</button>
@@ -140,28 +147,20 @@ export default function AdminProductosPage() {
                         <button onClick={() => router.push("/admin/productos")} className="font-semibold text-black">Productos</button>
                     </nav>
 
-                    <button
-                        onClick={() => router.push("/")}
-                        className="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100"
-                    >
+                    <button onClick={() => router.push("/")} className="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100">
                         Cerrar Sesión
                     </button>
                 </div>
             </header>
 
             <div className="max-w-7xl mx-auto px-6 py-8">
-                {/* Botón Nuevo Producto */}
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-3xl font-semibold text-gray-800">Catálogo de Productos</h2>
-                    <button
-                        onClick={abrirCrear}
-                        className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition"
-                    >
+                    <button onClick={abrirCrear} className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition">
                         + Nuevo Producto
                     </button>
                 </div>
 
-                {/* Tabla de Productos */}
                 {loading ? (
                     <div className="text-center py-12 text-gray-500">Cargando productos...</div>
                 ) : (
@@ -169,8 +168,10 @@ export default function AdminProductosPage() {
                         <table className="w-full">
                             <thead className="bg-gray-50">
                                 <tr>
+                                    <th className="px-6 py-4 text-left font-medium">Imagen</th>
                                     <th className="px-6 py-4 text-left font-medium">ID</th>
                                     <th className="px-6 py-4 text-left font-medium">Nombre</th>
+                                    <th className="px-6 py-4 text-left font-medium">Marca</th>
                                     <th className="px-6 py-4 text-left font-medium">Precio</th>
                                     <th className="px-6 py-4 text-left font-medium">Stock</th>
                                     <th className="px-6 py-4 text-left font-medium">Estado</th>
@@ -178,110 +179,78 @@ export default function AdminProductosPage() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {productos.map((p) => (
-                                    <tr key={p.id} className="hover:bg-gray-50">
-                                        <td className="px-6 py-5">{p.id}</td>
-                                        <td className="px-6 py-5 font-medium">{p.nombre}</td>
-                                        <td className="px-6 py-5">${p.precio.toLocaleString("es-MX")}</td>
-                                        <td className="px-6 py-5">
-                                            <span className={p.stock < 10 ? "text-red-600 font-semibold" : ""}>
-                                                {p.stock}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-5">
-                                            <span className={`px-4 py-1 text-xs rounded-full font-medium ${p.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                                                }`}>
-                                                {p.activo ? "Activo" : "Inactivo"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-5 text-center space-x-4">
-                                            <button
-                                                onClick={() => abrirEditar(p)}
-                                                className="text-blue-600 hover:text-blue-800 font-medium"
-                                            >
-                                                Editar
-                                            </button>
-                                            <button
-                                                onClick={() => handleEliminar(p.id)}
-                                                className="text-red-600 hover:text-red-800 font-medium"
-                                            >
-                                                Desactivar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {productos.map((p) => {
+                                    const imagenUrl = p.imagenes && p.imagenes.length > 0 
+                                        ? p.imagenes[0] 
+                                        : "https://via.placeholder.com/300x300/cccccc/666666?text=Sin+Imagen";
+
+                                    return (
+                                        <tr key={p.id} className="hover:bg-gray-50">
+                                            <td className="px-6 py-5">
+                                                <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                                                    <Image
+                                                        src={imagenUrl}
+                                                        alt={p.nombre}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="64px"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-5 font-mono text-sm text-gray-500">{p.id}</td>
+                                            <td className="px-6 py-5 font-medium line-clamp-2">{p.nombre}</td>
+                                            <td className="px-6 py-5">{p.marca || "—"}</td>
+                                            <td className="px-6 py-5 font-medium">${p.precio.toLocaleString("es-MX")}</td>
+                                            <td className="px-6 py-5">
+                                                <span className={p.stock < 10 ? "text-red-600 font-semibold" : ""}>
+                                                    {p.stock}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-5">
+                                                <span className={`px-4 py-1 text-xs rounded-full font-medium ${p.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                                                    {p.activo ? "Activo" : "Inactivo"}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-5 text-center space-x-4">
+                                                <button onClick={() => abrirEditar(p)} className="text-blue-600 hover:text-blue-800 font-medium">
+                                                    Editar
+                                                </button>
+                                                <button onClick={() => handleEliminar(p.id)} className="text-red-600 hover:text-red-800 font-medium">
+                                                    Desactivar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>
                 )}
             </div>
 
-            {/* Modal Crear / Editar */}
+            {/* Modal Crear / Editar (sin cambios) */}
             {showModal && (
                 <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
                     <div className="bg-white rounded-2xl p-8 w-full max-w-lg">
                         <h2 className="text-2xl font-bold mb-6">
                             {editando ? "Editar Producto" : "Crear Nuevo Producto"}
                         </h2>
-
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div>
                                 <label className="block text-sm font-medium mb-1">Nombre del Producto *</label>
-                                <input
-                                    type="text"
-                                    value={form.nombre}
-                                    onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                                    required
-                                    className="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:border-black"
-                                />
+                                <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
                             </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Precio ($)*</label>
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        value={form.precio}
-                                        onChange={(e) => setForm({ ...form, precio: e.target.value })}
-                                        required
-                                        className="w-full border border-gray-300 rounded-xl p-3"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Stock *</label>
-                                    <input
-                                        type="number"
-                                        value={form.stock}
-                                        onChange={(e) => setForm({ ...form, stock: e.target.value })}
-                                        required
-                                        className="w-full border border-gray-300 rounded-xl p-3"
-                                    />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Precio ($)*</label>
+                                <input type="number" step="0.01" value={form.precio} onChange={(e) => setForm({ ...form, precio: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
                             </div>
-
                             <div>
                                 <label className="block text-sm font-medium mb-1">Descripción</label>
-                                <textarea
-                                    value={form.descripcion}
-                                    onChange={(e) => setForm({ ...form, descripcion: e.target.value })}
-                                    rows={4}
-                                    className="w-full border border-gray-300 rounded-xl p-3"
-                                />
+                                <textarea value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={4} className="w-full border border-gray-300 rounded-xl p-3" />
                             </div>
-
                             <div className="flex gap-4 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowModal(false)}
-                                    className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 py-3 bg-black text-white rounded-xl hover:bg-gray-800"
-                                >
+                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100">Cancelar</button>
+                                <button type="submit" className="flex-1 py-3 bg-black text-white rounded-xl hover:bg-gray-800">
                                     {editando ? "Guardar Cambios" : "Crear Producto"}
                                 </button>
                             </div>
