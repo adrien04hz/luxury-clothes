@@ -20,7 +20,7 @@ export default function NavBarLogistica() {
       <div className="flex space-x-7 items-center">
         <div className="flex space-x-5">
           <Link href="/admin">
-          <p>Envio</p>
+          <p>te mandara a la carpeta admin</p>
           </Link>
           <Link href="/cuenta">
             <Image src="/assets/images/profile.svg" alt="User" width={30} height={30} />
