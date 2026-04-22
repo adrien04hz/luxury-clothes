@@ -15,7 +15,6 @@ export default function NavBar({
   todasLasCategorias: CategoriaPorGenero;
 }>) {
 
-
   return (
     <>
     <div className="w-full h-28 bg-black text-white flex justify-between px-12">
