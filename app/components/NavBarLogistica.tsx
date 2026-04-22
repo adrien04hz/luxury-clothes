@@ -3,7 +3,6 @@ import Link from "next/link";
 
 export default function NavBarLogistica() {
 
-
   return (
     <>
     <div className="w-full h-28 bg-black text-white flex justify-between px-12">
