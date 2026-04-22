@@ -17,7 +17,7 @@ export default function ListaPedidosPage() {
         const token = localStorage.getItem("token");
 
         // 🔹 1. Obtener pedidos (IDs)
-        const res = await fetch("/api/logistica/envios", {
+        const res = await fetch("/api/logistica/pedido", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
