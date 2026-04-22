@@ -23,7 +23,6 @@ export default function LoginPage() {
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
   const [mostrarPassword, setMostrarPassword] = useState(false);
-  const { updateRol } = auth();
 
   const handleLogin = async () => {
     setMensaje("");
@@ -69,22 +68,9 @@ export default function LoginPage() {
       const rol = payload.rol;
       localStorage.setItem("rol", rol.toString());
      
-     updateRol(rol); // <--- ESTO actualiza el Navbar sin refrescar la página
-router.push("/");
-router.refresh();
-      
-      // } else if (rol === 2) {
-      //   // Administrador
-      //   router.push("/admin");
-      // } else if (rol === 3) {
-      //   // Repartidor
-      //   router.push("/logistica");
-      // } else if (rol === 4) {
-      //   // Empacador
-      //   router.push("/logistica");
-      // } else {
-      //   router.push("/");
-      // }
+      router.push("/");
+      router.refresh();
+     
   
     } catch (error: any) {
       setMensaje(error.message);
