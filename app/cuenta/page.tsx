@@ -27,6 +27,7 @@ export default function PerfilPage() {
 
         if (res.status === 401) {
           localStorage.removeItem("token");
+          localStorage.removeItem("rol");
           localStorage.removeItem("userID");
           router.push("/auth/login");
           return;
@@ -146,6 +147,7 @@ export default function PerfilPage() {
             <button
               onClick={() => {
                 localStorage.removeItem("token");
+                localStorage.removeItem("rol");
                 localStorage.removeItem("userID");
                 router.push("/");
               }}

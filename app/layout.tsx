@@ -9,6 +9,8 @@ import { getProveedoresBancarios } from "@/client/proveedor.client";
 import { getMarcas } from "@/client/marca.client";
 import { getColores } from "@/client/color.client";
 
+import NavBarRol from "./components/NavBarRol";
+
 
 const geistMontserrat = Montserrat({
   subsets: ["latin"],
@@ -55,11 +57,13 @@ export default async function RootLayout({
       <body
         className={`${geistMontserrat.variable} antialiased min-h-screen flex flex-col`}
       >
-        <NavBar 
+        
+        <NavBarRol 
           generos={generos}
           categoriasPorGenero={categoriasPorGenero}
           todasLasCategorias={todasLasCategorias}
         />
+
 
         <main className="flex-1">
           {children}

@@ -5,7 +5,7 @@ import { GeneroResponse } from "@/types/producto/Genero";
 import { CategoriaPorGenero, CategoriasGeneroGeneral } from "@/types/producto/Categoria";
 
 
-export default async function NavBar({
+export default function NavBar({
   generos,
   categoriasPorGenero,
   todasLasCategorias,
@@ -14,7 +14,6 @@ export default async function NavBar({
   categoriasPorGenero: CategoriasGeneroGeneral[];
   todasLasCategorias: CategoriaPorGenero;
 }>) {
-
 
   return (
     <>
