@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation"; 
 import NavBar from "./NavBar";
 import NavBarLogistica from "./NavBarLogistica";
+import NavBarAdmin from "./NavBarAdmin";
 
 export default function NavBarRol(props: any) {
   const [rol, setRol] = useState<number | null>(null);
@@ -21,5 +22,15 @@ export default function NavBarRol(props: any) {
 
   if (!ready) return null;
 
-  return rol === 3 || rol === 4 ? <NavBarLogistica /> : <NavBar {...props} />;
+  if (rol === 2) {
+    return <NavBarAdmin />;
+  } 
+  
+  if (rol === 3) {
+    return <NavBarLogistica />;
+  }
+
+  return <NavBar {...props} />;
+
+
 }
