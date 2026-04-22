@@ -19,7 +19,7 @@ export default function NavBarLogistica() {
       
       <div className="flex space-x-7 items-center">
         <div className="flex space-x-5">
-          <Link href="/logistica/enviopendiente">
+          <Link href="/logistica">
           <p>Envio</p>
           </Link>
           <Link href="/cuenta">
