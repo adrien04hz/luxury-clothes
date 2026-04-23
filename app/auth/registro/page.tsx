@@ -33,22 +33,27 @@ export default function RegisterPage() {
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
-
+    
         try {
+            const telefonoLimpio = form.telefono.replace(/\D/g, "");
+    
             const res = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify({
+                    ...form,
+                    telefono: telefonoLimpio,
+                }),
             });
-
+    
             const data = await res.json();
-
+    
             if (!res.ok) {
                 throw new Error(data.error);
             }
-
+    
             router.push("/auth/login");
         } catch (err: any) {
             setError(err.message);

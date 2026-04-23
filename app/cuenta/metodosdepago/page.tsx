@@ -1,7 +1,13 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor : Diaz Antonio Luis Pedro*/
+//* Fecha: 21/04/2026 */
+//**********/
 "use client";
 
 import { useState, useEffect } from "react";
 import MetodoPagoModal from "./components/MetodoPago";
+import SidebarCuenta from "@/app/components/SidebarCuenta";
 
 export default function MetododePagoPage() {
     const [metodos, setMetodos] = useState<any[]>([]);
@@ -135,61 +141,62 @@ export default function MetododePagoPage() {
     if (loading) return <p>Cargando...</p>;
 
     return (
-        <div className="min-h-screen bg-gray-50 flex">
-            <div className="w-64">
-                {/* meter sidebar */}
-            </div>
-            <div className="flex-1 p-10">
-
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <div className="max-w-7xl mx-auto px-8 py-6">
                 <h1 className="text-2xl font-bold mb-6">
                     Métodos de pago
                 </h1>
                 <p className="text-gray-500 mb-8">
                     Métodos de pago disponibles ({metodos.length})
                 </p>
+            </div>
+            <div className="flex flex-1 w-full max-w-7xl px-50">
+                <SidebarCuenta />
+                <div className="flex-1 p-10">
 
-                {/* diseño de la tarjeta */}
-                <div className="flex flex-col gap-4">
-                    {metodos.map((m) => (
-                        <div key={m.id} className="bg-white border border-gray-200 rounded-xl p-5 w-full max-w-md">
+                    {/* diseño de la tarjeta */}
+                    <div className="flex flex-col gap-4">
+                        {metodos.map((m) => (
+                            <div key={m.id} className="bg-white border border-gray-200 rounded-xl p-5 w-full max-w-md">
 
-                            <h2 className="text-lg font-semibold mb-1">
-                                {m.banco || "Tarjeta"}
-                            </h2>
+                                <h2 className="text-lg font-semibold mb-1">
+                                    {m.banco || "Tarjeta"}
+                                </h2>
 
-                            <p className="text-gray-700 text-sm">
-                                {m.nombre_titular}
-                            </p>
+                                <p className="text-gray-700 text-sm">
+                                    {m.nombre_titular}
+                                </p>
 
-                            <p className="text-gray-500 text-sm mb-3">
-                                **** {m.numero_cuenta?.slice(-4)}
-                            </p>
+                                <p className="text-gray-500 text-sm mb-3">
+                                    **** {m.numero_cuenta?.slice(-4)}
+                                </p>
 
-                            <div className="flex gap-2">
-                                <button onClick={() => abrirEditar(m)} className="px-3 py-1 text-sm bg-gray-200 rounded-md">
-                                    Editar
-                                </button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => abrirEditar(m)} className="px-3 py-1 text-sm bg-gray-200 rounded-md">
+                                        Editar
+                                    </button>
 
-                                <button onClick={() => eliminarMetodo(m.id)} className="px-3 py-1 text-sm bg-gray-100 text-red-600 rounded-md">
-                                    Eliminar
-                                </button>
+                                    <button onClick={() => eliminarMetodo(m.id)} className="px-3 py-1 text-sm bg-gray-100 text-red-600 rounded-md">
+                                        Eliminar
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-                <button onClick={abrirCrear} className="bg-black text-white px-6 py-3 rounded-full mt-6">
-                    + Agregar tarjeta
-                </button>
+                        ))}
+                    </div>
+                    <button onClick={abrirCrear} className="bg-black text-white px-6 py-3 rounded-full mt-6">
+                        + Agregar tarjeta
+                    </button>
 
-                {/* Agregar el modal */}
-                <MetodoPagoModal
-                    open={modal.open}
-                    modo={modal.modo}
-                    form={form}
-                    setForm={setForm}
-                    onClose={cerrarModal}
-                    onSave={handleGuardar}
-                />
+                    {/* Agregar el modal */}
+                    <MetodoPagoModal
+                        open={modal.open}
+                        modo={modal.modo}
+                        form={form}
+                        setForm={setForm}
+                        onClose={cerrarModal}
+                        onSave={handleGuardar}
+                    />
+                </div>
             </div>
 
         </div>

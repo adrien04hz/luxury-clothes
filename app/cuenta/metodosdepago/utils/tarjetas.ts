@@ -1,3 +1,8 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor : Diaz Antonio Luis Pedro*/
+//* Fecha: 21/04/2026 */
+//**********/
 // Declaracion de bancos conocidos
 export const BIN_BANCOS: Record<string, string> = {
     "415231": "BBVA",

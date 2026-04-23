@@ -18,7 +18,9 @@ export class Producto {
    *   - id_marca?: number - Filter by brand ID.
    * @returns Promise resolving to an array of products with basic details.
    */
-  static async getAllProducts( {
+
+
+  static async getAllProducts({
     id_genero,
     id_categoria,
     id_subcategoria,
@@ -83,7 +85,7 @@ export class Producto {
    * @param productId - ID del producto para el cual se desean obtener los detalles.
    * @returns JSON con los detalles del producto, incluyendo nombre, descripción, precio, color, marca, imágenes y stock por talla.
    */
-  static async productDetails(productId: number){
+  static async productDetails(productId: number) {
     const { rows } = await pool.query(
       `
       SELECT
@@ -130,5 +132,51 @@ export class Producto {
     );
 
     return rows[0];
+  }
+
+  //***********/
+  //* Nombre del equipo: Equipo 1 */
+  //* Autor : Diaz Antonio Luis Pedro*/
+  //* Fecha: 22/04/2026 */
+  //**********/
+  // consulta de 5 productos al azar
+  static async getCarrusel(limit: number = 5) {
+    const query = `
+    SELECT DISTINCT ON (P.id)
+      P.id,
+      P.nombre,
+      P.precio,
+      M.nombre AS marca,
+      I.url AS imagen_url
+    FROM "Producto" P
+    INNER JOIN "Marca" M ON P.id_marca = M.id
+    INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
+    WHERE P.activo = true
+    ORDER BY P.id, RANDOM()
+  `;
+    const { rows } = await pool.query(query);
+    const random = rows.sort(() => Math.random() - 0.5);
+    return random.slice(0, limit);
+  }
+
+  //consulta de un producto random para cada categoria
+  static async getOneCategory() {
+    const query = `
+    SELECT DISTINCT ON (S.id_categoria)
+      P.id,
+      P.nombre,
+      P.precio,
+      S.id_categoria,
+      C.nombre AS categoria_nombre,
+      I.url AS imagen_url
+    FROM "Producto" P
+    JOIN "Subcategoria" S ON P.id_subcategoria = S.id
+    JOIN "Categoria" C ON S.id_categoria = C.id
+    JOIN "ImagenProducto" I ON I.id_producto = P.id
+    WHERE P.activo = true
+    ORDER BY S.id_categoria, RANDOM();
+  `;
+    const { rows } = await pool.query(query);
+    return rows;
   }
 }
