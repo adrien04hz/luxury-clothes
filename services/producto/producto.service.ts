@@ -43,4 +43,19 @@ export class Producto {
     static async getProductDetails(productId: number) {
         return await ProductoRepo.productDetails(productId);
     }
+
+
+    //***********/
+    //* Nombre del equipo: Equipo 1 */
+    //* Autor : Diaz Antonio Luis Pedro*/
+    //* Fecha: 22/04/2026 */
+    //**********/
+    static async getRandomProducts(limit: number = 5) {
+        return await ProductoRepo.getCarrusel(limit);
+    }
+
+    static async getOneProducts() {
+        return await ProductoRepo.getOneCategory();
+    }
+
 }
