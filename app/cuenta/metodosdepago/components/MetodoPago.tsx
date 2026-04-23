@@ -1,8 +1,8 @@
-/**
- * Equipo #1
- * Diaz Antonio Luis Pedro
- * 21 de abril de 2026
- */
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor : Diaz Antonio Luis Pedro*/
+//* Fecha: 21/04/2026 */
+//**********/
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
