@@ -175,6 +175,21 @@ export class DireccionEnvio {
     //Eliminar una direccion de envio existente
     static async deleteShippingAddress(clienteId: number, id_direccion: number){
 
+        const enUso = await pool.query(
+        `
+        SELECT 1 
+        FROM "Envio" 
+        WHERE id_direccion = $1 
+        LIMIT 1
+        `,
+        [id_direccion]
+    );
+
+    if ((enUso.rowCount ?? 0) > 0) {
+        throw new Error("DIRECCION_EN_USO");
+    }
+
+
         const query = `
             DELETE FROM "DireccionEnvio"
             WHERE id=$1 AND id_usuario=$2
