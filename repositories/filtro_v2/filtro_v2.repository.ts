@@ -178,5 +178,27 @@ export class FilterV2Repository {
             JOIN "Subcategoria" S ON P.id_subcategoria = S.id
             WHERE S.id_categoria = $1;
         `;
+        
+        const queryCategory = `SELECT nombre FROM "Categoria" WHERE id = $1;`;
+            
+        const [brandsResult, gendersResult, colorsResult, subcategoriesResult, totalResult, categoryResult] = await Promise.all([
+            pool.query(queryBrands, [id_categoria]),
+            pool.query(queryGenders, [id_categoria]),
+            pool.query(queryColors, [id_categoria]),
+            pool.query(querySubcategories, [id_categoria]),
+            pool.query(queryTotal, [id_categoria]),
+            pool.query(queryCategory, [id_categoria])
+        ]);
+
+        return {
+            categoria: categoryResult.rows[0].nombre,
+            total: totalResult.rows[0].total_categoria,
+            cantidades: {
+                subcategorias: subcategoriesResult.rows[0].subcategorias || [],
+                generos: gendersResult.rows || [],
+                colores: colorsResult.rows || [],
+                marcas: brandsResult.rows || [],
+            },
+        };
     }
 }
