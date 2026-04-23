@@ -1,6 +1,6 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Cervantes Rosales Abdiel, Ramos Bello Jose Luis*/
+//* Autor de la clase: Cervantes Rosales Abdiel, Ramos Bello Jose Luis, Diaz Antonio Luis Pedro*/
 //* Fecha: 10/04/2026 */
 //**********/
 "use client";
@@ -12,6 +12,7 @@ import { getDirecciones } from "@/client/direccionesenvio";
 import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
 import FormularioDireccion from "../cuenta/direcciones/components/FormularioDireccion";
 import ListaDirecciones from "./components/ListaDirecciones";
+import MetodoPagoModal from "../cuenta/metodosdepago/components/MetodoPago";
 
 interface ItemCarrito {
   id_producto: number;
@@ -88,18 +89,20 @@ export default function CheckoutPage() {
         return;
       }
 
+      const body = {
+          id_metodo_pago: selectedMetodo,     // Cambia según selección del usuario
+          id_direccion: selectedDireccion?.id,       // Cambia según selección del usuario
+          notas: "Compra realizada desde el checkout",
+          // Aquí puedes enviar también los items del carrito si tu API lo requiere
+      };
+
       const res = await fetch("/api/pedido/procesar_compra", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          id_metodo_pago: 1,     // Cambia según selección del usuario
-          id_direccion: 1,       // Cambia según selección del usuario
-          notas: "Compra realizada desde el checkout",
-          // Aquí puedes enviar también los items del carrito si tu API lo requiere
-        }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -129,16 +132,16 @@ export default function CheckoutPage() {
   const [direccion, setDirecciones] = useState<ListaDireccionEnvio[]>([]);
   const [selectedDireccion, setSelectedDireccion] = useState<ListaDireccionEnvio | null>(null);
   const [direccionEnEdicion, setDireccionEnEdicion] = useState<ListaDireccionEnvio | null>(null);
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if(!token) {
+    if (!token) {
       window.location.href = "/cuenta"; //redireccionamiento a page cuenta
       return;
     }
     loadDireccion();
   }, []);
-  
+
   const loadDireccion = async () => {
     try {
       const data = await getDirecciones();
@@ -154,7 +157,82 @@ export default function CheckoutPage() {
       console.error(error);
     }
   };
-  
+
+  // todo lo necesario para metodos de pagos
+
+  const [pagos, setPagos] = useState<any[]>([]);
+  const [selectedMetodo, setSelectedMetodo] = useState<number | null>(null);
+  const [misTarjetas, setMisTarjetas] = useState<any[]>([]);
+  const [mostrarFormularioTarjeta, setMostrarFormularioTarjeta] = useState(false);
+  const [tarjetaSeleccionada, setTarjetaSeleccionada] = useState<any>(null);
+
+  const [modalPago, setModalPago] = useState({
+    open: false,
+    modo: "crear" as "crear" | "editar"
+  });
+
+  const [formPago, setFormPago] = useState({
+    nombre_titular: "",
+    numero_cuenta: "",
+    fecha_vencimiento: "",
+    banco: "",
+    correo: "",
+    id_tipo_metodo: 1,
+    id_proveedor: 1
+  });
+
+  const abrirModalTarjeta = () => {
+    setFormPago({
+      nombre_titular: "",
+      numero_cuenta: "",
+      fecha_vencimiento: "",
+      banco: "",
+      correo: "",
+      id_tipo_metodo: 1,
+      id_proveedor: 1
+    });
+
+    setModalPago({ open: true, modo: "crear" });
+  };
+
+  const guardarTarjetaCheckout = async () => {
+    const userID = localStorage.getItem("userID");
+
+    await fetch("/api/metodosdepago/agregar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...formPago, id_usuario: userID })
+    });
+
+    setModalPago({ open: false, modo: "crear" });
+
+    await cargarMetodos();
+  };
+
+  useEffect(() => {
+    cargarPagos();
+    cargarMetodos();
+  }, []);
+
+  const cargarPagos = async () => {
+    const res = await fetch(`/api/metodosdepago/tipos`);
+    const data = await res.json();
+    console.log(data);
+
+    if (data.ok) setPagos(data.data);
+    setLoading(false);
+  };
+
+  const cargarMetodos = async () => {
+    const userID = localStorage.getItem("userID");
+
+    const res = await fetch(`/api/metodosdepago/vermetodos?clienteId=${userID}`);
+    const data = await res.json();
+
+    if (data.ok) setMisTarjetas(data.data);
+    setLoading(false);
+  };
+
   if (isLoadingData) {
     return <div className="p-10 text-center">Cargando resumen del pedido...</div>;
   }
@@ -172,7 +250,7 @@ export default function CheckoutPage() {
               <hr className=" mb-6" />
 
               <div className="p-5 border border-gray-200 rounded-xl space-y-4">
-                
+
                 <p className="text-sm text-gray-500 font-medium">
                   Enviar a domicilio
                 </p>
@@ -181,7 +259,7 @@ export default function CheckoutPage() {
                   <>
                     {/* DIRECCIÓN */}
                     <div className="flex justify-between items-start gap-4">
-                      
+
                       <div className="text-sm text-gray-700 space-y-1">
                         <p className="font-semibold text-black">
                           {selectedDireccion.nombre} {selectedDireccion.apellido}
@@ -215,7 +293,7 @@ export default function CheckoutPage() {
 
                     {/* BOTONES */}
                     <div className="flex flex-wrap gap-3 pt-2">
-                      
+
                       <button
                         onClick={() => setIsSelectModalOpen(true)}
                         className="border border-black px-5 py-2 rounded-full text-sm font-medium hover:bg-black hover:text-white transition"
@@ -259,7 +337,87 @@ export default function CheckoutPage() {
             <div>
               <h2 className="text-xl font-semibold mb-4">Método de pago</h2>
               <hr className="border-gray-800 mb-6" />
+
+              <div className="flex flex-col gap-4">
+                {pagos.map((m) => (
+                  <div key={m.id} onClick={() => {
+                    setSelectedMetodo(m.id);
+
+                    const esTarjeta = m.id === 1 || m.id === 2;
+
+                    if (esTarjeta) {
+                      if (misTarjetas.length > 0) {
+                        setMostrarFormularioTarjeta(false);
+                      } else {
+                        setMostrarFormularioTarjeta(true);
+                      }
+                    } else {
+                      setMostrarFormularioTarjeta(false);
+                      setTarjetaSeleccionada(null);
+                    }
+                  }}
+
+                    className={`border-1 rounded-xl p-5 w-full max-w-md cursor-pointer transition-all ${selectedMetodo === m.id
+                      ? "border-black scale-[1.02] bg-gray-50"
+                      : "border-gray-900 bg-white hover:border-gray-500"
+                      }`}>
+                    <h2 className="text-lg font-semibold mb-1">
+                      {m.nombre || "Tarjeta"}
+                    </h2>
+
+                    {selectedMetodo === m.id && (
+                      <p className="text-sm text-gray-600 mt-3">
+                        {m.descripcion || "Al seleccionar este método, podrás continuar con el pago de forma segura."}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {selectedMetodo && (selectedMetodo === 1 || selectedMetodo === 2) && (
+                <div className="mt-6 space-y-4">
+                  <h2 className="text-xl font-semibold mb-4">Selecciona tu tarjeta:</h2>
+
+                  {misTarjetas.length > 0 && (
+                    <div className="border rounded-xl p-4 bg-white">
+
+                      <p className="text-sm text-gray-500 mb-2">Tarjetas guardadas</p>
+
+                      <select
+                        className="w-full border rounded-lg p-3"
+                        onChange={(e) => {
+                          const tarjeta = misTarjetas.find(t => t.id == e.target.value);
+                          setTarjetaSeleccionada(tarjeta);
+                        }}
+                      >
+                        <option value="">Selecciona una tarjeta</option>
+                        {misTarjetas.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            **** **** **** {t.numero_cuenta?.slice(-4)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                  {tarjetaSeleccionada && (
+                    <div className="space-y-4">
+                      <button onClick={abrirModalTarjeta} className="text-sm">
+                        Agregar nueva tarjeta
+                      </button>
+
+                    </div>
+                  )}
+
+                  {misTarjetas.length === 0 && (
+                    <button onClick={abrirModalTarjeta} className="bg-black text-white px-4 py-2 rounded">
+                      Agregar tarjeta
+                    </button>
+                  )}
+                  
+                </div>
+              )}
             </div>
+
           </div>
 
           <div className="lg:col-span-4">
@@ -347,6 +505,15 @@ export default function CheckoutPage() {
         onSelect={(dir) => {
           setSelectedDireccion(dir);
         }}
+      />
+      {/* llamar al modal de agregar tarjeta  */}
+      <MetodoPagoModal
+        open={modalPago.open}
+        modo={modalPago.modo}
+        form={formPago}
+        setForm={setFormPago}
+        onClose={() => setModalPago({ open: false, modo: "crear" })}
+        onSave={guardarTarjetaCheckout}
       />
     </div>
   );

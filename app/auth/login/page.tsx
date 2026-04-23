@@ -67,10 +67,20 @@ export default function LoginPage() {
   
       const rol = payload.rol;
       localStorage.setItem("rol", rol.toString());
-     
-      router.push("/");
-      router.refresh();
-     
+    
+    if (rol === 1) {
+      router.push("/"); // Cliente
+    } else if (rol === 2) {
+      router.push("/admin"); // Administrador
+    } else if (rol === 3) {
+      router.push("/logistica"); // Repartidor
+    } else if (rol === 4) {
+      router.push("/logistica"); // Empacador
+    } else {
+      router.push("/"); // fallback
+    }
+
+    router.refresh();
   
     } catch (error: any) {
       setMensaje(error.message);

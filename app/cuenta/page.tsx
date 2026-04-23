@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import SidebarCuenta from "../components/SidebarCuenta";
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -98,66 +99,7 @@ export default function PerfilPage() {
         </div>
 
       <div className="flex flex-1 w-full max-w-7xl px-50">
-        {/* Sidebar Izquierda */}
-        <div className="w-60 shrink-0">
-          <nav className="flex flex-col">
-            <a
-              href="/"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Inicio
-            </a>
-            <a
-              href="/cuenta/"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Mi información
-            </a>
-            <a
-              href="/cuenta/pedidos"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Mis compras
-            </a>
-            <a
-              href="/cuenta/listadedeseos"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Mi lista de deseo
-            </a>
-            <a
-              href="/cuenta/direcciones"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Mis direcciones
-            </a>
-            <a
-              href="/cuenta/metodosdepago"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Mis métodos de pago
-            </a>
-            <a
-              href="/cuenta/configuracion"
-              className="px-2 py-3 text-gray-700 hover:bg-gray-50 font-medium border-b hover:border-gray-300 transition"
-            >
-              Configuracion
-            </a>
-
-            <button
-              onClick={() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("rol");
-                localStorage.removeItem("userID");
-                router.push("/");
-              }}
-              className="px-2 py-3 text-left text-red-600 border-b hover:bg-red-50 font-medium transition"
-            >
-              Cerrar sesión
-            </button>
-          </nav>
-        </div>
-
+        <SidebarCuenta />
         <div className="flex-1 px-40 bg-gray-50">
           <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-sm p-10">
             {/* Foto de perfil (si existe) */}
