@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import FormularioDireccion from "@/app/cuenta/direcciones/components/FormularioDireccion";
 import DireccionEnvio from "./components/DireccionEnvio";
 import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
+import SidebarCuenta from "@/app/components/SidebarCuenta";
+
 
 export default function DireccionesPage() {
   const [direcciones, setDirecciones] = useState<ListaDireccionEnvio[]>([]);
@@ -77,12 +79,21 @@ export default function DireccionesPage() {
   };
 
   return (
-    <div className="pl-16 pt-12 pr-16 pb-12 min-h-screen">
-      <h1 className="mb-6 text-2xl font-medium">
-        Direcciones de entrega guardadas
-      </h1>
+     <div className="min-h-screen bg-gray-50 flex flex-col">
+          
+      <div className="max-w-7xl mx-auto px-8 py-6">
+          <h1 className="text-3xl font-semibold text-center">Direcciones de envío guardadas</h1>
+          <p className="text-center text-gray-600 mt-1 text-lg">
+            
+          </p>
+        </div>
 
-      {/* BOTÓN ARRIBA SOLO SI HAY DIRECCIONES */}
+    <div className="flex flex-1 w-full max-w-7xl px-50 pt-10">
+            <SidebarCuenta />
+      
+
+      </div>
+      <div className="flex-1">
       {hasDirecciones && (
         <div className="flex justify-end mt-4">
           <button
@@ -95,7 +106,7 @@ export default function DireccionesPage() {
       )}
       
       {!hasDirecciones ? (
-        <div className="bg-gray-50 rounded-lg p-6 text-center pb-40 mt-6">
+       <div className="flex justify-end mb-4">
           <p className="text-gray-700 mt-2 mb-6">
             Actualmente no tienes ninguna dirección de envío guardada. <br /> Agrega
             una dirección aquí para que se complete automáticamente y puedas
@@ -135,5 +146,9 @@ export default function DireccionesPage() {
       />
 
     </div>
+    </div>
+    
+
+
   );
 }
