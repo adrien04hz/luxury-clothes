@@ -113,7 +113,6 @@ export class PedidoService {
   //************************************/
   // Procesar compra
   //************************************/
-
   static async procesarCompra(
     idUsuario: number,
     idTipoMetodoPago: number,
@@ -121,6 +120,7 @@ export class PedidoService {
     notas?: string
   ) {
     try {
+
       const result: QueryResult = await PedidoRepository.crearPedidoDesdeCarrito(
         idUsuario,
         idTipoMetodoPago,
@@ -128,29 +128,33 @@ export class PedidoService {
         notas
       );
 
-      if (result.rowCount === 0) {
+      const pedidoCreado = result.rows[0];
+
+      if (!pedidoCreado) {
         throw new Error("No se pudo crear el pedido");
       }
 
-      const pedidoCreado = result.rows[0];
+      const detalleCompleto = await this.obtenerDetallePedidoRecienCreado(
+        pedidoCreado.id
+      );
 
-      return {
-        id: pedidoCreado.id,
-        total: pedidoCreado.total,
-        estado: pedidoCreado.estado,
-        fecha: pedidoCreado.fecha,
-      };
+      return detalleCompleto;
+
     } catch (error: any) {
-      if (error.message.includes("stock")) {
+
+      const message = error.message || "";
+
+      if (message.toLowerCase().includes("stock")) {
         throw new Error("No hay stock suficiente para uno o más productos");
       }
-      if (error.message.includes("carrito está vacío")) {
+
+      if (message.toLowerCase().includes("carrito")) {
         throw new Error("El carrito está vacío o los productos no están disponibles");
       }
-      throw new Error(error.message || "Error al procesar la compra");
+
+      throw new Error(message || "Error al procesar la compra");
     }
   }
-
   static async obtenerDetallePedidoRecienCreado(idPedido: number) {
     return this.obtenerEstadoPedido(idPedido);
   }
