@@ -9,13 +9,10 @@ import { useRef, useState } from "react";
 import { X, Plus, Minus } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { CategoriaPorGenero } from "@/types/producto/Categoria";
+import { Data } from "@/types/filtro_v2/filtro_v2";
 
 interface Props {
-    categorias: CategoriaPorGenero;
-    generos: any[];
-    colores: any[];
-    marcas: any[];
+    data: Data | undefined;
     title?: string;
     count?: number;
     titulos?: {
@@ -25,42 +22,11 @@ interface Props {
     };
 }
 
-export default function Filtros({ categorias, generos, colores, marcas, title, count, titulos }: Props) {
+export default function FiltroV2({ data, title, count, titulos }: Props) {
     const [open, setOpen] = useState(false);
     const [activo, setActivo] = useState<string | null>(null);
 
-    function getColor(nombre: string) {
-        switch (nombre.toLowerCase()) {
-            case "negro":
-                return "#111111";
-            case "blanco":
-                return "#F2F1ED";
-            case "rojo":
-                return "#7A1E1E";
-            case "azul":
-                return "#0F1A2B";
-            case "verde":
-                return "#0F3D2E";
-            case "amarillo":
-                return "#C6A75E";
-            case "gris":
-                return "#4A4F55";
-            case "naranja":
-                return "#A65A3A";
-            case "rosa":
-                return "#B76E79";
-            case "morado":
-                return "#4B2E3F";
-            case "café":
-                return "#3B241C";
-            case "cafe":
-                return "#3B241C";
-            case "beige":
-                return "#C8B69C";
-            default:
-                return "lightgray";
-        }
-    }
+
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -329,4 +295,38 @@ function FiltroItem({ title, open, onToggle, children }: any) {
             </div>
         </div>
     );
+}
+
+
+function getColor(nombre: string) {
+    switch (nombre.toLowerCase()) {
+        case "negro":
+            return "#111111";
+        case "blanco":
+            return "#F2F1ED";
+        case "rojo":
+            return "#7A1E1E";
+        case "azul":
+            return "#0F1A2B";
+        case "verde":
+            return "#0F3D2E";
+        case "amarillo":
+            return "#C6A75E";
+        case "gris":
+            return "#4A4F55";
+        case "naranja":
+            return "#A65A3A";
+        case "rosa":
+            return "#B76E79";
+        case "morado":
+            return "#4B2E3F";
+        case "café":
+            return "#3B241C";
+        case "cafe":
+            return "#3B241C";
+        case "beige":
+            return "#C8B69C";
+        default:
+            return "lightgray";
+    }
 }

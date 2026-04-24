@@ -3,12 +3,9 @@ import CatalogoCuerpo from "./components/CatalogoCuerpo";
 import { getCatalogo } from "@/client/producto.client";
 import { Loader } from "lucide-react";
 import { breadCrumbs } from "./utils/producto";
-import Filtros from "./components/Filtros";
-import { getMarcas } from "@/client/marca.client";
-import { getColores } from "@/client/color.client";
-import { getGeneros } from "@/client/genero.client";
-import { getTodasLasCategorias } from "@/client/categoria.client";
+// import Filtros from "./components/Filtros";
 import { getFiltroV2 } from "@/client/filtro_v2.client";
+import FiltroV2 from "./components/FiltroV2";
 
 type Props = {
   searchParams: {
@@ -22,15 +19,16 @@ type Props = {
 
 export default async function Productos({searchParams}: Props) {
   const { categoria, subcategoria, genero, marca } = await searchParams;
+  let data;
 
   // TODO: Vas a poder borrar esto jasdfasdkj
-  const categoriasRes = await getTodasLasCategorias();
-  const generosRes = await getGeneros();
-  const generos = generosRes.data;
-  const coloresRes = await getColores();
-  const colores = coloresRes.data;
-  const marcasRes = await getMarcas();
-  const marcas = marcasRes.data;
+  // const categoriasRes = await getTodasLasCategorias();
+  // const generosRes = await getGeneros();
+  // const generos = generosRes.data;
+  // const coloresRes = await getColores();
+  // const colores = coloresRes.data;
+  // const marcasRes = await getMarcas();
+  // const marcas = marcasRes.data;
 
 
   const res = await getCatalogo({
@@ -50,7 +48,8 @@ export default async function Productos({searchParams}: Props) {
 
   // Respuesta para el filtro
   try {
-    const { data } = await getFiltroV2(categoria || 0);
+    const filtroRes = await getFiltroV2(categoria || 0);
+    data = filtroRes.data;
   } catch (err : any) {
     if (err.message === "El ID de categoría no puede ser 0") {
       console.error("Error al obtener el filtro v2:", err.message);
@@ -76,7 +75,13 @@ export default async function Productos({searchParams}: Props) {
       />
 
       <div className="flex justify-between items-center w-full sticky top-0 bg-white z-5 mt-4 py-4">
-        <Filtros categorias={categoriasRes} generos={generos} colores={colores} marcas={marcas}  count={productos.length} titulos={titulos}/>
+        {/* <Filtros categorias={categoriasRes} generos={generos} colores={colores} marcas={marcas}  count={productos.length} titulos={titulos}/> */}
+        <FiltroV2 
+          data={data}
+          count={productos.length} 
+          titulos={titulos}
+        />
+        
       </div>
 
       {/* Contenedor principal para productos cards */}
