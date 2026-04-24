@@ -15,13 +15,25 @@ export default function NavBarLogistica() {
           height={80} 
         />
       </Link>
-        
-      
+
+       <nav className="*:h-full flex items-center pt-12">
+        <ul className="h-full flex justify-center items-center font-semibold text-md space-x-9">
+          <Link href="/logistica/estadoenvio">
+            <li className="h-full text-white group hover:underline">
+              Envios
+            </li>
+          </Link>
+          <Link href="/logistica/estadopedido">
+            <li className="h-full text-white group hover:underline">
+              Pedidos
+            </li>
+          </Link>
+          
+          </ul>        
+      </nav>      
       <div className="flex space-x-7 items-center">
         <div className="flex space-x-5">
-          <Link href="/logistica">
-          <p>Envio</p>
-          </Link>
+         
           <Link href="/cuenta">
             <Image src="/assets/images/profile.svg" alt="User" width={30} height={30} />
           </Link>

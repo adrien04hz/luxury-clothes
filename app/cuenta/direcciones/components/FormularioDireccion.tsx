@@ -126,13 +126,16 @@ export default function FormularioDireccion(
 
     const data = await res.json();
 
-    if (!res.ok) {
-      console.error("ERROR DELETE:", data);
-      return;
-    }
+     if (!res.ok) {
+      setErrors({
+        invalido: "¡Ups! esta dirección está vinculada con un envío y no se puede eliminar.",
+    });
+    return false; 
+  }
 
     onSubmit({ deleted: true, id: selectedDireccion.id });
     onClose();
+    return true;
   };
 
   useEffect(() => {
@@ -520,34 +523,55 @@ export default function FormularioDireccion(
         {showConfirm && (
           <div className=" fixed inset-0 z-60 flex items-center justify-center bg-black/40">
             <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-lg min-h-63 flex flex-col justify-between relative"> 
-              <h3 className="text-2xl font-bold mb-4">
-                Eliminar dirección de entrega
-              </h3>
-               
-              <p className="text-gray-600 mb-6">
-                ¿Seguro que deseas eliminar esta dirección? <br />
-                 Esta acción no se puede deshacer
-              </p>
+             <h3 className="text-2xl font-bold mb-4">
+              {errors.invalido
+                ? "No se puede eliminar"
+                : "Eliminar dirección de entrega"}
+            </h3>
+
+            <p className="text-gray-600 mb-6">
+              {errors.invalido
+                ? errors.invalido
+                : (
+                  <>
+                    ¿Seguro que deseas eliminar esta dirección? <br />
+                    Esta acción no se puede deshacer
+                  </>
+                )}
+            </p>
 
               <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setShowConfirm(false)}
-                  className="px-4 py-2 border rounded-full"
-                >
-                  Cancelar
-                </button>
+                {!errors.invalido ? (
+                  <>
+                    <button
+                      onClick={() => setShowConfirm(false)}
+                      className="px-4 py-2 border rounded-full"
+                    >
+                      Cancelar
+                    </button>
 
-                <button
-                  onClick={async () => {
-                    await deleteDireccion();
-                    setShowConfirm(false);
-                  }}
-                  className="px-4 py-2 bg-black text-white rounded-full"
-                >
-                  Sí, eliminar
-                </button>
+                    <button
+                      onClick={async () => {
+                        const success = await deleteDireccion();
+                        if (success) setShowConfirm(false);
+                      }}
+                      className="px-4 py-2 bg-black text-white rounded-full"
+                    >
+                      Sí, eliminar
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setShowConfirm(false);
+                      setErrors({});
+                    }}
+                    className="px-4 py-2 bg-black text-white rounded-full"
+                  >
+                    Entendido
+                  </button>
+                )}
               </div>
-
             </div>
           </div>
         )}
