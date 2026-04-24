@@ -41,7 +41,7 @@ export class LogisticaRepository {
          e.fecha_entrega_estimada
        FROM "Envio" e
        JOIN "EstadoEnvio" ep ON e.id_estado_envio = ep.id
-       WHERE e.id = $1`,
+       WHERE e.id_pedido = $1`,
       [idPedido]
     );
   }
