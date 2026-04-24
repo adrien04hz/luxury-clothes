@@ -24,9 +24,12 @@ export default function EnviosPendientes(){
     "Entregado"
   ];
 
-  const estadosDisponibles = flujoEstados.slice(
-    flujoEstados.indexOf(detalleEnvio?.estado || "Pendiente") + 1
-  );
+  const estadoActualIndex = flujoEstados.indexOf(detalleEnvio?.estado || "Pendiente");
+
+  const estadosDisponibles =
+  estadoActualIndex >= 0 && estadoActualIndex < flujoEstados.length - 1
+    ? [flujoEstados[estadoActualIndex + 1]]
+    : [];
 
   const getEstadoColor = (estado: EnvioPendiente["estado_envio"]): string => {
     switch (estado) {
