@@ -27,9 +27,15 @@ export class LogisticaService {
   static async obtenerEstadoEnvio(idPedido: number) {
     const result: QueryResult = await LogisticaRepository.obtenerEstadoEnvio(idPedido);
     
-    if (result.rowCount === 0) {
-      throw new Error("Pedido no encontrado o no tiene información de envío");
-    }
+   if (result.rowCount === 0) {
+  return {
+    id_pedido: idPedido,
+    estado: "Pendiente",
+    descripcion: null,
+    fecha_envio: null,
+    fecha_entrega_estimada: null
+  };
+}
     
     return result.rows[0];
   }

@@ -24,12 +24,9 @@ export default function EnviosPendientes(){
     "Entregado"
   ];
 
-  const estadoActualIndex = flujoEstados.indexOf(detalleEnvio?.estado || "Pendiente");
-
-  const siguienteEstado =
-  estadoActualIndex >= 0 && estadoActualIndex < flujoEstados.length - 1
-    ? flujoEstados[estadoActualIndex + 1]
-    : null;
+  const estadosDisponibles = flujoEstados.slice(
+    flujoEstados.indexOf(detalleEnvio?.estado || "Pendiente") + 1
+  );
 
   const getEstadoColor = (estado: EnvioPendiente["estado_envio"]): string => {
     switch (estado) {
@@ -180,9 +177,10 @@ export default function EnviosPendientes(){
               <button
                 onClick={async () => {
                   setPedidoSeleccionado(envio.id_pedido);
-                  setOpenModal(true);
 
                   await cargarDetalleEnvio(envio.id_pedido);
+                  setOpenModal(true);
+
                 }}
                 className={`flex items-center justify-center gap-2 font-black p-4 text-xs uppercase tracking-widest transition shadow-lg rounded-full ${
                   envio.estado_envio === "Entregado" 
@@ -265,13 +263,11 @@ export default function EnviosPendientes(){
                     value={nuevoEstado}
                     onChange={(e) => setNuevoEstado(e.target.value)}
                   >
-                   <option value="">Selecciona estado</option>
-
-                    {siguienteEstado && (
-                      <option value={siguienteEstado}>
-                        {siguienteEstado}
-                      </option>
-                    )}
+                    <option value="">Selecciona estado</option>
+                    <option value="Preparado">Preparado</option>
+                    <option value="Enviado">Enviado</option>
+                    <option value="En Camino">En Camino</option>
+                    <option value="Entregado">Entregado</option>
                   </select>
                 </div>
               </div>
