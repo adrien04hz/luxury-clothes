@@ -33,30 +33,30 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    function aplicarFiltro(key: string, value: string) {
-        const params = new URLSearchParams(searchParams.toString());
+    // function aplicarFiltro(key: string, value: string) {
+    //     const params = new URLSearchParams(searchParams.toString());
 
-        params.set(key, value);
+    //     params.set(key, value);
 
-        if (!params.get("q")) {
-            const q = searchParams.get("q");
-            if (q) params.set("q", q);
-        }
+    //     if (!params.get("q")) {
+    //         const q = searchParams.get("q");
+    //         if (q) params.set("q", q);
+    //     }
 
-        router.push(`/productos/buscar?${params.toString()}`);
-    }
+    //     router.push(`/productos/buscar?${params.toString()}`);
+    // }
 
-    function limpiarFiltros() {
-        const params = new URLSearchParams();
+    // function limpiarFiltros() {
+    //     const params = new URLSearchParams();
 
-        const q = searchParams.get("q");
+    //     const q = searchParams.get("q");
 
-        if (q) {
-            params.set("q", q);
-        }
+    //     if (q) {
+    //         params.set("q", q);
+    //     }
 
-        router.push(`/productos/buscar?${params.toString()}`);
-    }
+    //     router.push(`/productos/buscar?${params.toString()}`);
+    // }
 
     return (
 
@@ -128,7 +128,9 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                     {/* SECCIONES */}
                     {/* seccion de orden */}
                     <FiltroItem title="Ordenar por" open={activo === "orden"} onToggle={() => setActivo(activo === "orden" ? null : "orden")}>
-                        <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_asc")}>
+                        {/* <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_asc")}> */}
+                        <div className="text-sm cursor-pointer">
+
                             <label className="flex items-center space-x-2 cursor-pointer">
                                 <input type="checkbox" className="peer hidden" />
 
@@ -142,7 +144,9 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                                 <span>Precio menor a mayor</span>
                             </label>
                         </div>
-                        <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_desc")}>
+                        {/* <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_desc")}> */}
+                        <div className="text-sm cursor-pointer">
+
                             <label className="flex items-center space-x-2 cursor-pointer">
                                 <input type="checkbox" className="peer hidden" />
 
@@ -167,7 +171,9 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                             </p>
                             {
                                 subcategorias?.map((s) => (
-                                    <div key={s.id} className="text-sm ml-3 text-gray-500 cursor-pointer" onClick={() => aplicarFiltro("categoria", s.id.toString())}>
+                                    // <div key={s.id} className="text-sm ml-3 text-gray-500 cursor-pointer" onClick={() => aplicarFiltro("categoria", s.id.toString())}>
+                                    <div key={s.id} className="text-sm ml-3 text-gray-500 cursor-pointer">
+
 
                                         <label className="flex items-center space-x-2 cursor-pointer">
                                             <input type="checkbox" className="peer hidden" />
@@ -192,7 +198,9 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                     <FiltroItem title="Género" open={activo === "género"} onToggle={() => setActivo(activo === "género" ? null : "género")}>
                         {generos?.map((c) => (
                             <div key={c.id}>
-                                <div className="text-sm font-normal cursor-pointer" onClick={() => aplicarFiltro("genero", c.id.toString())}>
+                                {/* <div className="text-sm font-normal cursor-pointer" onClick={() => aplicarFiltro("genero", c.id.toString())}> */}
+                                <div className="text-sm font-normal cursor-pointer">
+
                                     <label className="flex items-center space-x-2 cursor-pointer">
                                         <input type="checkbox" className="peer hidden" />
 
@@ -215,10 +223,15 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                         <div className=" px-8 mt-4 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
                             {colores?.map((color) => (
                                 <div key={color.id} className="flex flex-col items-center  w-fit">
-                                    <div
+                                    {/* <div
                                         className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition"
                                         style={{ backgroundColor: getColor(color.color || "") }}
                                         onClick={() => aplicarFiltro("color", color.id.toString())}
+                                    ></div> */}
+
+                                    <div
+                                        className="w-10 h-10 rounded-full cursor-pointer hover:scale-110 transition"
+                                        style={{ backgroundColor: getColor(color.color || "") }}
                                     ></div>
                                     <span className="text-xs mt-2 text-gray-700">
                                         {color.color + " (" + color.total_categoria + ")"}
@@ -231,7 +244,9 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                     <FiltroItem title="Marcas" open={activo === "marca"} onToggle={() => setActivo(activo === "marca" ? null : "marca")}>
                         {marcas?.map((c) => (
                             <div key={c.id}>
-                                <div className="text-sm font-normal cursor-pointer" onClick={() => aplicarFiltro("marca", c.id.toString())}>
+                                {/* <div className="text-sm font-normal cursor-pointer" onClick={() => aplicarFiltro("marca", c.id.toString())}> */}
+                                <div className="text-sm font-normal cursor-pointer">
+
                                     <label className="flex items-center space-x-2 cursor-pointer">
                                         <input type="checkbox" className="peer hidden" />
 
@@ -250,7 +265,8 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                     </FiltroItem>
 
                     <div className="mt-6 space-y-4">
-                        <button onClick={limpiarFiltros} className="text-sm underline">
+                        {/* <button onClick={limpiarFiltros} className="text-sm underline"> */}
+                        <button className="text-sm underline">
                             Borrar todo
                         </button>
                     </div>
