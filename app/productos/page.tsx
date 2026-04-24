@@ -20,6 +20,12 @@ type Props = {
 export default async function Productos({searchParams}: Props) {
   const { categoria, subcategoria, genero, marca } = await searchParams;
   let data;
+  const params = {
+    id_categoria: categoria,
+    id_subcategoria: subcategoria,
+    id_genero: genero,
+    id_marca: marca,
+  };
 
   // TODO: Vas a poder borrar esto jasdfasdkj
   // const categoriasRes = await getTodasLasCategorias();
@@ -77,6 +83,7 @@ export default async function Productos({searchParams}: Props) {
       <div className="flex justify-between items-center w-full sticky top-0 bg-white z-5 mt-4 py-4">
         {/* <Filtros categorias={categoriasRes} generos={generos} colores={colores} marcas={marcas}  count={productos.length} titulos={titulos}/> */}
         <FiltroV2 
+          params={params}
           data={data}
           count={productos.length} 
           titulos={titulos}

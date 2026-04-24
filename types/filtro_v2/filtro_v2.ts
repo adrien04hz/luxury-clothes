@@ -28,19 +28,12 @@ export interface Colore {
 
 export interface TotalSubcategoria {
     id_sub:   number;
-    nombre:   Nombre;
+    nombre:   string;
     cantidad: number;
-}
-
-export enum Nombre {
-    Botas = "Botas",
-    Sandalias = "Sandalias",
-    Tacones = "Tacones",
-    Tenis = "Tenis",
 }
 
 export interface Subcategoria {
     id:       number;
-    nombre:   Nombre;
+    nombre:   string;
     cantidad: number;
 }

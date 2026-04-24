@@ -20,15 +20,23 @@ interface Props {
         subcategoria?: string;
         genero?: string;
     };
+    params?: {
+        id_categoria?: number;
+        id_subcategoria?: number;
+        id_genero?: number;
+        id_marca?: number;
+    }
 }
 
-export default function FiltroV2({ data, title, count, titulos }: Props) {
+export default function FiltroV2({ data, title, count, titulos, params }: Props) {
     const [open, setOpen] = useState(false);
     const [activo, setActivo] = useState<string | null>(null);
 
     const { categoria, id_categoria } = data || {};
     const { cantidades } = data || {};
     const { subcategorias, generos, colores, marcas } = cantidades || {};
+
+    const [subcategoria, setSubcategoria] = useState<number | null>(params?.id_subcategoria || null);
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -57,6 +65,21 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
 
     //     router.push(`/productos/buscar?${params.toString()}`);
     // }
+
+    function getCantidadPorSubcategoria(
+        item: any,
+        subcategoriaSeleccionada: number | null
+    ) {
+        if (!subcategoriaSeleccionada) {
+            return Number(item.total_categoria);
+        }
+
+        const match = item.total_subcategorias.find(
+            (s: any) => s.id_sub === subcategoriaSeleccionada
+        );
+
+        return match?.cantidad || 0;
+    }
 
     return (
 
@@ -176,14 +199,26 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
 
 
                                         <label className="flex items-center space-x-2 cursor-pointer">
-                                            <input type="checkbox" className="peer hidden" />
+                                            <input 
+                                                type="checkbox"
+                                                className="peer hidden"
+                                                checked={subcategoria === s.id}
+                                                onChange={() => { 
+                                                    if (subcategoria === s.id) {
+                                                        setSubcategoria(null);
+                                                    } else {
+                                                        setSubcategoria(s.id);
+                                                    }
+                                                }}
+                                            />
 
-                                            <div className="
+                                            <div className={`
                                                 w-4 h-4 border border-gray-400
                                                 peer-checked:bg-black
                                                 peer-checked:border-black
                                                 transition rounded-sm
-                                            "></div>
+                                            `}
+                                            ></div>
 
                                             <span>{s.nombre + " (" + s.cantidad + ")"}</span>
                                         </label>
@@ -202,7 +237,12 @@ export default function FiltroV2({ data, title, count, titulos }: Props) {
                                 <div className="text-sm font-normal cursor-pointer">
 
                                     <label className="flex items-center space-x-2 cursor-pointer">
-                                        <input type="checkbox" className="peer hidden" />
+                                        <input 
+                                            type="checkbox"
+                                            className="peer hidden"
+                                            checked={Number(params?.id_genero) === c.id}
+                                            readOnly
+                                        />
 
                                         <div className="
                                             w-4 h-4 border border-gray-400
