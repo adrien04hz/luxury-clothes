@@ -31,10 +31,7 @@ export default function SidebarCuenta() {
           Mi información
         </Link>
         <Link href="/cuenta/pedidos" className={linkClass("/cuenta/pedidos")}>
-          Mis compras
-        </Link>
-        <Link href="/cuenta/listadedeseos" className={linkClass("/cuenta/listadedeseos")}>
-          Mi lista de deseo
+          Mis pedidos
         </Link>
         <Link href="/cuenta/direcciones" className={linkClass("/cuenta/direcciones")}>
           Mis direcciones

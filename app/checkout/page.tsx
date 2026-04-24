@@ -1,6 +1,6 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Cervantes Rosales Abdiel, Ramos Bello Jose Luis, Diaz Antonio Luis Pedro*/
+//* Autor de la clase: Cervantes Rosales Abdiel, Ramos Bello Jose Luis, Diaz Antonio Luis Pedro, Valeriano Lopez Magali Natividad*/
 //* Fecha: 10/04/2026 */
 //**********/
 "use client";
@@ -20,7 +20,7 @@ interface ItemCarrito {
   talla: string;
   precio: number;
   cantidad: number;
-  imagen_url?: string;
+  imagen?: string;
 }
 
 export default function CheckoutPage() {
@@ -30,49 +30,44 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // Simulación de carrito
-  useEffect(() => {
-    const carritoEjemplo: ItemCarrito[] = [
-      {
-        id_producto: 1,
-        nombre: "100 mm Mules - Silk taffetas",
-        talla: "24",
-        precio: 21533.30,
-        cantidad: 2,
-        imagen_url: "/images/zapatos/mules-black.png",
-      },
-      {
-        id_producto: 2,
-        nombre: "100 mm Mules - Silk taffetas",
-        talla: "30",
-        precio: 21533.30,
-        cantidad: 2,
-        imagen_url: "/images/zapatos/mules-black.png",
-      },
-      {
-        id_producto: 3,
-        nombre: "100 mm Mules - Silk taffetas",
-        talla: "25",
-        precio: 21533.30,
-        cantidad: 2,
-        imagen_url: "/images/zapatos/mules-black.png",
-      },
-      {
-        id_producto: 4,
-        nombre: "100 mm Mules - Silk taffetas",
-        talla: "27",
-        precio: 21533.30,
-        cantidad: 2,
-        imagen_url: "/images/zapatos/mules-black.png",
-      },
-    ];
+  const cargarCarrito = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-    setItems(carritoEjemplo);
-    setIsLoadingData(false);
+      const res = await fetch("/api/carrito", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Error al cargar carrito");
+      }
+      const itemsFormateados = data.data.map((item: any) => ({
+        id_producto: item.id_producto,
+        nombre: item.nombre,
+        talla: item.talla,
+        precio: Number(item.precio),
+        cantidad: item.cantidad,
+        imagen: item.imagen,
+      }));
+      setItems(itemsFormateados);
+
+    } catch (error) {
+      console.error(error);
+      setError("No se pudo cargar el carrito");
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+  useEffect(() => {
+    cargarCarrito();
   }, []);
 
   const subtotal = items.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-
+  console.log(items);
   const realizarCompra = async () => {
     if (items.length === 0) {
       setError("No hay productos en el carrito");
@@ -90,12 +85,19 @@ export default function CheckoutPage() {
       }
 
       const body = {
-          id_metodo_pago: selectedMetodo,     // Cambia según selección del usuario
-          id_direccion: selectedDireccion?.id,       // Cambia según selección del usuario
-          notas: "Compra realizada desde el checkout",
-          // Aquí puedes enviar también los items del carrito si tu API lo requiere
+        id_metodo_pago: selectedMetodo,
+        id_direccion: selectedDireccion?.id,
+        notas: "Compra realizada desde el checkout",
       };
+      if (!selectedMetodo) {
+        setError("Selecciona un método de pago");
+        return;
+      }
 
+      if (!selectedDireccion) {
+        setError("Selecciona una dirección");
+        return;
+      }
       const res = await fetch("/api/pedido/procesar_compra", {
         method: "POST",
         headers: {
@@ -110,10 +112,9 @@ export default function CheckoutPage() {
       if (!res.ok) {
         throw new Error(data.error || "Error al procesar la compra");
       }
-
-      const idPedido = data.id_pedido || data.pedido?.id;
+      const idPedido = data.data?.id;
       if (!idPedido) {
-        throw new Error("No se recibió el ID del pedido");
+        throw new Error("No se pudo obtener el pedido");
       }
 
       // Redirigir a confirmación
@@ -149,7 +150,7 @@ export default function CheckoutPage() {
 
       setDirecciones(dirs);
 
-      // 👉 última dirección agregada
+      // última dirección agregada
       if (dirs.length > 0) {
         setSelectedDireccion(dirs[dirs.length - 1]);
       }
@@ -413,7 +414,7 @@ export default function CheckoutPage() {
                       Agregar tarjeta
                     </button>
                   )}
-                  
+
                 </div>
               )}
             </div>
@@ -427,9 +428,9 @@ export default function CheckoutPage() {
               {items.map((item) => (
                 <div key={item.id_producto} className="flex gap-6">
                   <div className="flex-shrink-0 w-28 h-28 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
-                    {item.imagen_url ? (
+                    {item.imagen ? (
                       <Image
-                        src={item.imagen_url}
+                        src={item.imagen || "/images/no-image.png"}
                         alt={item.nombre}
                         width={112}
                         height={112}
@@ -443,7 +444,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex-1 pt-2">
                     <p className="font-medium text-base">
-                      100 mm Mules - Silk taffetas
+                      {item.nombre}
                     </p>
                     <div className="mt-3 space-y-1 text-sm text-gray-600">
                       <p><span className="font-medium">Talla:</span> {item.talla}</p>
@@ -467,13 +468,21 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
-            <div className="flex justify-end mt-8">
+            <div className="flex flex-col lg:flex-row gap-4 justify-end mt-8">
               <button
                 onClick={realizarCompra}
                 disabled={loading || items.length === 0}
                 className="bg-black text-white px-16 py-4 rounded-md font-semibold text-lg hover:bg-gray-900 transition disabled:bg-gray-400 disabled:cursor-not-allowed w-full lg:w-auto"
               >
-                {loading ? "Procesando compra..." : "Comprar"}
+                {loading ? "Procesando..." : "Confirmar compra"}
+              </button>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-4 justify-end mt-8">
+              <button
+                onClick={() => window.history.back()}
+                className="border border-gray-800 px-16 py-4 rounded-md font-semibold text-lg hover:bg-gray-100 transition w-full lg:w-auto"
+              >
+                {loading ? "Cancelando compra..." : "Cancelar compra"}
               </button>
             </div>
             {error && (
@@ -482,7 +491,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-      //Formulario para editar o añadir direccion
       <FormularioDireccion
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -497,7 +505,6 @@ export default function CheckoutPage() {
         allowDelete={false}
       />
 
-      //Mostrar lista de direcciones
       <ListaDirecciones
         isOpen={isSelectModalOpen}
         onClose={() => setIsSelectModalOpen(false)}

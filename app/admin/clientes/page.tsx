@@ -7,6 +7,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Sidebar from "@/app/components/SidebarAdmin";
 
 interface Cliente {
     id: number;
@@ -47,34 +48,11 @@ export default function AdminClientesPage() {
     );
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold text-gray-800">Gestión de Clientes</h1>
-                    </div>
-
-                    <nav className="flex gap-6 text-sm">
-                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Inicio</button>
-                        <button onClick={() => router.push("/admin/categorias")} className="hover:text-black">Categorías</button>
-                        <button onClick={() => router.push("/admin/clientes")} className="font-semibold text-black">Clientes</button>
-                        <button onClick={() => router.push("/admin/marcas")} className="hover:text-black">Marcas</button>
-                        <button onClick={() => router.push("/admin/pedidos")} className="hover:text-black">Pedidos</button>
-                        <button onClick={() => router.push("/admin/productos")} className="hover:text-black">Productos</button>
-                    </nav>
-
-                    <button
-                        onClick={() => router.push("/")}
-                        className="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100"
-                    >
-                        Cerrar Sesión
-                    </button>
-                </div>
-            </header>
-
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <div>
                 <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-3xl font-semibold text-gray-800">Clientes Registrados</h2>
+                    <h2 className="text-3xl font-semibold text-gray-800">
+                        Clientes Registrados
+                    </h2>
 
                     <input
                         type="text"
@@ -133,6 +111,5 @@ export default function AdminClientesPage() {
                     </div>
                 )}
             </div>
-        </div>
     );
 }

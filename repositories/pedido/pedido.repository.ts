@@ -219,60 +219,73 @@ export class PedidoRepository {
     idDireccion: number,
     notas?: string
   ): Promise<QueryResult> {
+
     const client = await pool.connect();
+
     try {
       await client.query('BEGIN');
 
+      // Obtener carrito válido
       const carritoResult = await client.query(
         `SELECT 
-         cc.id_producto,
-         cc.id_talla,
-         cc.cantidad,
-         p.precio,
-         s.stock
-       FROM "CarritoCompras" cc
-       JOIN "Producto" p ON cc.id_producto = p.id
-       JOIN "StockPorTalla" s ON cc.id_producto = s.id_producto 
-                             AND cc.id_talla = s.id_talla
-       WHERE cc.id_usuario = $1
-         AND p.activo = true
-         AND s.stock >= cc.cantidad`,
+          cc.id_producto,
+          cc.id_talla,
+          cc.cantidad,
+          p.nombre,
+          p.precio,
+          t.nombre AS talla,
+          ip.url AS imagen_url
+        FROM "CarritoCompras" cc
+        JOIN "Producto" p ON cc.id_producto = p.id
+        JOIN "Talla" t ON cc.id_talla = t.id
+        LEFT JOIN LATERAL (
+          SELECT url
+          FROM "ImagenProducto"
+          WHERE id_producto = p.id
+          LIMIT 1
+        ) ip ON true
+
+        WHERE cc.id_usuario = $1;`,
         [idUsuario]
       );
 
       if (carritoResult.rowCount === 0) {
-        throw new Error("El carrito está vacío o no hay stock suficiente para algún producto");
+        throw new Error("El carrito está vacío o sin stock suficiente");
       }
 
       const items = carritoResult.rows;
 
-      let total = 0;
-      for (const item of items) {
-        total += item.precio * item.cantidad;
-      }
+      // Calcular total
+      const total = items.reduce(
+        (acc, item) => acc + item.precio * item.cantidad,
+        0
+      );
 
+      // Crear Pedido (estado fijo = 3)
       const pedidoResult = await client.query(
         `INSERT INTO "Pedido" (
-          id_usuario, 
-          id_estado_pedido, 
-          total, 
-          fecha
-        ) VALUES (
-          $1, 
-          (SELECT id FROM "EstadoPedido" WHERE nombre ILIKE 'pendiente' LIMIT 1),
-          $2, 
-          CURRENT_TIMESTAMP
-        ) RETURNING id`,
+        id_usuario,
+        id_estado_pedido,
+        total,
+        fecha
+      ) VALUES ($1, 3, $2, CURRENT_TIMESTAMP)
+      RETURNING id`,
         [idUsuario, total]
       );
 
       const idPedido = pedidoResult.rows[0].id;
 
+      // Insertar DetallePedido + actualizar stock
       for (const item of items) {
+
         await client.query(
           `INSERT INTO "DetallePedido" (
-           id_pedido, id_producto, id_talla, cantidad, precio_unitario
-         ) VALUES ($1, $2, $3, $4, $5)`,
+          id_pedido,
+          id_producto,
+          id_talla,
+          cantidad,
+          precio_unitario
+        ) VALUES ($1, $2, $3, $4, $5)`,
           [idPedido, item.id_producto, item.id_talla, item.cantidad, item.precio]
         );
 
@@ -284,17 +297,71 @@ export class PedidoRepository {
         );
       }
 
+      // Crear Pago
       await client.query(
-        `DELETE FROM "CarritoCompras" WHERE id_usuario = $1`,
+        `INSERT INTO "Pago" (
+          id_pedido,
+          id_tipo_metodo,
+          id_estado_pago,
+          total,
+          fecha,
+          referencia
+        ) VALUES ($1, $2, 2, $3, CURRENT_TIMESTAMP, $4)`,
+        [
+          idPedido,
+          idTipoMetodoPago,
+          total,
+          `PAY-${idPedido}-${Date.now()}`
+        ]
+      );
+
+      // Crear Envío
+      await client.query(
+        `INSERT INTO "Envio" (
+          id_pedido,
+          id_direccion,
+          id_estado_envio,
+          fecha_envio,
+          numero_guia,
+          fecha_entrega_estimada
+        ) VALUES ($1, $2, 1, CURRENT_TIMESTAMP, $3, $4)`,
+        [
+          idPedido,
+          idDireccion,
+          `GUIA-${idPedido}-${Date.now()}`,
+          new Date(Date.now() + 5 * 24 * 60 * 60 * 1000) // +5 días
+        ]
+      );
+
+      // Historial del estado del pedido
+      await client.query(
+        `INSERT INTO "HistorialEstadoPedido" (
+          id_pedido,
+          id_estado_pedido,
+          id_usuario,
+          fecha
+        ) VALUES ($1, 3, $2, CURRENT_TIMESTAMP)`,
+        [
+          idPedido,
+          idUsuario
+        ]
+      );
+
+      // Vaciar carrito
+      await client.query(
+        `DELETE FROM "CarritoCompras"
+       WHERE id_usuario = $1`,
         [idUsuario]
       );
 
       await client.query('COMMIT');
 
+      // Retornar el pedido completo
       return await client.query(
-        `SELECT p.*, ep.nombre AS estado 
+        `SELECT p.*, ep.nombre AS estado
        FROM "Pedido" p
-       JOIN "EstadoPedido" ep ON p.id_estado_pedido = ep.id
+       JOIN "EstadoPedido" ep 
+         ON p.id_estado_pedido = ep.id
        WHERE p.id = $1`,
         [idPedido]
       );

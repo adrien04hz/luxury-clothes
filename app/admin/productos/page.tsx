@@ -8,6 +8,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Sidebar from "@/app/components/SidebarAdmin";
 
 interface Producto {
     id: number;
@@ -94,7 +95,7 @@ export default function AdminProductosPage() {
                     body: JSON.stringify(payload),
                 });
             } else {
-                res = await fetch("/api/administrador/agregar_producto", {
+                res = await fetch("/api/administrador/agregar-producto", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
@@ -118,7 +119,7 @@ export default function AdminProductosPage() {
         if (!confirm("¿Estás seguro de desactivar este producto?")) return;
 
         try {
-            const res = await fetch(`/api/administrador/eliminar_producto?id=${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/administrador/eliminar-producto?id=${id}`, { method: "DELETE" });
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}));
@@ -133,131 +134,112 @@ export default function AdminProductosPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-gray-800">Gestión de Productos</h1>
+            <div>
+                <div>
+                    <div className="flex justify-between items-center mb-8">
+                        <h2 className="text-3xl font-semibold text-gray-800">Catálogo de Productos</h2>
+                        <button onClick={abrirCrear} className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition">
+                            + Nuevo Producto
+                        </button>
+                    </div>
 
-                    <nav className="flex gap-6 text-sm">
-                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Inicio</button>
-                        <button onClick={() => router.push("/admin/categorias")} className="hover:text-black">Categorías</button>
-                        <button onClick={() => router.push("/admin/clientes")} className="hover:text-black">Clientes</button>
-                        <button onClick={() => router.push("/admin/marcas")} className="hover:text-black">Marcas</button>
-                        <button onClick={() => router.push("/admin/pedidos")} className="hover:text-black">Pedidos</button>
-                        <button onClick={() => router.push("/admin/productos")} className="font-semibold text-black">Productos</button>
-                    </nav>
+                    {loading ? (
+                        <div className="text-center py-12 text-gray-500">Cargando productos...</div>
+                    ) : (
+                        <div className="bg-white rounded-2xl shadow overflow-hidden">
+                            <table className="w-full">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-4 text-left font-medium">Imagen</th>
+                                        <th className="px-6 py-4 text-left font-medium">ID</th>
+                                        <th className="px-6 py-4 text-left font-medium">Nombre</th>
+                                        <th className="px-6 py-4 text-left font-medium">Marca</th>
+                                        <th className="px-6 py-4 text-left font-medium">Precio</th>
+                                        <th className="px-6 py-4 text-left font-medium">Stock</th>
+                                        <th className="px-6 py-4 text-left font-medium">Estado</th>
+                                        <th className="px-6 py-4 text-center font-medium">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {productos.map((p) => {
+                                        const imagenUrl = p.imagenes && p.imagenes.length > 0
+                                            ? p.imagenes[0]
+                                            : "https://via.placeholder.com/300x300/cccccc/666666?text=Sin+Imagen";
 
-                    <button onClick={() => router.push("/")} className="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100">
-                        Cerrar Sesión
-                    </button>
+                                        return (
+                                            <tr key={p.id} className="hover:bg-gray-50">
+                                                <td className="px-6 py-5">
+                                                    <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                                                        <Image
+                                                            src={imagenUrl}
+                                                            alt={p.nombre}
+                                                            fill
+                                                            className="object-cover"
+                                                            sizes="64px"
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-5 font-mono text-sm text-gray-500">{p.id}</td>
+                                                <td className="px-6 py-5 font-medium line-clamp-2">{p.nombre}</td>
+                                                <td className="px-6 py-5">{p.marca || "—"}</td>
+                                                <td className="px-6 py-5 font-medium">${p.precio.toLocaleString("es-MX")}</td>
+                                                <td className="px-6 py-5">
+                                                    <span className={p.stock < 10 ? "text-red-600 font-semibold" : ""}>
+                                                        {p.stock}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <span className={`px-4 py-1 text-xs rounded-full font-medium ${p.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                                                        {p.activo ? "Activo" : "Inactivo"}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-5 text-center space-x-4">
+                                                    <button onClick={() => abrirEditar(p)} className="text-blue-600 hover:text-blue-800 font-medium">
+                                                        Editar
+                                                    </button>
+                                                    <button onClick={() => handleEliminar(p.id)} className="text-red-600 hover:text-red-800 font-medium">
+                                                        Desactivar
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
-            </header>
 
-            <div className="max-w-7xl mx-auto px-6 py-8">
-                <div className="flex justify-between items-center mb-8">
-                    <h2 className="text-3xl font-semibold text-gray-800">Catálogo de Productos</h2>
-                    <button onClick={abrirCrear} className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition">
-                        + Nuevo Producto
-                    </button>
-                </div>
-
-                {loading ? (
-                    <div className="text-center py-12 text-gray-500">Cargando productos...</div>
-                ) : (
-                    <div className="bg-white rounded-2xl shadow overflow-hidden">
-                        <table className="w-full">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="px-6 py-4 text-left font-medium">Imagen</th>
-                                    <th className="px-6 py-4 text-left font-medium">ID</th>
-                                    <th className="px-6 py-4 text-left font-medium">Nombre</th>
-                                    <th className="px-6 py-4 text-left font-medium">Marca</th>
-                                    <th className="px-6 py-4 text-left font-medium">Precio</th>
-                                    <th className="px-6 py-4 text-left font-medium">Stock</th>
-                                    <th className="px-6 py-4 text-left font-medium">Estado</th>
-                                    <th className="px-6 py-4 text-center font-medium">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-200">
-                                {productos.map((p) => {
-                                    const imagenUrl = p.imagenes && p.imagenes.length > 0 
-                                        ? p.imagenes[0] 
-                                        : "https://via.placeholder.com/300x300/cccccc/666666?text=Sin+Imagen";
-
-                                    return (
-                                        <tr key={p.id} className="hover:bg-gray-50">
-                                            <td className="px-6 py-5">
-                                                <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
-                                                    <Image
-                                                        src={imagenUrl}
-                                                        alt={p.nombre}
-                                                        fill
-                                                        className="object-cover"
-                                                        sizes="64px"
-                                                    />
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-5 font-mono text-sm text-gray-500">{p.id}</td>
-                                            <td className="px-6 py-5 font-medium line-clamp-2">{p.nombre}</td>
-                                            <td className="px-6 py-5">{p.marca || "—"}</td>
-                                            <td className="px-6 py-5 font-medium">${p.precio.toLocaleString("es-MX")}</td>
-                                            <td className="px-6 py-5">
-                                                <span className={p.stock < 10 ? "text-red-600 font-semibold" : ""}>
-                                                    {p.stock}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-5">
-                                                <span className={`px-4 py-1 text-xs rounded-full font-medium ${p.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                                                    {p.activo ? "Activo" : "Inactivo"}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-5 text-center space-x-4">
-                                                <button onClick={() => abrirEditar(p)} className="text-blue-600 hover:text-blue-800 font-medium">
-                                                    Editar
-                                                </button>
-                                                <button onClick={() => handleEliminar(p.id)} className="text-red-600 hover:text-red-800 font-medium">
-                                                    Desactivar
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
+                {/* Modal Crear / Editar (sin cambios) */}
+                {showModal && (
+                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-2xl p-8 w-full max-w-lg">
+                            <h2 className="text-2xl font-bold mb-6">
+                                {editando ? "Editar Producto" : "Crear Nuevo Producto"}
+                            </h2>
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Nombre del Producto *</label>
+                                    <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Precio ($)*</label>
+                                    <input type="number" step="0.01" value={form.precio} onChange={(e) => setForm({ ...form, precio: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium mb-1">Descripción</label>
+                                    <textarea value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={4} className="w-full border border-gray-300 rounded-xl p-3" />
+                                </div>
+                                <div className="flex gap-4 pt-4">
+                                    <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100">Cancelar</button>
+                                    <button type="submit" className="flex-1 py-3 bg-black text-white rounded-xl hover:bg-gray-800">
+                                        {editando ? "Guardar Cambios" : "Crear Producto"}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 )}
             </div>
-
-            {/* Modal Crear / Editar (sin cambios) */}
-            {showModal && (
-                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-2xl p-8 w-full max-w-lg">
-                        <h2 className="text-2xl font-bold mb-6">
-                            {editando ? "Editar Producto" : "Crear Nuevo Producto"}
-                        </h2>
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Nombre del Producto *</label>
-                                <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Precio ($)*</label>
-                                <input type="number" step="0.01" value={form.precio} onChange={(e) => setForm({ ...form, precio: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Descripción</label>
-                                <textarea value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={4} className="w-full border border-gray-300 rounded-xl p-3" />
-                            </div>
-                            <div className="flex gap-4 pt-4">
-                                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100">Cancelar</button>
-                                <button type="submit" className="flex-1 py-3 bg-black text-white rounded-xl hover:bg-gray-800">
-                                    {editando ? "Guardar Cambios" : "Crear Producto"}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-        </div>
     );
 }
