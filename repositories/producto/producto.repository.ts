@@ -139,8 +139,8 @@ export class Producto {
   //* Autor : Diaz Antonio Luis Pedro*/
   //* Fecha: 22/04/2026 */
   //**********/
-  // consulta de 5 productos al azar
-  static async getCarrusel(limit: number = 5) {
+  // consulta de 10 productos al azar
+  static async getCarrusel(limit: number = 10) {
     const query = `
     SELECT DISTINCT ON (P.id)
       P.id,

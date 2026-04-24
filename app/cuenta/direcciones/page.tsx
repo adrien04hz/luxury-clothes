@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import FormularioDireccion from "@/app/cuenta/direcciones/components/FormularioDireccion";
 import DireccionEnvio from "./components/DireccionEnvio";
 import { ListaDireccionEnvio } from "@/types/direccionesenvio/DireccionesEnvio";
+import SidebarCuenta from "@/app/components/SidebarCuenta";
 
 export default function DireccionesPage() {
   const [direcciones, setDirecciones] = useState<ListaDireccionEnvio[]>([]);
@@ -77,19 +78,28 @@ export default function DireccionesPage() {
   };
 
   return (
-    <div className="pl-16 pt-12 pr-16 pb-12 min-h-screen">
-      <h1 className="mb-6 text-2xl font-medium">
-        Direcciones de entrega guardadas
-      </h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col max-w-full">
+      <div className=" mx-auto px-8 py-6 pb-15 ">
+       
+          <h1 className="text-3xl font-semibold text-center">
+             Direcciones de entrega guardadas
+          </h1>
+          <p className="text-center text-gray-600 mt-1 text-lg">
+            Gestiona tus direccion de envio
+          </p>
+        </div>
 
+        <div className="flex flex-1  px-50">
+            <SidebarCuenta /> 
+        <div className="flex-1 p-10 bg-white max-w-full h-full">
       {/* BOTÓN ARRIBA SOLO SI HAY DIRECCIONES */}
       {hasDirecciones && (
-        <div className="flex justify-end mt-4">
+        <div className=" flex justify-start rounded-2xl">
           <button
             onClick={() => {setSelectedDireccion(null);setIsModalOpen(true)}}
             className="bg-black text-white px-6 py-2.5 rounded-full font-medium hover:opacity-80 transition"
           >
-            Agregar nueva
+            + Agregar nueva direccion
           </button>
         </div>
       )}
@@ -134,6 +144,9 @@ export default function DireccionesPage() {
         allowDelete={true}
       />
 
+      </div>
     </div>
+  </div>
+
   );
 }

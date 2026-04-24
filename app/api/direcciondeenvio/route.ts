@@ -170,10 +170,17 @@ export async function DELETE(req: Request) {
       { status: 200 }
     );
 
-  } catch (error: any) {
+  }catch (error: any) {
+    if (error.message === "DIRECCION_EN_USO") {
+        return NextResponse.json(
+            { error: "No puedes eliminar esta dirección porque está asociada a un envío" },
+            { status: 400 }
+        );
+    }
+
     return NextResponse.json(
-      { error: error.message },
-      { status: 400 }
+        { error: "Error al eliminar dirección" },
+        { status: 500 }
     );
-  }
+}
 }

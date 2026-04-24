@@ -1,4 +1,3 @@
-import Image from "next/image";
 import BreadCrumb from "./components/BreadCrumb";
 import CatalogoCuerpo from "./components/CatalogoCuerpo";
 import { getCatalogo } from "@/client/producto.client";
@@ -15,12 +14,13 @@ type Props = {
     categoria?: number;
     subcategoria?: number;
     genero?: number;
+    marca?: number;
   };
 };
 
 
 export default async function Productos({searchParams}: Props) {
-  const { categoria, subcategoria, genero } = await searchParams;
+  const { categoria, subcategoria, genero, marca } = await searchParams;
 
   const categoriasRes = await getTodasLasCategorias();
   const generosRes = await getGeneros();
@@ -33,7 +33,8 @@ export default async function Productos({searchParams}: Props) {
   const res = await getCatalogo({
     id_categoria: categoria,
     id_subcategoria: subcategoria,
-    id_genero: genero
+    id_genero: genero,
+    id_marca: marca,
   });
 
   const titulos = breadCrumbs({
