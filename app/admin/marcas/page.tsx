@@ -8,7 +8,7 @@ interface Marca {
 
 async function getMarcas(): Promise<Marca[]> {
   try {
-    const res = await fetch("/api/marcas", {
+    const res = await fetch(`${process.env.API_URL}/marcas`, {
       cache: "no-store",
     });
 
@@ -23,7 +23,7 @@ async function getMarcas(): Promise<Marca[]> {
     console.error("Error cargando marcas:", error);
     return [];
   }
-  
+
 }
 
 export default async function Page() {
@@ -42,7 +42,7 @@ export default async function Page() {
 
       {marcas.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-          
+
           {marcas.map((marca) => (
             <div
               key={marca.id}
