@@ -226,7 +226,10 @@ export default function CarritoPage() {
         <div className="font-medium opacity-80 flex flex-col gap-4">
           <div className="flex justify-between">
             <p>Subtotal</p>
-            <p>$ {Number(getTotal()).toLocaleString()}</p>
+            <p>{Number(getTotal()).toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            })}</p>
           </div>
 
           <div className="flex justify-between">
@@ -240,7 +243,10 @@ export default function CarritoPage() {
         <div className="flex flex-col gap-4">
           <div className="flex justify-between font-semibold">
             <p>Total</p>
-            <p>$ {Number(getTotal()).toLocaleString()}</p>
+            <p>{Number(getTotal()).toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            })}</p>
           </div>
           <div className="border border-gray-200 w-full"></div>
         </div>

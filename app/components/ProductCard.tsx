@@ -104,7 +104,10 @@ export default function ProductCard(
 
         <div className="mt-auto">
           <p className="text-black font-medium">
-             $ {Number(product?.precio || item?.precio).toLocaleString()}
+            {Number(product?.precio || item?.precio).toLocaleString("es-MX", {
+                style: "currency",
+                currency: "MXN",
+              })}
           </p>
           
           {showToCart && (

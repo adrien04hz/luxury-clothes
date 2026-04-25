@@ -84,11 +84,17 @@ export default function ProductCardCart(
                 <p className="text-black font-medium opacity-50">{genero}</p>
                 <p className="text-black font-medium opacity-50">{color}</p>
                 <p className="text-black font-medium opacity-70 underline underline-offset-6">{'Talla: ' + talla}</p>
-                <p className="text-black font-medium opacity-50 mt-3">$ {Number(price).toLocaleString()} / unidad</p>
+                <p className="text-black font-medium opacity-50 mt-3">{Number(price).toLocaleString("es-MX", {
+                  style: "currency",
+                  currency: "MXN",
+                })} / unidad</p>
               </div>
               {/* Precio */}
               <div className="py-1 h-full w-50 flex justify-end px-4">
-                <p className="font-semibold">$ {Number(price * cantidad).toLocaleString()}</p>
+                <p className="font-semibold">{Number(price * cantidad).toLocaleString("es-MX", {
+                  style: "currency",
+                  currency: "MXN",
+                })}</p>
               </div>
             </div>
           </div>
