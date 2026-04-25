@@ -119,8 +119,39 @@ export default function Asistencia() {
         },
     ];
     return (
-        <div className="w-full h-screen flex items-center justify-center">
-            <h1 className="text-4xl font-bold">Página de Asistencia</h1>
+        <div className="w-full flex items-center justify-center p-24">
+            <div className="flex flex-col items-start justify-start  h-full w-full gap-8">
+                <div className=" w-full">
+                    <p className="text-4xl font-bold">Preguntas frecuentes</p>
+                </div>
+
+                <div className="pl-12 w-full h-full flex items-start justify-start gap-12">
+                    <div className="h-full ">
+                        {col1.map((col) => (
+                            <div key={col.tema} className="mb-8">
+                                <p className="text-2xl font-bold mb-4">{col.tema}</p>
+                                <ul className="list-disc list-inside">
+                                    {col.preguntas.map((pregunta, index) => (
+                                        <li key={index} className="mb-2 list-none hover:underline hover:cursor-pointer">{pregunta}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                    <div className=" h-full">
+                        {col2.map((col) => (
+                            <div key={col.tema} className="mb-8">
+                                <p className="text-2xl font-bold mb-4">{col.tema}</p>
+                                <ul className="list-disc list-inside">
+                                    {col.preguntas.map((pregunta, index) => (
+                                        <li key={index} className="mb-2 list-none hover:underline hover:cursor-pointer">{pregunta}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
