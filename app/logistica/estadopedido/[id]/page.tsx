@@ -1,3 +1,9 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Fecha: 10/04/2026 */
+//**********/
+
 "use client";
 
 import { useEffect, useState } from "react";
