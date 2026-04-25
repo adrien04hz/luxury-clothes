@@ -2,7 +2,6 @@
 import { useRouter, usePathname } from "next/navigation";
 import {
   Home,
-  Tag,
   Users,
   Layers,
   ShoppingCart,
@@ -11,10 +10,9 @@ import {
 
 const menuItems = [
   { name: "Inicio", path: "/admin", icon: Home },
-  { name: "Categorías", path: "/admin/categorias", icon: Tag },
   { name: "Clientes", path: "/admin/clientes", icon: Users },
   { name: "Marcas", path: "/admin/marcas", icon: Layers },
-  { name: "Pedidos", path: "/admin/pedidos", icon: ShoppingCart },
+  { name: "Ventas", path: "/admin/pedidos", icon: ShoppingCart },
   { name: "Productos", path: "/admin/productos", icon: Package },
 ];
 
