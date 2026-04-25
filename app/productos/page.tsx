@@ -5,8 +5,7 @@ import { breadCrumbs } from "./utils/producto";
 // import Filtros from "./components/Filtros";
 import { getFiltroV2 } from "@/client/filtro_v2.client";
 import FiltroV2 from "./components/FiltroV2";
-import Link from "next/link";
-import { time } from "console";
+import EmppyRedirect from "./components/EmpyRedirect";
 
 type Props = {
   searchParams: {
@@ -57,20 +56,9 @@ export default async function Productos({searchParams}: Props) {
   }
 
   if (productos.length === 0) {
-    timeout(() => {
-      window.location.href = "/productos?categoria=1";
-    }, 3000);
     return (
       <div className="h-full w-full flex items-center justify-center">
-        <div className="w-full h-[50vh] flex flex-col items-center justify-center gap-4">
-          <p className="text-xl font-medium">
-            No hay productos disponibles
-          </p>
-
-          <p className="text-gray-500">
-            Algo no está bien, volviendo a inicio...
-          </p>
-        </div>
+        <EmppyRedirect />
       </div>
     );
   }
