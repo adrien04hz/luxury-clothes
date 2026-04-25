@@ -130,10 +130,10 @@ export default function HistorialPedidosPage() {
                     {/* ESTADO */}
                     <span className={`
                       px-3 py-1 text-sm rounded-full text-white
-                      ${pedido.estado === "Pendiente" ? "bg-green-500" : ""}
-                      ${pedido.estado === "Pagado" ? "bg-yellow-500" : ""}
+                      ${pedido.estado === "Pendiente" ? "bg-blue-500" : ""}
+                      ${pedido.estado === "Pagado" ? "bg-green-500" : ""}
                       ${pedido.estado === "En preparación" ? "bg-blue-500" : ""}
-                      ${pedido.estado === "Listo para envío" ? "bg-indigo-500" : ""}
+                      ${pedido.estado === "Listo para envío" ? "bg-blue-500" : ""}
                       ${pedido.estado === "Completado" ? "bg-green-700" : ""}
                       ${pedido.estado === "Cancelado" ? "bg-red-500" : ""}
                     `}>
