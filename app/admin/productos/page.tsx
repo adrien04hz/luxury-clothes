@@ -30,25 +30,12 @@ export default function AdminProductosPage() {
     const [showModal, setShowModal] = useState(false);
     const [editando, setEditando] = useState<Producto | null>(null);
     const [tallas, setTallas] = useState<any[]>([]);
-    const [marcas, setMarcas] = useState<any[]>([]);
-    const [categorias, setCategorias] = useState<any[]>([]);
-    const [subcategorias, setSubcategorias] = useState<any[]>([]);
-    const [colores, setColores] = useState<any[]>([]);
-    const [generos, setGeneros] = useState<any[]>([]);
-    const [tallasDisponibles, setTallasDisponibles] = useState<any[]>([]);
-    const [stockTallas, setStockTallas] = useState<any[]>([]);
-    const subcategoriasFiltradas = subcategorias;
 
     const [form, setForm] = useState({
         nombre: "",
         precio: "",
         descripcion: "",
-        id_marca: "",
-        id_categoria: "",
-        id_subcategoria: "",
-        id_color: "",
-        id_genero: "",
-        imagen: null as File | null
+        stock: "",
     });
 
     const cargarProductos = async () => {
@@ -78,17 +65,7 @@ export default function AdminProductosPage() {
 
     const abrirCrear = () => {
         setEditando(null);
-        setForm({
-            nombre: "",
-            precio: "",
-            descripcion: "",
-            id_marca: "",
-            id_categoria: "",
-            id_subcategoria: "",
-            id_color: "",
-            id_genero: "",
-            imagen: null,
-        });
+        setForm({ nombre: "", precio: "", descripcion: "", stock: "" });
         setShowModal(true);
     };
 
@@ -100,12 +77,7 @@ export default function AdminProductosPage() {
                 nombre: producto.nombre,
                 precio: producto.precio.toString(),
                 descripcion: producto.descripcion || "",
-                id_marca: "",
-                id_categoria: "",
-                id_subcategoria: "",
-                id_color: "",
-                id_genero: "",
-                imagen: null,
+                stock: producto.stock.toString(),
             });
 
             const res = await fetch(`/api/administrador/stock-producto/${producto.id}`);
@@ -139,6 +111,7 @@ export default function AdminProductosPage() {
                 nombre: form.nombre.trim(),
                 precio: parseFloat(form.precio),
                 descripcion: form.descripcion.trim() || "Sin descripción",
+                stock: parseInt(form.stock),
             };
 
             let res;
@@ -180,6 +153,9 @@ export default function AdminProductosPage() {
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
                 });
+
+                const body = await res.json();
+                console.log("Datos recibidos para nuevo producto:", body);
 
                 if (!res.ok) {
                     const errorData = await res.json().catch(() => ({}));
@@ -324,131 +300,131 @@ export default function AdminProductosPage() {
                             {editando ? "Editar Producto" : "Crear Nuevo Producto"}
                         </h2>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-6">
 
-                            {/* Nombre */}
-                            <input
-                                type="text"
-                                placeholder="Nombre"
-                                value={form.nombre}
-                                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            />
-
-                            {/* Precio */}
-                            <input
-                                type="number"
-                                placeholder="Precio"
-                                value={form.precio}
-                                onChange={(e) => setForm({ ...form, precio: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            />
-
-                            {/* Marca */}
-                            <select
-                                value={form.id_marca}
-                                onChange={(e) => setForm({ ...form, id_marca: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            >
-                                <option value="">Selecciona marca</option>
-                                {marcas.map((m) => (
-                                    <option key={m.id} value={m.id}>{m.nombre}</option>
-                                ))}
-                            </select>
-
-                            {/* Categoría */}
-                            <select
-                                value={form.id_categoria}
-                                onChange={(e) => setForm({ ...form, id_categoria: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            >
-                                <option value="">Categoría</option>
-                                {categorias.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.nombre}</option>
-                                ))}
-                            </select>
-
-                            {/* Subcategoría */}
-                            <select
-                                value={form.id_subcategoria}
-                                onChange={(e) => setForm({ ...form, id_subcategoria: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            >
-                                <option value="">Subcategoría</option>
-                                {subcategoriasFiltradas.map((s) => (
-                                    <option key={s.id} value={s.id}>{s.nombre}</option>
-                                ))}
-                            </select>
-
-                            {/* Color */}
-                            <select
-                                value={form.id_color}
-                                onChange={(e) => setForm({ ...form, id_color: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            >
-                                <option value="">Color</option>
-                                {colores.map((c) => (
-                                    <option key={c.id} value={c.id}>{c.nombre}</option>
-                                ))}
-                            </select>
-
-                            {/* Género */}
-                            <select
-                                value={form.id_genero}
-                                onChange={(e) => setForm({ ...form, id_genero: e.target.value })}
-                                className="w-full border p-3 rounded-xl"
-                            >
-                                <option value="">Género</option>
-                                {generos.map((g) => (
-                                    <option key={g.id} value={g.id}>{g.nombre}</option>
-                                ))}
-                            </select>
-
-                            {/* Imagen */}
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) =>
-                                    setForm({ ...form, imagen: e.target.files?.[0] || null })
-                                }
-                                className="w-full"
-                            />
-
-                            {/* Tallas dinámicas */}
+                            {/* 🔒 Nombre (bloqueado en edición) */}
                             <div>
-                                <h3 className="font-semibold">Tallas y stock</h3>
-
-                                {tallasDisponibles.map((t) => (
-                                    <div key={t.id} className="flex justify-between items-center">
-                                        <label>{t.nombre}</label>
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            placeholder="Stock"
-                                            onChange={(e) => {
-                                                const value = parseInt(e.target.value) || 0;
-
-                                                setStockTallas((prev) => {
-                                                    const existe = prev.find(p => p.id_talla === t.id);
-
-                                                    if (existe) {
-                                                        return prev.map(p =>
-                                                            p.id_talla === t.id ? { ...p, stock: value } : p
-                                                        );
-                                                    }
-
-                                                    return [...prev, { id_talla: t.id, stock: value }];
-                                                });
-                                            }}
-                                            className="border p-2 w-24 rounded-lg"
-                                        />
-                                    </div>
-                                ))}
+                                <label className="block text-sm font-medium mb-1">
+                                    Nombre del Producto
+                                </label>
+                                <input
+                                    type="text"
+                                    value={form.nombre}
+                                    disabled={!!editando}
+                                    onChange={(e) =>
+                                        setForm({ ...form, nombre: e.target.value })
+                                    }
+                                    className={`w-full border rounded-xl p-3 ${editando ? "bg-gray-100 cursor-not-allowed" : ""
+                                        }`}
+                                />
                             </div>
 
-                            <button className="w-full bg-black text-white py-3 rounded-xl">
-                                Crear Producto
-                            </button>
+                            {/* 💲 Precio */}
+                            <div>
+                                <label className="block text-sm font-medium mb-1">
+                                    Precio ($)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value={form.precio}
+                                    onChange={(e) =>
+                                        setForm({ ...form, precio: e.target.value })
+                                    }
+                                    required
+                                    className="w-full border border-gray-300 rounded-xl p-3"
+                                />
+                            </div>
+
+                            {/* 📝 Descripción */}
+                            <div>
+                                <label className="block text-sm font-medium mb-1">
+                                    Descripción
+                                </label>
+                                <textarea
+                                    value={form.descripcion}
+                                    onChange={(e) =>
+                                        setForm({ ...form, descripcion: e.target.value })
+                                    }
+                                    rows={4}
+                                    className="w-full border border-gray-300 rounded-xl p-3"
+                                />
+                            </div>
+
+                            {/* � Stock */}
+                            <div>
+                                <label className="block text-sm font-medium mb-1">
+                                    Stock
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    value={form.stock}
+                                    onChange={(e) =>
+                                        setForm({ ...form, stock: e.target.value })
+                                    }
+                                    required
+                                    className="w-full border border-gray-300 rounded-xl p-3"
+                                />
+                            </div>
+                            {/* 📦 STOCK POR TALLA (solo en edición) */}
+                            {editando && (
+                                <div>
+                                    <h3 className="font-semibold mb-3 text-gray-800">
+                                        Stock por talla
+                                    </h3>
+
+                                    {tallas.length === 0 ? (
+                                        <p className="text-gray-500 text-sm">
+                                            No hay tallas registradas
+                                        </p>
+                                    ) : (
+                                        <div className="space-y-2">
+                                            {tallas.map((t, index) => (
+                                                <div
+                                                    key={t.id_talla}
+                                                    className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
+                                                >
+                                                    <span className="font-medium w-20">
+                                                        {t.talla}
+                                                    </span>
+
+                                                    <input
+                                                        type="number"
+                                                        value={t.stock}
+                                                        min={0}
+                                                        onChange={(e) => {
+                                                            const newTallas = [...tallas];
+                                                            newTallas[index].stock = parseInt(e.target.value) || 0;
+                                                            setTallas(newTallas);
+                                                        }}
+                                                        className="border p-2 w-24 rounded-lg text-center"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* ⚡ Botones */}
+                            <div className="flex gap-4 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100"
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="flex-1 py-3 bg-black text-white rounded-xl hover:bg-gray-800"
+                                >
+                                    {editando ? "Guardar Cambios" : "Crear Producto"}
+                                </button>
+                            </div>
+
                         </form>
                     </div>
                 </div>
