@@ -13,29 +13,21 @@ type Props = {
     subcategoria?: number;
     genero?: number;
     marca?: number;
+    color?: number;
   };
 };
 
 
 export default async function Productos({searchParams}: Props) {
-  const { categoria, subcategoria, genero, marca } = await searchParams;
+  const { categoria, subcategoria, genero, marca, color } = await searchParams;
   let data;
   const params = {
     id_categoria: categoria,
     id_subcategoria: subcategoria,
     id_genero: genero,
     id_marca: marca,
+    id_color: color
   };
-
-  // TODO: Vas a poder borrar esto jasdfasdkj
-  // const categoriasRes = await getTodasLasCategorias();
-  // const generosRes = await getGeneros();
-  // const generos = generosRes.data;
-  // const coloresRes = await getColores();
-  // const colores = coloresRes.data;
-  // const marcasRes = await getMarcas();
-  // const marcas = marcasRes.data;
-
 
   const res = await getCatalogo({
     id_categoria: categoria,
