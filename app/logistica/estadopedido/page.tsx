@@ -16,7 +16,7 @@ export default function ListaPedidosPage() {
       try {
         const token = localStorage.getItem("token");
 
-        // 🔹 1. Obtener pedidos (IDs)
+        // 1. Obtener pedidos (IDs)
         const res = await fetch("/api/logistica/pedido", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -24,6 +24,7 @@ export default function ListaPedidosPage() {
         });
 
         const data = await res.json();
+        console.log(data);
 
         if (!res.ok) {
           throw new Error(data.error || "Error al obtener pedidos");
@@ -31,7 +32,7 @@ export default function ListaPedidosPage() {
 
         const lista = data.data || [];
 
-        // 🔹 2. Obtener estado REAL de cada pedido
+        //2. Obtener estado REAL de cada pedido
         const resultados = await Promise.all(
           lista.map((p: any) =>
             fetch(`/api/pedido/${p.id_pedido}/estado`, {
@@ -41,7 +42,6 @@ export default function ListaPedidosPage() {
             }).then(res => res.json())
           )
         );
-
         setPedidos(resultados);
 
       } catch (err: any) {
@@ -70,44 +70,34 @@ export default function ListaPedidosPage() {
       )}
 
       <div className="space-y-4">
-        {pedidos.map((pedido: any, index: number) => {
-
-          // ⚠️ Ajusta según cómo venga tu JSON
-          const data = pedido.data || pedido;
-
+        {/* Nuevo mapeo de pedidos */}
+        {pedidos.map((pedido: any) => {
           return (
             <div
-              key={index}
-              onClick={() => router.push(`/logistica/estadopedido/${data.id_pedido || index + 1}`)}
+              key={pedido.id}
+              onClick={() => router.push(`/logistica/estadopedido/${pedido.id}`)}
               className="bg-white p-5 rounded-xl shadow hover:shadow-lg cursor-pointer transition"
             >
               <div className="flex justify-between items-center">
 
-                {/* 📦 ID */}
+                {/* numero de pedido */}
                 <div>
                   <p className="font-semibold">
-                    Pedido #{data.id_pedido || index + 1}
+                    Pedido #{pedido.id}
                   </p>
 
-                  {/* 🧑 Cliente */}
+                  {/* Estado de Pedido */}
                   <p className="text-sm text-gray-600">
-                    {data.nombre_cliente || "Cliente"}
+                    {pedido.estado}
                   </p>
                 </div>
 
-                {/* 🟣 ESTADO */}
+                {/* Fecha de Pedido */}
                 <div className="px-3 py-1 rounded-full text-white text-sm bg-purple-600">
-                  {data.estado || "Sin estado"}
+                  {new Date(pedido.fecha_pedido).toLocaleString()}
                 </div>
 
               </div>
-
-              {/* 📅 Fecha */}
-              {data.fecha && (
-                <p className="text-xs text-gray-500 mt-2">
-                  {new Date(data.fecha).toLocaleString()}
-                </p>
-              )}
 
             </div>
           );
