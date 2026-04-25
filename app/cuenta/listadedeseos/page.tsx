@@ -173,7 +173,7 @@ export default function ListadeseosPage() {
 
   if ( loading ) {
     return (
-      <div className="h-180 w-full flex flex-col items-center justify-center gap-4">
+      <div className="h-screen w-full flex flex-col items-center justify-center gap-4">
         <Loader className="h-20 w-20 animate-spin" />
         <p className="font-medium text-lg">Cargando favoritos...</p>
       </div>

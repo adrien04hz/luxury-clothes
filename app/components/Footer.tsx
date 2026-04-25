@@ -97,7 +97,7 @@ export default async function Footer({
                   categorias.data?.map(
                     (categoria) => (
                       <li key={categoria.id} className="hover:underline">
-                        <Link href={`#`}>
+                        <Link href={`productos?categoria=${categoria.id}`}>
                           {categoria.nombre}
                         </Link>
                       </li>
@@ -148,7 +148,7 @@ export default async function Footer({
                   asistencias.data?.map(
                     (asistencia) => (
                       <li key={asistencia.id} className="hover:underline">
-                        <Link href={`#`}>
+                        <Link href={`/asistencia/`}>
                           {asistencia.nombre}
                         </Link>
                       </li>

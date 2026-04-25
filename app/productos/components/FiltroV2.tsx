@@ -341,7 +341,7 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                     </FiltroItem>
 
                     <div className="mt-6 space-y-4">
-                        <button className="text-sm hover:underline" onClick={limpiarFiltros}>
+                        <button className="text-sm hover:underline hover:cursor-pointer" onClick={limpiarFiltros}>
                             Limpiar filtros
                         </button>
                     </div>
