@@ -1,7 +1,7 @@
 "use client"
 import { useEffect } from "react";
-import React, { useState } from 'react';
-import { MapPin, Clock, RefreshCcw } from 'lucide-react';
+import { useState } from 'react';
+import { Clock } from 'lucide-react';
 import { EnvioPendiente, EstadoEnvioDetalle } from '@/types/logistica/envio_pendiente';
 
 export default function EnviosPendientes(){
@@ -24,9 +24,11 @@ export default function EnviosPendientes(){
     "Entregado"
   ];
 
-  const estadosDisponibles = flujoEstados.slice(
-    flujoEstados.indexOf(detalleEnvio?.estado || "Pendiente") + 1
-  );
+  const estadoActualIndex = flujoEstados.indexOf(detalleEnvio?.estado || "Pendiente");
+
+  const estadosDisponibles = estadoActualIndex >= 0 && estadoActualIndex < flujoEstados.length - 1
+    ? [flujoEstados[estadoActualIndex + 1]]
+    : [];
 
   const getEstadoColor = (estado: EnvioPendiente["estado_envio"]): string => {
     switch (estado) {
@@ -61,6 +63,7 @@ export default function EnviosPendientes(){
       (envio: EnvioPendiente, index: number, self: EnvioPendiente[]) =>
         index === self.findIndex(e => e.id_pedido === envio.id_pedido)
     );
+    // console.log(unicos);
 
     setEnvioPendiente(unicos);
 
@@ -88,11 +91,12 @@ export default function EnviosPendientes(){
       const res = await fetch(`/api/logistica/estado_envio/${id}`);
 
       const data = await res.json();
+      // console.log("Respuesta cruda:", data);
 
       if (!res.ok) throw new Error(data.error);
 
       setDetalleEnvio(data.data);
-
+      return data.data;
     } catch (err: any) {
       setError(err.message);
     }
@@ -177,9 +181,9 @@ export default function EnviosPendientes(){
               <button
                 onClick={async () => {
                   setPedidoSeleccionado(envio.id_pedido);
+                  setDetalleEnvio(null);
                   setOpenModal(true);
-
-                  await cargarDetalleEnvio(envio.id_pedido);
+                  const res = await cargarDetalleEnvio(envio.id_pedido);
                 }}
                 className={`flex items-center justify-center gap-2 font-black p-4 text-xs uppercase tracking-widest transition shadow-lg rounded-full ${
                   envio.estado_envio === "Entregado" 
@@ -256,8 +260,20 @@ export default function EnviosPendientes(){
                   <label className="text-xs font-bold uppercase text-gray-500">
                     Nuevo estado
                   </label>
-
                   <select
+                    className="w-full mt-2 border border-gray-200 p-3 rounded-xl text-sm font-medium"
+                    value={nuevoEstado}
+                    onChange={(e) => setNuevoEstado(e.target.value)}
+                  >
+                    <option value="">Selecciona estado</option>
+
+                    {estadosDisponibles.map((estado) => (
+                      <option key={estado} value={estado}>
+                        {estado}
+                      </option>
+                    ))}
+                  </select>
+                  {/* <select
                     className="w-full mt-2 border border-gray-200 p-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-black"
                     value={nuevoEstado}
                     onChange={(e) => setNuevoEstado(e.target.value)}
@@ -267,7 +283,7 @@ export default function EnviosPendientes(){
                     <option value="Enviado">Enviado</option>
                     <option value="En Camino">En Camino</option>
                     <option value="Entregado">Entregado</option>
-                  </select>
+                  </select> */}
                 </div>
               </div>
 

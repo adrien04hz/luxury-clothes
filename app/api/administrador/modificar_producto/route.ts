@@ -9,10 +9,6 @@ import { getUserFromToken } from "@/lib/auth";
 
 export async function PATCH(req: Request) {
   try {
-      const user = getUserFromToken(req);
-      if (!user) {
-        return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-      }
     const { searchParams } = new URL(req.url);
     const idStr = searchParams.get("id");
 

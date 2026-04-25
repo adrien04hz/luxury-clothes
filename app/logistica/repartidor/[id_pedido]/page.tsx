@@ -1,3 +1,9 @@
+//***********/
+//* Nombre del equipo: Equipo 1 */
+//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Fecha: 23/04/2026 */
+//**********/
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -32,7 +38,7 @@ export default function InfoPedidoRepartidorPage() {
           throw new Error(data.error || "Error al obtener pedido");
         }
 
-        console.log("Pedido:", data); // 🔥 DEBUG
+        console.log("Pedido:", data);
         setPedido(data);
 
       } catch (err: any) {
@@ -48,7 +54,7 @@ export default function InfoPedidoRepartidorPage() {
       const token = localStorage.getItem("token");
       const userID = localStorage.getItem("userID") || localStorage.getItem("userId");
 
-      console.log("userID:", userID); // 🔥 DEBUG
+      console.log("userID:", userID); 
   
       if (!userID) {
         throw new Error("Usuario no identificado");

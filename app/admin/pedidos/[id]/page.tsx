@@ -1,6 +1,6 @@
 //***********/
 //* Nombre del equipo: Equipo 1 */
-//* Autor de la clase: Cervantes Rosales Abdiel */
+//* Autor de la clase: Ramos Bello Jose Luis */
 //* Fecha: 10/04/2026 */
 //**********/
 
@@ -92,7 +92,7 @@ export default function DetallePedidoPage() {
             </h1>
 
             <button
-            onClick={() => router.push("/cuenta/pedidos")}
+            onClick={() => window.history.back()}
             className="text-gray-900  rounded-full hover:bg-gray-100  hover:text-gray-600 transition text-sm"
             >
               <X size={24} />
@@ -108,7 +108,7 @@ export default function DetallePedidoPage() {
         {/* GRID PRINCIPAL */}
         <div className="flex  gap-6">
 
-            {/* DETALLE DEL PEDIDO */}
+            {/* 🧾 DETALLE DEL PEDIDO */}
             <div className="w-1/3 sm:col-span-2 bg-white  p-6">
 
             <h2 className="text-2xl font-bold mb-4">

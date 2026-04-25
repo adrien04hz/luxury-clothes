@@ -29,7 +29,7 @@ export default function AdminPedidosPage() {
             setLoading(true);
             setError(null);
 
-            const res = await fetch("/api/administrador/historial_venta", {
+            const res = await fetch("/api/administrador/historial-venta", {
                 credentials: "include", // Por si usas autenticación con cookies
             });
 
@@ -44,10 +44,10 @@ export default function AdminPedidosPage() {
             }
 
             // Aceptamos tanto "pedidos" como "historial_ventas" por compatibilidad
-            const listaPedidos = Array.isArray(data.pedidos) 
-                ? data.pedidos 
-                : Array.isArray(data.historial_ventas) 
-                    ? data.historial_ventas 
+            const listaPedidos = Array.isArray(data.pedidos)
+                ? data.pedidos
+                : Array.isArray(data.historial_ventas)
+                    ? data.historial_ventas
                     : [];
 
             setPedidos(listaPedidos);
@@ -64,48 +64,42 @@ export default function AdminPedidosPage() {
     }, []);
 
     const pedidosFiltrados = pedidos.filter(pedido =>
-        filtroEstado === "todos" || 
+        filtroEstado === "todos" ||
         pedido.estado.toLowerCase() === filtroEstado.toLowerCase()
     );
 
-    const getEstadoColor = (estado: string) => {
-        switch (estado.toLowerCase()) {
-            case "pendiente": return "bg-yellow-100 text-yellow-700";
-            case "en_preparacion": return "bg-blue-100 text-blue-700";
-            case "enviado": return "bg-purple-100 text-purple-700";
-            case "completado": return "bg-green-100 text-green-700";
-            case "cancelado": return "bg-red-100 text-red-700";
-            default: return "bg-gray-100 text-gray-700";
+    // Función segura para colores de estado
+    const getEstadoColor = (estado: string | undefined | null) => {
+        if (!estado) return "bg-gray-100 text-gray-700"; // color por defecto si no hay estado
+
+        const estadoLower = estado.toLowerCase().trim();
+
+        switch (estadoLower) {
+            case "pendiente":
+                return "bg-yellow-100 text-yellow-700";
+            case "pagado":
+                return "bg-blue-100 text-blue-700";
+            case "en preparación":
+            case "en_preparacion":
+                return "bg-blue-100 text-blue-700";
+            case "listo para envío":
+            case "listo_para_envio":
+                return "bg-purple-100 text-purple-700";
+            case "enviado":
+                return "bg-purple-100 text-purple-700";
+            case "completado":
+                return "bg-green-100 text-green-700";
+            case "cancelado":
+                return "bg-red-100 text-red-700";
+            case "rechazado":
+                return "bg-red-100 text-red-700";
+            default:
+                return "bg-gray-100 text-gray-700";
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <header className="bg-white shadow-sm border-b sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-4">
-                        <h1 className="text-2xl font-bold text-gray-800">Gestión de Pedidos</h1>
-                    </div>
-
-                    <nav className="flex gap-6 text-sm">
-                        <button onClick={() => router.push("/admin/")} className="hover:text-black">Dashboard</button>
-                        <button onClick={() => router.push("/admin/categorias")} className="hover:text-black">Categorías</button>
-                        <button onClick={() => router.push("/admin/clientes")} className="hover:text-black">Clientes</button>
-                        <button onClick={() => router.push("/admin/marcas")} className="hover:text-black">Marcas</button>
-                        <button onClick={() => router.push("/admin/pedidos")} className="font-semibold text-black">Pedidos</button>
-                        <button onClick={() => router.push("/admin/productos")} className="hover:text-black">Productos</button>
-                    </nav>
-
-                    <button
-                        onClick={() => router.push("/")}
-                        className="text-sm px-4 py-2 border rounded-lg hover:bg-gray-100"
-                    >
-                        Cerrar Sesión
-                    </button>
-                </div>
-            </header>
-
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <div>
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-3xl font-semibold text-gray-800">Lista de Pedidos</h2>
 
@@ -126,7 +120,7 @@ export default function AdminPedidosPage() {
                 {error && (
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 flex justify-between items-center">
                         <span>{error}</span>
-                        <button 
+                        <button
                             onClick={cargarPedidos}
                             className="underline hover:no-underline"
                         >
@@ -159,15 +153,16 @@ export default function AdminPedidosPage() {
                                         </td>
                                         <td className="px-6 py-5">{pedido.cliente}</td>
                                         <td className="px-6 py-5 font-semibold">
-                                            ${pedido.total.toLocaleString("es-MX")}
+                                            ${pedido.total ? pedido.total.toLocaleString("es-MX") : "0"}
                                         </td>
                                         <td className="px-6 py-5">
                                             <span className={`px-4 py-1 text-xs rounded-full font-medium ${getEstadoColor(pedido.estado)}`}>
-                                                {pedido.estado.replace("_", " ")}
+                                                {pedido.estado || "Sin estado"}
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-center">
-                                            <button className="text-blue-600 hover:text-blue-800 font-medium">
+                                            <button onClick={() => router.push(`/admin/pedidos/${pedido.id}`)}
+                                            className="text-blue-600 hover:text-blue-800 font-medium">
                                                 Ver Detalle
                                             </button>
                                         </td>
@@ -184,6 +179,5 @@ export default function AdminPedidosPage() {
                     </div>
                 )}
             </div>
-        </div>
     );
 }

@@ -77,9 +77,9 @@ export class ProductoService {
       throw new Error("Producto no encontrado o ya está inactivo");
     }
 
-    return { 
+    return {
       mensaje: "Producto desactivado correctamente",
-      id 
+      id
     };
   }
 
@@ -96,5 +96,41 @@ export class ProductoService {
   static async obtenerStockProducto(id: number) {
     const result = await AdministradorRepository.obtenerStockProducto(id);
     return result.rows;
+  }
+  static async obtenerVentasTotales() {
+    const result = await AdministradorRepository.obtenerVentasTotales();
+    return result.rows[0]?.total_ventas || 0;
+  }
+  static async obtenerUsuariosActivos() {
+    const result = await AdministradorRepository.obtenerUsuariosActivos();
+    return result.rows[0]?.usuarios_activos || 0;
+  }
+  static async obtenerUsuariosRecientes() {
+    const result = await AdministradorRepository.obtenerUsuariosRecientes();
+    return result.rows;
+  }
+  static async obtenerTopProductos() {
+    const result = await AdministradorRepository.obtenerTopProductos();
+    return result.rows;
+  }
+  static async obtenerDashboard() {
+    const [
+      ventasRes,
+      activosRes,
+      recientesRes,
+      topRes
+    ] = await Promise.all([
+      AdministradorRepository.obtenerVentasTotales(),
+      AdministradorRepository.obtenerUsuariosActivos(),
+      AdministradorRepository.obtenerUsuariosRecientes(),
+      AdministradorRepository.obtenerTopProductos()
+    ]);
+
+    return {
+      ventas: ventasRes.rows[0]?.total_ventas || 0,
+      usuariosActivos: activosRes.rows[0]?.usuarios_activos || 0,
+      usuariosRecientes: recientesRes.rows,
+      topProductos: topRes.rows
+    };
   }
 }

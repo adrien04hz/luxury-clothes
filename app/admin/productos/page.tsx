@@ -8,7 +8,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Sidebar from "@/app/components/SidebarAdmin";
 
 interface Producto {
     id: number;
@@ -21,7 +20,7 @@ interface Producto {
     genero?: string;
     subcategoria?: string;
     marca?: string;
-    imagenes?: string[];        // array de URLs desde ImagenProducto
+    imagenes?: string[];
 }
 
 export default function AdminProductosPage() {
@@ -30,11 +29,26 @@ export default function AdminProductosPage() {
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [editando, setEditando] = useState<Producto | null>(null);
+    const [tallas, setTallas] = useState<any[]>([]);
+    const [marcas, setMarcas] = useState<any[]>([]);
+    const [categorias, setCategorias] = useState<any[]>([]);
+    const [subcategorias, setSubcategorias] = useState<any[]>([]);
+    const [colores, setColores] = useState<any[]>([]);
+    const [generos, setGeneros] = useState<any[]>([]);
+    const [tallasDisponibles, setTallasDisponibles] = useState<any[]>([]);
+    const [stockTallas, setStockTallas] = useState<any[]>([]);
+    const subcategoriasFiltradas = subcategorias;
 
     const [form, setForm] = useState({
         nombre: "",
         precio: "",
         descripcion: "",
+        id_marca: "",
+        id_categoria: "",
+        id_subcategoria: "",
+        id_color: "",
+        id_genero: "",
+        imagen: null as File | null
     });
 
     const cargarProductos = async () => {
@@ -64,53 +78,126 @@ export default function AdminProductosPage() {
 
     const abrirCrear = () => {
         setEditando(null);
-        setForm({ nombre: "", precio: "", descripcion: "" });
-        setShowModal(true);
-    };
-
-    const abrirEditar = (producto: Producto) => {
-        setEditando(producto);
         setForm({
-            nombre: producto.nombre,
-            precio: producto.precio.toString(),
-            descripcion: producto.descripcion || "",
+            nombre: "",
+            precio: "",
+            descripcion: "",
+            id_marca: "",
+            id_categoria: "",
+            id_subcategoria: "",
+            id_color: "",
+            id_genero: "",
+            imagen: null,
         });
         setShowModal(true);
     };
 
+    const abrirEditar = async (producto: Producto) => {
+        try {
+            setEditando(producto);
+
+            setForm({
+                nombre: producto.nombre,
+                precio: producto.precio.toString(),
+                descripcion: producto.descripcion || "",
+                id_marca: "",
+                id_categoria: "",
+                id_subcategoria: "",
+                id_color: "",
+                id_genero: "",
+                imagen: null,
+            });
+
+            const res = await fetch(`/api/administrador/stock-producto/${producto.id}`);
+            if (!res.ok) {
+                const text = await res.text();
+                console.error("ERROR BACKEND:", text);
+                throw new Error("Error al obtener tallas");
+            }
+
+            const data = await res.json();
+
+            setTallas(Array.isArray(data.stock) ? data.stock : []);
+
+            setShowModal(true);
+
+        } catch (error: any) {
+            console.error(error);
+            alert("Error al cargar información del producto");
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const payload = {
-            nombre: form.nombre.trim(),
-            precio: parseFloat(form.precio),
-            descripcion: form.descripcion.trim() || "Sin descripción",
-        };
 
         try {
+            if (!form.precio || isNaN(parseFloat(form.precio))) {
+                throw new Error("Precio inválido");
+            }
+
+            const payload = {
+                nombre: form.nombre.trim(),
+                precio: parseFloat(form.precio),
+                descripcion: form.descripcion.trim() || "Sin descripción",
+            };
+
             let res;
+
             if (editando) {
-                res = await fetch(`/api/administrador/modificar_producto?id=${editando.id}`, {
+                res = await fetch(
+                    `/api/administrador/modificar_producto?id=${editando.id}`,
+                    {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    }
+                );
+
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}));
+                    throw new Error(errorData.error || "Error al actualizar producto");
+                }
+
+                const resStock = await fetch("/api/administrador/actualizar-stock", {
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify({
+                        id_producto: editando.id,
+                        tallas,
+                    }),
                 });
+
+                if (!resStock.ok) {
+                    const errorData = await resStock.json().catch(() => ({}));
+                    throw new Error(errorData.error || "Error al actualizar stock");
+                }
+
+                alert("Producto actualizado correctamente");
+
             } else {
                 res = await fetch("/api/administrador/agregar-producto", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payload),
                 });
+
+                if (!res.ok) {
+                    const errorData = await res.json().catch(() => ({}));
+                    throw new Error(errorData.error || "Error al crear producto");
+                }
+
+                alert("Producto creado correctamente");
             }
 
-            if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                throw new Error(errorData.error || "Error en la operación");
-            }
+            await cargarProductos();
 
-            alert(editando ? "Producto actualizado correctamente" : "Producto creado correctamente");
             setShowModal(false);
-            cargarProductos();
+
+            setEditando(null);
+            setTallas([]);
+
         } catch (error: any) {
+            console.error(error);
             alert("Error: " + error.message);
         }
     };
@@ -119,127 +206,253 @@ export default function AdminProductosPage() {
         if (!confirm("¿Estás seguro de desactivar este producto?")) return;
 
         try {
-            const res = await fetch(`/api/administrador/eliminar-producto?id=${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/administrador/eliminar-producto?id=${id}`, {
+                method: "DELETE",
+            });
+
+            const text = await res.text();
+
+            let data;
+            try {
+                data = text ? JSON.parse(text) : {};
+            } catch {
+                data = {};
+            }
 
             if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                throw new Error(errorData.error || "No se pudo desactivar el producto");
+                throw new Error(data.error || "Error al desactivar producto");
             }
 
             alert("Producto desactivado correctamente");
-            cargarProductos();
+
+            setProductos((prev) =>
+                prev.map((p) =>
+                    p.id === id ? { ...p, activo: false } : p
+                )
+            );
+
         } catch (error: any) {
+            console.error(error);
             alert("Error: " + error.message);
         }
     };
 
     return (
+        <div>
             <div>
-                <div>
-                    <div className="flex justify-between items-center mb-8">
-                        <h2 className="text-3xl font-semibold text-gray-800">Catálogo de Productos</h2>
-                        <button onClick={abrirCrear} className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition">
-                            + Nuevo Producto
-                        </button>
-                    </div>
-
-                    {loading ? (
-                        <div className="text-center py-12 text-gray-500">Cargando productos...</div>
-                    ) : (
-                        <div className="bg-white rounded-2xl shadow overflow-hidden">
-                            <table className="w-full">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left font-medium">Imagen</th>
-                                        <th className="px-6 py-4 text-left font-medium">ID</th>
-                                        <th className="px-6 py-4 text-left font-medium">Nombre</th>
-                                        <th className="px-6 py-4 text-left font-medium">Marca</th>
-                                        <th className="px-6 py-4 text-left font-medium">Precio</th>
-                                        <th className="px-6 py-4 text-left font-medium">Stock</th>
-                                        <th className="px-6 py-4 text-left font-medium">Estado</th>
-                                        <th className="px-6 py-4 text-center font-medium">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-200">
-                                    {productos.map((p) => {
-                                        const imagenUrl = p.imagenes && p.imagenes.length > 0
-                                            ? p.imagenes[0]
-                                            : "https://via.placeholder.com/300x300/cccccc/666666?text=Sin+Imagen";
-
-                                        return (
-                                            <tr key={p.id} className="hover:bg-gray-50">
-                                                <td className="px-6 py-5">
-                                                    <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
-                                                        <Image
-                                                            src={imagenUrl}
-                                                            alt={p.nombre}
-                                                            fill
-                                                            className="object-cover"
-                                                            sizes="64px"
-                                                        />
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-5 font-mono text-sm text-gray-500">{p.id}</td>
-                                                <td className="px-6 py-5 font-medium line-clamp-2">{p.nombre}</td>
-                                                <td className="px-6 py-5">{p.marca || "—"}</td>
-                                                <td className="px-6 py-5 font-medium">${p.precio.toLocaleString("es-MX")}</td>
-                                                <td className="px-6 py-5">
-                                                    <span className={p.stock < 10 ? "text-red-600 font-semibold" : ""}>
-                                                        {p.stock}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-5">
-                                                    <span className={`px-4 py-1 text-xs rounded-full font-medium ${p.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                                                        {p.activo ? "Activo" : "Inactivo"}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-5 text-center space-x-4">
-                                                    <button onClick={() => abrirEditar(p)} className="text-blue-600 hover:text-blue-800 font-medium">
-                                                        Editar
-                                                    </button>
-                                                    <button onClick={() => handleEliminar(p.id)} className="text-red-600 hover:text-red-800 font-medium">
-                                                        Desactivar
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
+                <div className="flex justify-between items-center mb-8">
+                    <h2 className="text-3xl font-semibold text-gray-800">Catálogo de Productos</h2>
+                    <button onClick={abrirCrear} className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition">
+                        + Nuevo Producto
+                    </button>
                 </div>
 
-                {/* Modal Crear / Editar (sin cambios) */}
-                {showModal && (
-                    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                        <div className="bg-white rounded-2xl p-8 w-full max-w-lg">
-                            <h2 className="text-2xl font-bold mb-6">
-                                {editando ? "Editar Producto" : "Crear Nuevo Producto"}
-                            </h2>
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Nombre del Producto *</label>
-                                    <input type="text" value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Precio ($)*</label>
-                                    <input type="number" step="0.01" value={form.precio} onChange={(e) => setForm({ ...form, precio: e.target.value })} required className="w-full border border-gray-300 rounded-xl p-3" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium mb-1">Descripción</label>
-                                    <textarea value={form.descripcion} onChange={(e) => setForm({ ...form, descripcion: e.target.value })} rows={4} className="w-full border border-gray-300 rounded-xl p-3" />
-                                </div>
-                                <div className="flex gap-4 pt-4">
-                                    <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 border border-gray-300 rounded-xl hover:bg-gray-100">Cancelar</button>
-                                    <button type="submit" className="flex-1 py-3 bg-black text-white rounded-xl hover:bg-gray-800">
-                                        {editando ? "Guardar Cambios" : "Crear Producto"}
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                {loading ? (
+                    <div className="text-center py-12 text-gray-500">Cargando productos...</div>
+                ) : (
+                    <div className="bg-white rounded-2xl shadow overflow-hidden">
+                        <table className="w-full">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-4 text-left font-medium">Imagen</th>
+                                    <th className="px-6 py-4 text-left font-medium">ID</th>
+                                    <th className="px-6 py-4 text-left font-medium">Nombre</th>
+                                    <th className="px-6 py-4 text-left font-medium">Marca</th>
+                                    <th className="px-6 py-4 text-left font-medium">Precio</th>
+                                    <th className="px-6 py-4 text-left font-medium">Stock</th>
+                                    <th className="px-6 py-4 text-left font-medium">Estado</th>
+                                    <th className="px-6 py-4 text-center font-medium">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200">
+                                {productos.map((p) => {
+                                    const imagenUrl = p.imagenes && p.imagenes.length > 0
+                                        ? p.imagenes[0]
+                                        : "https://via.placeholder.com/300x300/cccccc/666666?text=Sin+Imagen";
+
+                                    return (
+                                        <tr key={p.id} className="hover:bg-gray-50">
+                                            <td className="px-6 py-5">
+                                                <div className="w-16 h-16 relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                                                    <Image
+                                                        src={imagenUrl}
+                                                        alt={p.nombre}
+                                                        fill
+                                                        className="object-cover"
+                                                        sizes="64px"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-5 font-mono text-sm text-gray-500">{p.id}</td>
+                                            <td className="px-6 py-5 font-medium line-clamp-2">{p.nombre}</td>
+                                            <td className="px-6 py-5">{p.marca || "—"}</td>
+                                            <td className="px-6 py-5 font-medium">${p.precio.toLocaleString("es-MX")}</td>
+                                            <td className="px-6 py-5">
+                                                <span className={p.stock < 10 ? "text-red-600 font-semibold" : ""}>
+                                                    {p.stock}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-5">
+                                                <span className={`px-4 py-1 text-xs rounded-full font-medium ${p.activo ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                                                    {p.activo ? "Activo" : "Inactivo"}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-5 text-center space-x-4">
+                                                <button onClick={() => abrirEditar(p)} className="text-blue-600 hover:text-blue-800 font-medium">
+                                                    Editar
+                                                </button>
+                                                <button onClick={() => handleEliminar(p.id)} className="text-red-600 hover:text-red-800 font-medium">
+                                                    Desactivar
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>
+
+            {/* Modal Crear / Editar (sin cambios) */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-2xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+
+                        {/* Título */}
+                        <h2 className="text-2xl font-bold mb-6">
+                            {editando ? "Editar Producto" : "Crear Nuevo Producto"}
+                        </h2>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+
+                            {/* Nombre */}
+                            <input
+                                type="text"
+                                placeholder="Nombre"
+                                value={form.nombre}
+                                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            />
+
+                            {/* Precio */}
+                            <input
+                                type="number"
+                                placeholder="Precio"
+                                value={form.precio}
+                                onChange={(e) => setForm({ ...form, precio: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            />
+
+                            {/* Marca */}
+                            <select
+                                value={form.id_marca}
+                                onChange={(e) => setForm({ ...form, id_marca: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            >
+                                <option value="">Selecciona marca</option>
+                                {marcas.map((m) => (
+                                    <option key={m.id} value={m.id}>{m.nombre}</option>
+                                ))}
+                            </select>
+
+                            {/* Categoría */}
+                            <select
+                                value={form.id_categoria}
+                                onChange={(e) => setForm({ ...form, id_categoria: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            >
+                                <option value="">Categoría</option>
+                                {categorias.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.nombre}</option>
+                                ))}
+                            </select>
+
+                            {/* Subcategoría */}
+                            <select
+                                value={form.id_subcategoria}
+                                onChange={(e) => setForm({ ...form, id_subcategoria: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            >
+                                <option value="">Subcategoría</option>
+                                {subcategoriasFiltradas.map((s) => (
+                                    <option key={s.id} value={s.id}>{s.nombre}</option>
+                                ))}
+                            </select>
+
+                            {/* Color */}
+                            <select
+                                value={form.id_color}
+                                onChange={(e) => setForm({ ...form, id_color: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            >
+                                <option value="">Color</option>
+                                {colores.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.nombre}</option>
+                                ))}
+                            </select>
+
+                            {/* Género */}
+                            <select
+                                value={form.id_genero}
+                                onChange={(e) => setForm({ ...form, id_genero: e.target.value })}
+                                className="w-full border p-3 rounded-xl"
+                            >
+                                <option value="">Género</option>
+                                {generos.map((g) => (
+                                    <option key={g.id} value={g.id}>{g.nombre}</option>
+                                ))}
+                            </select>
+
+                            {/* Imagen */}
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) =>
+                                    setForm({ ...form, imagen: e.target.files?.[0] || null })
+                                }
+                                className="w-full"
+                            />
+
+                            {/* Tallas dinámicas */}
+                            <div>
+                                <h3 className="font-semibold">Tallas y stock</h3>
+
+                                {tallasDisponibles.map((t) => (
+                                    <div key={t.id} className="flex justify-between items-center">
+                                        <label>{t.nombre}</label>
+                                        <input
+                                            type="number"
+                                            min={0}
+                                            placeholder="Stock"
+                                            onChange={(e) => {
+                                                const value = parseInt(e.target.value) || 0;
+
+                                                setStockTallas((prev) => {
+                                                    const existe = prev.find(p => p.id_talla === t.id);
+
+                                                    if (existe) {
+                                                        return prev.map(p =>
+                                                            p.id_talla === t.id ? { ...p, stock: value } : p
+                                                        );
+                                                    }
+
+                                                    return [...prev, { id_talla: t.id, stock: value }];
+                                                });
+                                            }}
+                                            className="border p-2 w-24 rounded-lg"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            <button className="w-full bg-black text-white py-3 rounded-xl">
+                                Crear Producto
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 }
