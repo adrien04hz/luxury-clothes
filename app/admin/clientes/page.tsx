@@ -75,7 +75,6 @@ export default function AdminClientesPage() {
                                     <th className="px-6 py-4 text-left">Correo</th>
                                     <th className="px-6 py-4 text-left">Teléfono</th>
                                     <th className="px-6 py-4 text-left">Estado</th>
-                                    <th className="px-6 py-4 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
@@ -92,11 +91,6 @@ export default function AdminClientesPage() {
                                                 }`}>
                                                 {cliente.activo ? "Activo" : "Inactivo"}
                                             </span>
-                                        </td>
-                                        <td className="px-6 py-5 text-center">
-                                            <button className="text-blue-600 hover:text-blue-800 font-medium">
-                                                Ver Detalle
-                                            </button>
                                         </td>
                                     </tr>
                                 ))}
