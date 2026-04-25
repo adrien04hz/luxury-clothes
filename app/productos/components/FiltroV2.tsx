@@ -277,7 +277,7 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
 
                     {/* seccion de Color */}
                     <FiltroItem title="Color" open={activo === "color"} onToggle={() => setActivo(activo === "color" ? null : "color")}>
-                        <div className=" px-8 mt-4 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
+                        <div className=" px-8 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
                         {colores?.map((color) => {
                         const cantidad = getCantidadPorSubcategoria(color, selectedSubcategoria);
 
