@@ -10,10 +10,10 @@ interface ProductoInput {
   nombre: string;
   descripcion: string;
   precio: number;
-  id_color?: number;        // ← Cambiado a opcional
-  id_genero?: number;       // ← Cambiado a opcional
-  id_subcategoria?: number; // ← Cambiado a opcional
-  id_marca?: number;        // ← Cambiado a opcional
+  id_color?: number; 
+  id_genero?: number;
+  id_subcategoria?: number;
+  id_marca?: number;
   activo?: boolean;
 }
 
@@ -144,21 +144,15 @@ export class AdministradorRepository {
   static async obtenerHistorialVentas(): Promise<QueryResult> {
     return pool.query(`
       SELECT 
-        p.id AS id_producto,
-        p.nombre AS nombre_producto,
-        t.nombre AS talla,
-        SUM(dp.cantidad) AS cantidad_total_vendida,
-        COUNT(DISTINCT dp.id_pedido) AS numero_pedidos,
-        ROUND(AVG(dp.precio_unitario), 2) AS precio_promedio
-      FROM "DetallePedido" dp
-      JOIN "Producto" p ON dp.id_producto = p.id
-      JOIN "Talla" t ON dp.id_talla = t.id
-      JOIN "Pedido" ped ON dp.id_pedido = ped.id
-      JOIN "EstadoPedido" ep ON ped.id_estado_pedido = ep.id
-      WHERE ep.nombre NOT ILIKE '%cancelado%'
-        AND ep.nombre NOT ILIKE '%rechazado%'
-      GROUP BY p.id, p.nombre, t.id, t.nombre
-      ORDER BY cantidad_total_vendida DESC, p.nombre, t.nombre
+        p.id AS id,
+        p.fecha,
+        p.total,
+        ep.nombre AS estado,
+        u.nombre || ' ' || u.apellidos AS cliente
+      FROM "Pedido" p
+      JOIN "EstadoPedido" ep ON ep.id = p.id_estado_pedido
+      JOIN "Usuario" u ON u.id = p.id_usuario
+      ORDER BY p.id ASC;
     `);
   }
 
@@ -173,5 +167,40 @@ export class AdministradorRepository {
       WHERE s.id_producto = $1
       ORDER BY t.nombre
     `, [idProducto]);
+  }
+  static async obtenerVentasTotales() {
+    return pool.query(`
+      SELECT SUM(total) as total_ventas
+      FROM "Pedido"
+      WHERE "id_estado_pedido" = 5;
+    `);
+  }
+  static async obtenerUsuariosActivos() {
+    return pool.query(`
+      SELECT COUNT(*) as usuarios_activos
+      FROM "Usuario"
+      WHERE "activo" = true;
+    `);
+  }
+  static async obtenerUsuariosRecientes() {
+    return pool.query(`
+      SELECT id, nombre, correo
+      FROM "Usuario"
+      ORDER BY "id" DESC
+      LIMIT 5;
+    `);
+  }
+  static async obtenerTopProductos() {
+    return pool.query(`
+      SELECT 
+        p.id,
+        p.nombre,
+        SUM(dp.cantidad) as total_vendidos
+        FROM "DetallePedido" dp
+      INNER JOIN "Producto" p ON p.id = dp.id_producto
+      GROUP BY p.id, p.nombre
+      ORDER BY total_vendidos DESC
+      LIMIT 5;
+    `);
   }
 }
