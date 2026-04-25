@@ -40,7 +40,6 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
     const selectedSubcategoria = params?.id_subcategoria ? Number(params.id_subcategoria) : null;
     const selectedGenero = params?.id_genero ? Number(params.id_genero) : null;
     const selectedMarca = params?.id_marca ? Number(params.id_marca) : null;
-    const selectedColor = params?.id_color ? Number(params.id_color) : null;
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -63,17 +62,17 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
         router.push(`/productos?${params.toString()}`);
     }
 
-    // function limpiarFiltros() {
-    //     const params = new URLSearchParams();
+    function limpiarFiltros() {
+        const params = new URLSearchParams();
 
-    //     const q = searchParams.get("q");
+        const categoria = searchParams.get("categoria");
 
-    //     if (q) {
-    //         params.set("q", q);
-    //     }
+        if (categoria) {
+            params.set("categoria", categoria);
+        }
 
-    //     router.push(`/productos/buscar?${params.toString()}`);
-    // }
+        router.push(`/productos?${params.toString()}`);
+    }
 
     function getCantidadPorSubcategoria(
         item: Colore,
@@ -342,9 +341,8 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                     </FiltroItem>
 
                     <div className="mt-6 space-y-4">
-                        {/* <button onClick={limpiarFiltros} className="text-sm underline"> */}
-                        <button className="text-sm underline">
-                            Borrar todo
+                        <button className="text-sm hover:underline" onClick={limpiarFiltros}>
+                            Limpiar filtros
                         </button>
                     </div>
                 </div>
