@@ -32,7 +32,7 @@ export default function Home() {
   // Para el carrusel de productos por categoria
   const [curSlide, setCurSlide] = useState(0);
   const slidesTotal = Math.ceil(items.length / productosPorSlide);
-  const [currentCategory, setCurrentCategory] = useState<number>(13);
+  const [currentCategory, setCurrentCategory] = useState<number>(11);
 
   // consulta de 10 productos al azar
   useEffect(() => {
