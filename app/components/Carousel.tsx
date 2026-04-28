@@ -19,17 +19,6 @@ export default function Carrusel({ productos }: { productos: Producto[] }) {
   const [transition, setTransition] = useState(true);
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (productos.length === 0) return;
-
-  //   const interval = setInterval(() => {
-  //     setIndex((prev) => (prev + 1) % productos.length);
-  //   }, 4000);
-
-  //   return () => clearInterval(interval);
-  // }, [productos]);
-
-
   useEffect(() => {
     if (productos.length === 0) return;
 
@@ -83,9 +72,13 @@ export default function Carrusel({ productos }: { productos: Producto[] }) {
     }
   };
 
-
-
-  if (productos.length === 0) return null;
+  if (productos.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-200">
+        <p className="text-gray-500">No hay productos disponibles</p>
+      </div>
+    );
+  };
 
   const producto = productos[index];
 
