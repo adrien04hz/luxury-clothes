@@ -36,26 +36,28 @@ export default function Home() {
   const [currentCategory, setCurrentCategory] = useState<number>(11);
 
   useLayoutEffect(() => {
-    const sections = gsap.utils.toArray(".fade-section");
+    const ctx = gsap.context(() => {
+      const sections = gsap.utils.toArray(".fade-section");
 
-    sections.forEach((section: any) => {
-      gsap.from(section, {
-        opacity: 0,
-        y: 80,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+      sections.forEach((section: any) => {
+        gsap.from(section, {
+          opacity: 0,
+          y: 80,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
       });
     });
 
     ScrollTrigger.refresh();
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ctx.revert();
     };
   }, []);
 

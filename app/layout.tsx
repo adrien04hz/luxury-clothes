@@ -8,6 +8,7 @@ import { getGeneros } from "@/client/genero.client";
 import { getProveedoresBancarios } from "@/client/proveedor.client";
 import { getMarcas } from "@/client/marca.client";
 import { getColores } from "@/client/color.client";
+import SmoothScrollProvider from "./components/SmoothScrollProvider";
 
 import NavBarRol from "./components/NavBarRol";
 
@@ -58,23 +59,22 @@ export default async function RootLayout({
         className={`${geistMontserrat.variable} antialiased min-h-screen flex flex-col`}
       >
         
-        <NavBarRol 
-          generos={generos}
-          categoriasPorGenero={categoriasPorGenero}
-          todasLasCategorias={todasLasCategorias}
-        />
-
-
-        <main className="flex-1">
-          {children}
-        </main>
-
-        <Footer 
-          categorias={categorias}
-          marcas={marcas}
-          proveedoresBancarios={proveedoresBancarios}
-        
-        />
+        <SmoothScrollProvider>
+          <NavBarRol
+            generos={generos}
+            categoriasPorGenero={categoriasPorGenero}
+            todasLasCategorias={todasLasCategorias}
+          />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer
+            categorias={categorias}
+            marcas={marcas}
+            proveedoresBancarios={proveedoresBancarios}
+          
+          />
+        </SmoothScrollProvider>
       </body>
     </html>
   );
