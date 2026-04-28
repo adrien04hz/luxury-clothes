@@ -18,8 +18,7 @@ import Image from "next/image";
 
 
 export default function Home() {
-  const router = useRouter();
-  const [categorias, setCategorias] = useState<any[]>([]);
+  const [categorias, setCategorias] = useState<Producto[]>([]);
   const [productos, setProductos] = useState<Producto[]>([]);
   const [items, setItems] = useState<Producto[]>([]);
   const [marcas, setMarcas] = useState<any[]>([]);
@@ -59,6 +58,13 @@ export default function Home() {
       });
   }, [currentCategory]);
 
+  // Consulta por categoria
+  useEffect(() => {
+    fetch("/api/producto/categoriaone")
+      .then(res => res.json())
+      .then(data => setCategorias(data.data));
+  }, []);
+
   // Para los productos destacados
   const siguiente = () => {
     setCurrentSlide((prev) =>
@@ -95,13 +101,13 @@ export default function Home() {
       </div>
 
       {/* Contenedor principal para cuerpo de home */}
-      <div className="p-24 h-full w-full flex flex-col gap-32 justify-center items-center">
+      <div className="p-24 h-full w-full flex flex-col gap-40 justify-center items-center">
 
         {/* Productos destacados */}
         <div className="flex flex-col gap-4">
           {/* handler y titulo */}
           <div className="flex items-center justify-between">
-            <p className="text-2xl">Productos destacados</p>
+            <p className="text-3xl">Productos destacados</p>
 
             <div className="flex items-center gap-2">
               <Link href="/productos">
@@ -159,7 +165,7 @@ export default function Home() {
 
         {/* Marcas de la tienda */}
 
-        <div className="h-full w-full flex flex-col items-center justify-center gap-4">
+        <div className="h-full w-full flex flex-col items-center justify-center gap-10">
           <p className="text-3xl">Nuestras marcas</p>
           <div className="flex items-center flex-wrap justify-center gap-12">
             {marcas.map((marca) => (
@@ -259,6 +265,33 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+
+        {/* Compra por categoria */}
+        <div className="w-full flex flex-col items-center justify-center gap-10">
+          <p className="text-3xl">Compra por categoría</p>
+          <div className="flex items-center gap-6 flex-wrap justify-center">
+            {categorias.map((categoria) => (
+              <Link
+                href={`/productos?categoria=${categoria.id_categoria}`}
+                key={categoria.id_categoria}
+              >
+                <div className="relative rounded-lg p-4 w-120 h-120 flex items-center justify-center text-center hover:bg-gray-100 transition overflow-hidden group">
+                  <Image 
+                    src={categoria.imagen_url || "/assets/images/bag.svg"} 
+                    alt={categoria.nombre} 
+                    fill 
+                    className="object-cover group-hover:scale-110 transition-transform duration-300" 
+                  />
+
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 flex items-center justify-center transition-all duration-300">
+                    <p className="text-white text-xl transition-all duration-300 group-hover:font-bold">{categoria.categoria_nombre}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </div>

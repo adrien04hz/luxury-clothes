@@ -27,6 +27,8 @@ export interface Producto {
     imagen_url?: string;
     imagenes?: string[];
     stock_por_talla?: Talla[];
+    id_categoria?: number;
+    categoria_nombre?: string;
 }
 
 export interface Talla {

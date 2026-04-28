@@ -10,7 +10,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader } from "lucide-react";
 import { Producto } from "@/types/producto/Producto";
 import Image from "next/image";
 
@@ -74,8 +74,9 @@ export default function Carrusel({ productos }: { productos: Producto[] }) {
 
   if (productos.length === 0) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gray-200">
-        <p className="text-gray-500">No hay productos disponibles</p>
+      <div className="w-full h-full flex items-center justify-center bg-gray-200 gap-2">
+        <Loader size={48} className="animate-spin text-gray-500" />
+        <p className="text-gray-500">Cargando productos...</p>
       </div>
     );
   };
