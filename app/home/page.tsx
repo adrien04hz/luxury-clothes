@@ -1,8 +1,11 @@
-//***********/
-//* Nombre del equipo: Equipo 1 */
-//* Autor : Diaz Antonio Luis Pedro*/
-//* Fecha: 22/04/2026 */
-//**********/
+/**
+ * Página principal de la tienda de ropa de lujo
+ * @author Diaz Antonio Luis Pedro
+ * @author Hernandez Sanchez Adrien
+ * @date 22/04/2026
+ * Ultima modificacion: 27/04/2026
+ */
+
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -39,10 +42,10 @@ export default function Home() {
   if (categorias.length === 0) return null;
 
   return (
-    <main className="min-h-screen bg-white text-gray-800">
+    <div className="min-h-screen bg-white text-gray-800">
 
       {/* seccion del carrucel, slogan, direccionamiento a productos */}
-      <section className="relative w-full h-[80vh] flex items-center justify-center">
+      <div className="relative w-full h-screen flex items-center justify-center">
         {/* implementacion de carruselde 5 imagenes de productos */}
         <Carrusel productos={productos} />
 
@@ -57,7 +60,7 @@ export default function Home() {
             Ver productos
           </button>
         </div>
-      </section>
+      </div>
 
       {/* Seccion de categorias Ropa, Calzado, Accesorios y direccionamiento a productos de esa categoria */}
       <section className="py-20 px-10">
@@ -128,6 +131,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

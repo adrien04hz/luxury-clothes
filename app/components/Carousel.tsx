@@ -1,8 +1,12 @@
-//***********/
-//* Nombre del equipo: Equipo 1 */
-//* Autor : Diaz Antonio Luis Pedro*/
-//* Fecha: 22/04/2026 */
-//**********/
+/**
+ * Carrusel de productos para la página principal
+ * @author Diaz Antonio Luis Pedro
+ * @author Hernandez Sanchez Adrien
+ * @date 22/04/2026
+ * Ultima modificacion: 27/04/2026
+ */
+
+
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
