@@ -43,6 +43,8 @@ export default function Home() {
         {/* implementacion de carruselde 5 imagenes de productos */}
         <Carrusel productos={productos} />
       </div>
+
+      
     </div>
   );
 }
