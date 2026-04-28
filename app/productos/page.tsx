@@ -40,7 +40,8 @@ export default async function Productos({searchParams}: Props) {
   const titulos = breadCrumbs({
     id_categoria: categoria || 0,
     id_subcategoria: subcategoria,
-    id_genero: genero
+    id_genero: genero,
+    id_marca: marca
   });
 
   const { productos } = res || {};
@@ -71,6 +72,7 @@ export default async function Productos({searchParams}: Props) {
         categoria={categoria || 0}
         subcategoria={subcategoria}
         genero={genero}
+        marca={marca}
       />
 
       <div className="flex justify-between items-center w-full sticky top-0 bg-white z-5 mt-4 py-4">

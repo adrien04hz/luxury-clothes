@@ -164,7 +164,9 @@ export default function Home() {
           <div className="flex items-center flex-wrap justify-center gap-12">
             {marcas.map((marca) => (
               <div className="h-30 w-30 relative" key={marca.id}>
-                <Image src={marca.imagen_url} alt={marca.nombre} fill className="object-contain scale-95" />
+                <Link href={`/productos?marca=${marca.id}`}>
+                  <Image src={marca.imagen_url} alt={marca.nombre} fill className="object-contain scale-95" />
+                </Link>
               </div>
             ))}
           </div>
