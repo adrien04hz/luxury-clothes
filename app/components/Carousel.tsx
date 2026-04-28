@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Producto } from "@/types/producto/Producto";
 import Image from "next/image";
-import Link from "next/link";
 
 export default function Carrusel({ productos }: { productos: Producto[] }) {
   const [index, setIndex] = useState<number>(0);
@@ -49,15 +48,35 @@ export default function Carrusel({ productos }: { productos: Producto[] }) {
 
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden">
-      <Image
-        src={producto.imagen_url || "assets/images/bag.svg"}
-        alt={producto.nombre}
-        className="w-full h-full object-cover"
-        fill
-      />
+      <div className="absolute inset-0 overflow-hidden">
+        <div
+          className="flex h-full transition-transform duration-700 ease-in-out"
+          style={{
+            width: `${productos.length * 100}%`,
+            transform: `translateX(-${index * (100 / productos.length)}%)`,
+          }}
+        >
+          {productos.map((producto) => (
+            <div
+              key={producto.id}
+              className="relative w-full h-full shrink-0"
+              style={{ width: `${100 / productos.length}%` }}
+            >
+              <Image
+                src={producto.imagen_url || "/assets/images/bag.svg"}
+                alt={producto.nombre}
+                fill
+                className="object-contain object-center scale-95"
+                priority={producto.id === productos[0].id}
+                quality={100}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* difunimar la parte de la imagen */}
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/30 to-transparent" />
 
       {/*  anterior */}
       <button onClick={anterior} className="absolute left-5 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-3 rounded-full z-10 transition">
@@ -69,18 +88,23 @@ export default function Carrusel({ productos }: { productos: Producto[] }) {
         <ChevronRight size={25} />
       </button>
 
-      <div className="absolute bottom-40 left-35 flex flex-col items-start gap-10 z-10">
+      <div
+        key={producto.id}
+        className="
+          absolute bottom-40 left-35
+          flex flex-col items-start gap-10 z-10
+          animate-fade-slide
+        "
+      >
         <div className="flex flex-col gap-2">
           <p className="text-white text-2xl z-10">
             {producto.marca}
           </p>
-          <h2 className="text-white text-4xl font-bold z-10">{producto.nombre}</h2>
+          <h2 className="text-white text-4xl font-bold z-10 max-w-240">{producto.nombre}</h2>
         </div>
 
-        <button className="text-black bg-white py-2 px-4 rounded-[28px]">
-          <Link href={`/productos/${producto.id}`} >
-            Ver producto
-          </Link>
+        <button className="text-black bg-white py-2 px-4 rounded-[28px]" onClick={() => router.push(`/productos/${producto.id}`)}>
+          Ver producto
         </button>
       </div>
     </div>
