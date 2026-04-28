@@ -125,12 +125,12 @@ export default function Carrusel({ productos }: { productos: Producto[] }) {
       <div className="absolute inset-0 bg-linear-to-r from-black/70 via-black/30 to-transparent" />
 
       {/*  anterior */}
-      <button onClick={anterior} className="absolute left-5 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-3 rounded-full z-10 transition">
+      <button onClick={anterior} className="absolute left-5 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-3 rounded-full z-10 transition hover:cursor-pointer">
         <ChevronLeft size={25}/>
       </button>
 
       {/*  siguiente */}
-      <button onClick={siguiente} className="absolute right-5 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-3 rounded-full z-10 transition">
+      <button onClick={siguiente} className="absolute right-5 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/80 text-white p-3 rounded-full z-10 transition hover:cursor-pointer">
         <ChevronRight size={25} />
       </button>
 
