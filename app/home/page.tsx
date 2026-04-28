@@ -161,24 +161,34 @@ export default function Home() {
         <div className="flex flex-col gap-4">
           {/* handler y titulo */}
           <div className="flex items-center justify-between">
-            <div className="border flex items-center gap-4">
-              <button className="border text-black bg-white px-2 py-0.5 hover:cursor-pointer">
-                Tacones
+            <div className="flex items-center gap-4">
+              <button className={`border  px-2 py-0.5 hover:cursor-pointer ${currentCategory === 11 ? "bg-black text-white" : "text-black bg-white"}`}
+              onClick={() => setCurrentCategory(11)}
+              >
+                Botas
               </button>
               
-              <button className="border text-black bg-white px-2 py-0.5 hover:cursor-pointer">
+              <button className={`border px-2 py-0.5 hover:cursor-pointer ${currentCategory === 8 ? "bg-black text-white" : "text-black bg-white"}`}
+              onClick={() => setCurrentCategory(8)}
+              >
                 Camisas
               </button>
 
-              <button className="border text-black bg-white px-2 py-0.5 hover:cursor-pointer">
+              <button className={`border px-2 py-0.5 hover:cursor-pointer ${currentCategory === 2 ? "bg-black text-white" : "text-black bg-white"}`}
+              onClick={() => setCurrentCategory(2)}
+              >
                 Pantalones
               </button>
 
-              <button className="border text-black bg-white px-2 py-0.5 hover:cursor-pointer">
+              <button className={`border px-2 py-0.5 hover:cursor-pointer ${currentCategory === 17 ? "bg-black text-white" : "text-black bg-white"}`}
+              onClick={() => setCurrentCategory(17)}
+              >
                 Relojes
               </button>
 
-              <button className="border text-black bg-white px-2 py-0.5 hover:cursor-pointer">
+              <button className={`border px-2 py-0.5 hover:cursor-pointer ${currentCategory === 20 ? "bg-black text-white" : "text-black bg-white"}`}
+              onClick={() => setCurrentCategory(20)}
+              >
                 Joyería
               </button>
             </div>
