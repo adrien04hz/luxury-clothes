@@ -26,12 +26,14 @@ export class Producto {
     id_subcategoria,
     id_marca,
     id_color,
+    limit,
   }: {
     id_genero?: number;
     id_categoria?: number;
     id_subcategoria?: number;
     id_marca?: number;
     id_color?: number;
+    limit?: number;
   }) {
 
     const conditions: string[] = [];
@@ -62,6 +64,13 @@ export class Producto {
       conditions.push(`P.id_color = $${values.length}`);
     }
 
+    let limitClause = "";
+
+    if (limit && limit > 0) {
+      values.push(limit);
+      limitClause = `LIMIT $${values.length}`;
+    }
+
     const whereClause = conditions.length
       ? `AND ${conditions.join(' AND ')}`
       : '';
@@ -80,7 +89,8 @@ export class Producto {
       WHERE P.activo = true 
       ${whereClause}
       ORDER BY P.id
-      `
+      ${limitClause}
+    `;
     const { rows } = await pool.query(query, values);
 
     return rows;

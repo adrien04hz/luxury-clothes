@@ -14,13 +14,15 @@ export async function GET ( request: Request ) {
     const id_subcategoria = searchParams.get('id_subcategoria') ? parseInt(searchParams.get('id_subcategoria')!) : undefined;
     const id_marca = searchParams.get('id_marca') ? parseInt(searchParams.get('id_marca')!) : undefined;
     const id_color = searchParams.get('id_color') ? parseInt(searchParams.get('id_color')!) : undefined;
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
 
     const productos = await Producto.getCatalog({
       id_genero,
       id_categoria,
       id_subcategoria,
       id_marca,
-      id_color
+      id_color,
+      limit
     });
 
     return NextResponse.json({

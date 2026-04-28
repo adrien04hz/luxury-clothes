@@ -13,6 +13,8 @@ export class Producto {
      * @param id_categoria - ID de la categoría para filtrar productos (opcional)
      * @param id_subcategoria - ID de la subcategoría para filtrar productos (opcional)
      * @param id_marca - ID de la marca para filtrar productos (opcional)
+     * @param id_color - ID del color para filtrar productos (opcional)
+     * @param limit - Número máximo de productos a retornar (opcional)
      * @returns Lista de productos que coinciden con los filtros aplicados
      */
     static async getCatalog({
@@ -21,12 +23,14 @@ export class Producto {
         id_subcategoria,
         id_marca,
         id_color,
+        limit,
     }: {
         id_genero?: number;
         id_categoria?: number;
         id_subcategoria?: number;
         id_marca?: number;
         id_color?: number;
+        limit?: number;
     }) {
         return await ProductoRepo.getAllProducts({
             id_genero,
@@ -34,6 +38,7 @@ export class Producto {
             id_subcategoria,
             id_marca,
             id_color,
+            limit,
         });
     }
 

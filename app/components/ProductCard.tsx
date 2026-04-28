@@ -7,8 +7,6 @@
  */
 "use client";
 
-import { useRef, useState } from "react";
-
 import Image from "next/image";
 import { ListaDeDeseos } from "@/types/listadedeseos/ListaDeDeseos";
 import { Producto } from "@/types/producto/Producto";
