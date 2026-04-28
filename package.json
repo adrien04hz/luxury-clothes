@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
+    "@studio-freight/lenis": "^1.0.42",
     "bcryptjs": "^3.0.3",
     "embla-carousel-react": "^8.6.0",
+    "gsap": "^3.15.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.577.0",
     "npm": "^11.9.0",

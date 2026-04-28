@@ -1,12 +1,21 @@
+"use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function NavBarLogistica() {
+  const [rol, setRol] = useState<number>(0);
+
+  useEffect(() => {
+    const rol = localStorage.getItem("rol");
+    setRol(rol ? parseInt(rol, 10) : 0);
+
+  }, []);
 
   return (
     <>
-    <div className="w-full h-28 bg-black text-white flex justify-between px-12">
-      <Link href="/" className="flex items-center justify-center">
+    <div className="w-full h-28 bg-black text-white flex items-center justify-between px-12">
+      <Link href="" className="flex items-center justify-center">
         <Image 
           src="/assets/logo/main-logo.svg" 
           alt="Logo" 
@@ -16,19 +25,11 @@ export default function NavBarLogistica() {
         />
       </Link>
 
-       <nav className="*:h-full flex items-center pt-12">
-        <ul className="h-full flex justify-center items-center font-semibold text-md space-x-9">
-          <Link href="/logistica/estadoenvio">
-            <li className="h-full text-white group hover:underline">
-              Envios
-            </li>
-          </Link>
-          <Link href="/logistica/estadopedido">
-            <li className="h-full text-white group hover:underline">
-              Pedidos
-            </li>
-          </Link>
-          
+       <nav className="*:h-full flex items-center">
+        <ul className="h-full flex justify-center items-center text-md space-x-9">
+          <li>
+            <p className="text-3xl">{rol === 3 ? "Repartidor" : "Empacador"}</p>
+          </li>
           </ul>        
       </nav>      
       <div className="flex space-x-7 items-center">

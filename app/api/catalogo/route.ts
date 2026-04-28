@@ -15,6 +15,7 @@ export async function GET ( request: Request ) {
     const id_marca = searchParams.get('id_marca') ? parseInt(searchParams.get('id_marca')!) : undefined;
     const id_color = searchParams.get('id_color') ? parseInt(searchParams.get('id_color')!) : undefined;
     const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
+    const order = searchParams.get('order') ? searchParams.get('order')! : undefined;
 
     const productos = await Producto.getCatalog({
       id_genero,
@@ -22,7 +23,8 @@ export async function GET ( request: Request ) {
       id_subcategoria,
       id_marca,
       id_color,
-      limit
+      limit,
+      order,
     });
 
     return NextResponse.json({

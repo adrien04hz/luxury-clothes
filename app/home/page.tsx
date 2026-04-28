@@ -7,8 +7,9 @@
  */
 
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Carrusel from "../components/Carousel";
 import ProductCard from "../components/ProductCard";
 import Link from "next/link"
@@ -16,10 +17,10 @@ import { Producto } from "@/types/producto/Producto";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Home() {
-  const router = useRouter();
-  const [categorias, setCategorias] = useState<any[]>([]);
+  const [categorias, setCategorias] = useState<Producto[]>([]);
   const [productos, setProductos] = useState<Producto[]>([]);
   const [items, setItems] = useState<Producto[]>([]);
   const [marcas, setMarcas] = useState<any[]>([]);
@@ -33,6 +34,36 @@ export default function Home() {
   const [curSlide, setCurSlide] = useState(0);
   const slidesTotal = Math.ceil(items.length / productosPorSlide);
   const [currentCategory, setCurrentCategory] = useState<number>(11);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      const sections = gsap.utils.toArray(".fade-section");
+
+      sections.forEach((section: any) => {
+        gsap.from(section, {
+          opacity: 0,
+          y: 80,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+    });
+
+    ScrollTrigger.refresh();
+
+    return () => {
+      ctx.revert();
+    };
+  }, []);
+
+  useEffect(() => {
+    ScrollTrigger.refresh();
+  }, [productos, marcas, items, categorias]);
 
   // consulta de 10 productos al azar
   useEffect(() => {
@@ -58,6 +89,13 @@ export default function Home() {
         setCurSlide(0);
       });
   }, [currentCategory]);
+
+  // Consulta por categoria
+  useEffect(() => {
+    fetch("/api/producto/categoriaone")
+      .then(res => res.json())
+      .then(data => setCategorias(data.data));
+  }, []);
 
   // Para los productos destacados
   const siguiente = () => {
@@ -89,22 +127,22 @@ export default function Home() {
     <div className="min-h-screen bg-white text-gray-800">
 
       {/* seccion del carrucel, slogan, direccionamiento a productos */}
-      <div className="relative w-full h-190 flex items-center justify-center">
+      <div className="relative w-full min-h-screen flex items-center justify-center">
         {/* implementacion de carruselde 5 imagenes de productos */}
         <Carrusel productos={productos} />
       </div>
 
       {/* Contenedor principal para cuerpo de home */}
-      <div className="p-24 h-full w-full flex flex-col gap-32 justify-center items-center">
+      <div className="p-24 h-full w-full flex flex-col gap-40 justify-center items-center mt-16">
 
         {/* Productos destacados */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 fade-section w-full">
           {/* handler y titulo */}
           <div className="flex items-center justify-between">
-            <p className="text-2xl">Productos destacados</p>
+            <p className="text-3xl">Productos destacados</p>
 
             <div className="flex items-center gap-2">
-              <Link href="/productos?categoria=1">
+              <Link href="/productos">
                 <p className="underline text-lg">Ver todo</p>
               </Link>
               <button className="rounded-full border hover:cursor-pointer" onClick={anterior}>
@@ -132,7 +170,7 @@ export default function Home() {
                     width: `${100 / totalSlides}%`,
                   }}
                 >
-                  {productos.reverse()
+                  {[...productos].reverse()
                     .slice(
                       slideIndex * productosPorSlide,
                       (slideIndex + 1) * productosPorSlide
@@ -159,12 +197,14 @@ export default function Home() {
 
         {/* Marcas de la tienda */}
 
-        <div className="h-full w-full flex flex-col items-center justify-center gap-4">
+        <div className="h-full w-full flex flex-col items-center justify-center gap-10 fade-section">
           <p className="text-3xl">Nuestras marcas</p>
           <div className="flex items-center flex-wrap justify-center gap-12">
             {marcas.map((marca) => (
               <div className="h-30 w-30 relative" key={marca.id}>
-                <Image src={marca.imagen_url} alt={marca.nombre} fill className="object-contain scale-95" />
+                <Link href={`/productos?marca=${marca.id}`}>
+                  <Image src={marca.imagen_url} alt={marca.nombre} fill className="object-contain scale-95" />
+                </Link>
               </div>
             ))}
           </div>
@@ -173,7 +213,7 @@ export default function Home() {
 
 
         {/* Productos por categoria */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 fade-section">
           {/* handler y titulo */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -209,7 +249,7 @@ export default function Home() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Link href="/productos?categoria=1">
+              <Link href={`/productos?subcategoria=${currentCategory}`}>
                 <p className="underline text-lg">Ver todo</p>
               </Link>
               <button className="rounded-full border hover:cursor-pointer" onClick={ant}>
@@ -257,6 +297,33 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+
+        {/* Compra por categoria */}
+        <div className="w-full flex flex-col items-center justify-center gap-10 fade-section">
+          <p className="text-3xl">Compra por categoría</p>
+          <div className="flex items-center gap-6 flex-wrap justify-center">
+            {categorias.map((categoria) => (
+              <Link
+                href={`/productos?categoria=${categoria.id_categoria}`}
+                key={categoria.id_categoria}
+              >
+                <div className="relative rounded-lg p-4 w-120 h-120 flex items-center justify-center text-center hover:bg-gray-100 transition overflow-hidden group">
+                  <Image 
+                    src={categoria.imagen_url || "/assets/images/bag.svg"} 
+                    alt={categoria.nombre} 
+                    fill 
+                    className="object-cover group-hover:scale-110 transition-transform duration-300" 
+                  />
+
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 flex items-center justify-center transition-all duration-300">
+                    <p className="text-white text-xl transition-all duration-300 group-hover:font-bold">{categoria.categoria_nombre}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </div>

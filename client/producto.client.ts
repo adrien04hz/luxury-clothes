@@ -15,13 +15,15 @@ export const getCatalogo = ({
         id_categoria,
         id_subcategoria,
         id_marca,
-        id_color
+        id_color,
+        order,
     }: {
         id_genero?: number;
         id_categoria?: number;
         id_subcategoria?: number;
         id_marca?: number;
         id_color?: number;
+        order?: string;
     }) : Promise<ProductosResponse> => {
 
     const conditions: string[] = [];
@@ -44,6 +46,10 @@ export const getCatalogo = ({
 
     if (id_color) {
       conditions.push(`id_color=${id_color}`);
+    }
+
+    if (order) {
+      conditions.push(`order=${order}`);
     }
 
     const params = conditions.length

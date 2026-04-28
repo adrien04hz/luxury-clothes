@@ -24,6 +24,7 @@ export class Producto {
         id_marca,
         id_color,
         limit,
+        order,
     }: {
         id_genero?: number;
         id_categoria?: number;
@@ -31,6 +32,7 @@ export class Producto {
         id_marca?: number;
         id_color?: number;
         limit?: number;
+        order?: string;
     }) {
         return await ProductoRepo.getAllProducts({
             id_genero,
@@ -39,6 +41,7 @@ export class Producto {
             id_marca,
             id_color,
             limit,
+            order,
         });
     }
 

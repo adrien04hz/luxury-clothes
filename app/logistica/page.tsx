@@ -2,9 +2,9 @@ import NavBarRol from "../components/NavBarRol";
 
 export default function PagePrincipal () {
   return (
-    <div>
+    <div className="min-h-screen">
       <div>
-        <h1>AQUI ESTOY </h1>
+        <h1>Home de logisitca</h1>
       </div>
     </div>
   );

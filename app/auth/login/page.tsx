@@ -73,9 +73,9 @@ export default function LoginPage() {
     } else if (rol === 2) {
       router.push("/admin"); // Administrador
     } else if (rol === 3) {
-      router.push("/logistica"); // Repartidor
+      router.push("/logistica/estadoenvio"); // Repartidor
     } else if (rol === 4) {
-      router.push("/logistica/estadopedido/"); // Empacador
+      router.push("/logistica/estadopedido"); // Empacador
     } else {
       router.push("/"); // fallback
     }

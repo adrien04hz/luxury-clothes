@@ -2,10 +2,17 @@
 
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function SidebarCuenta() {
   const router = useRouter();
   const pathname = usePathname();
+  const [rol, setRol] = useState<number>(0);
+
+  useEffect(() => {
+    const rol = localStorage.getItem("rol");
+    setRol(rol ? parseInt(rol, 10) : 0);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -24,24 +31,26 @@ export default function SidebarCuenta() {
   return (
     <div className="w-60 shrink-0">
       <nav className="flex flex-col">
-        <Link href="/" className={linkClass("/")}>
-          Inicio
-        </Link>
-        <Link href="/cuenta" className={linkClass("/cuenta")}>
-          Mi información
-        </Link>
-        <Link href="/cuenta/pedidos" className={linkClass("/cuenta/pedidos")}>
-          Mis pedidos
-        </Link>
-        <Link href="/cuenta/direcciones" className={linkClass("/cuenta/direcciones")}>
-          Mis direcciones
-        </Link>
-        <Link href="/cuenta/metodosdepago" className={linkClass("/cuenta/metodosdepago")}>
-          Mis métodos de pago
-        </Link>
-        <Link href="/cuenta/configuracion" className={linkClass("/cuenta/configuracion")}>
-          Configuración
-        </Link>
+        {rol === 1 && (<>
+          <Link href="/" className={linkClass("/")}>
+            Inicio
+          </Link>
+          <Link href="/cuenta" className={linkClass("/cuenta")}>
+            Mi información
+          </Link>
+          <Link href="/cuenta/pedidos" className={linkClass("/cuenta/pedidos")}>
+            Mis pedidos
+          </Link>
+          <Link href="/cuenta/direcciones" className={linkClass("/cuenta/direcciones")}>
+            Mis direcciones
+          </Link>
+          <Link href="/cuenta/metodosdepago" className={linkClass("/cuenta/metodosdepago")}>
+            Mis métodos de pago
+          </Link>
+          <Link href="/cuenta/configuracion" className={linkClass("/cuenta/configuracion")}>
+            Configuración
+          </Link>
+        </>)}
         <button
           onClick={handleLogout}
           className="px-2 py-3 text-left text-red-600 border-b hover:bg-red-50 font-medium transition"

@@ -27,6 +27,7 @@ export class Producto {
     id_marca,
     id_color,
     limit,
+    order,
   }: {
     id_genero?: number;
     id_categoria?: number;
@@ -34,6 +35,7 @@ export class Producto {
     id_marca?: number;
     id_color?: number;
     limit?: number;
+    order?: string;
   }) {
 
     const conditions: string[] = [];
@@ -65,6 +67,17 @@ export class Producto {
     }
 
     let limitClause = "";
+    let orderClause = "";
+
+    if (order) {
+      if (order === "precio_asc") {
+        orderClause = "ORDER BY precio ASC";
+      } else if (order === "precio_desc") {
+        orderClause = "ORDER BY precio DESC";
+      }
+    } else {
+      orderClause = "ORDER BY id";
+    }
 
     if (limit && limit > 0) {
       values.push(limit);
@@ -75,22 +88,26 @@ export class Producto {
       ? `AND ${conditions.join(' AND ')}`
       : '';
 
-    const query = `
-      SELECT DISTINCT ON (P.id)
-        P.id,
-        P.nombre,
-        P.precio,
-        M.nombre AS marca,
-        I.url AS imagen_url
-      FROM "Producto" P
-      INNER JOIN "Marca" M ON P.id_marca = M.id
-      INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
-      INNER JOIN "Subcategoria" S ON P.id_subcategoria = S.id
-      WHERE P.activo = true 
-      ${whereClause}
-      ORDER BY P.id
-      ${limitClause}
-    `;
+      const query = `
+        SELECT *
+        FROM (
+          SELECT DISTINCT ON (P.id)
+            P.id,
+            P.nombre,
+            P.precio,
+            M.nombre AS marca,
+            I.url AS imagen_url
+          FROM "Producto" P
+          INNER JOIN "Marca" M ON P.id_marca = M.id
+          INNER JOIN "ImagenProducto" I ON P.id = I.id_producto
+          INNER JOIN "Subcategoria" S ON P.id_subcategoria = S.id
+          WHERE P.activo = true
+          ${whereClause}
+          ORDER BY P.id
+        ) AS productos
+        ${orderClause}
+        ${limitClause}
+      `;
     const { rows } = await pool.query(query, values);
 
     return rows;

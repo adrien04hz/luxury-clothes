@@ -307,7 +307,7 @@ export default function FormularioDireccion(
             </div>
 
             <div className="relative">
-              <input id="numero_exterior" type="text"
+              <input maxLength={3} id="numero_exterior" type="text"
               value={form.numero_exterior}
               onChange={(e) =>
                 setForm({ ...form, numero_exterior: e.target.value })
@@ -325,7 +325,7 @@ export default function FormularioDireccion(
             </div>
 
             <div className="relative">
-              <input id="numero_interior" type="text"
+              <input maxLength={3} id="numero_interior" type="text"
               value={form.numero_interior || ""}
               onChange={(e) =>
                 setForm({ ...form, numero_interior: e.target.value })
@@ -369,7 +369,7 @@ export default function FormularioDireccion(
             </div>
 
             <div className="relative">
-              <input id="codigo_postal" type="text" 
+              <input maxLength={5} id="codigo_postal" type="text" 
               value={form.codigo_postal}
               onChange={(e) =>
                 setForm({ ...form, codigo_postal: e.target.value })

@@ -15,10 +15,12 @@ interface Props {
     data: Data | undefined;
     title?: string;
     count?: number;
+    flag?: boolean;
     titulos?: {
         categoria: string;
         subcategoria?: string;
         genero?: string;
+        marca?: string;
     };
     params?: {
         id_categoria?: number;
@@ -26,10 +28,11 @@ interface Props {
         id_genero?: number;
         id_marca?: number;
         id_color?: number;
+        order?: string;
     }
 }
 
-export default function FiltroV2({ data, title, count, titulos, params }: Props) {
+export default function FiltroV2({ data, title, count, titulos, params, flag = false }: Props) {
     const [open, setOpen] = useState(false);
     const [activo, setActivo] = useState<string | null>(null);
 
@@ -40,6 +43,7 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
     const selectedSubcategoria = params?.id_subcategoria ? Number(params.id_subcategoria) : null;
     const selectedGenero = params?.id_genero ? Number(params.id_genero) : null;
     const selectedMarca = params?.id_marca ? Number(params.id_marca) : null;
+    const selectedOrder = params?.order || "";
 
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -96,7 +100,9 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
             <div className="flex w-full justify-between items-end">
                 <div className="text-3xl font-medium">
                     {
-                        titulos && (<p>{titulos?.categoria ? ((titulos.subcategoria ? titulos.subcategoria : titulos.categoria) + " " + (titulos.genero ? "para " + titulos.genero + " (" + count + ")" : "(" + count + ")")) : "Todos los productos (" + count + ")"}</p>)
+                        titulos && (<p>{titulos?.categoria ? ((titulos.subcategoria ? titulos.subcategoria : titulos.categoria) + " " + (titulos.genero ? "para " + titulos.genero + " (" + count + ")" : "(" + count + ")")) 
+                        
+                        : (titulos?.marca ? titulos.marca + " (" + count + ")" : (titulos?.subcategoria ? titulos.subcategoria + " (" + count + ")" : "Todos los productos (" + count + ")"))}</p>)
                     }
 
                     {
@@ -159,11 +165,18 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                     {/* SECCIONES */}
                     {/* seccion de orden */}
                     <FiltroItem title="Ordenar por" open={activo === "orden"} onToggle={() => setActivo(activo === "orden" ? null : "orden")}>
-                        {/* <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_asc")}> */}
                         <div className="text-sm cursor-pointer">
-
                             <label className="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" className="peer hidden" />
+                                <input type="checkbox" className="peer hidden" 
+                                    checked={selectedOrder === "precio_asc"}
+                                    onChange={() => { 
+                                        if (selectedOrder === "precio_asc") {
+                                            aplicarFiltro("orden", null, ["color"]);
+                                        } else {
+                                            aplicarFiltro("orden", "precio_asc", ["color"]);
+                                        }
+                                    }}
+                                />
 
                                 <div className="
                                     w-4 h-4 border border-gray-400
@@ -175,11 +188,18 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                                 <span>Precio menor a mayor</span>
                             </label>
                         </div>
-                        {/* <div className="text-sm cursor-pointer" onClick={() => aplicarFiltro("orden", "precio_desc")}> */}
                         <div className="text-sm cursor-pointer">
-
                             <label className="flex items-center space-x-2 cursor-pointer">
-                                <input type="checkbox" className="peer hidden" />
+                                <input type="checkbox" className="peer hidden" 
+                                    checked={selectedOrder === "precio_desc"}
+                                        onChange={() => { 
+                                            if (selectedOrder === "precio_desc") {
+                                                aplicarFiltro("orden", null, ["color"]);
+                                            } else {
+                                                aplicarFiltro("orden", "precio_desc", ["color"]);
+                                            }
+                                        }}
+                                />
 
                                 <div className="
                                     w-4 h-4 border border-gray-400
@@ -193,7 +213,7 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                         </div>
                     </FiltroItem>
 
-                    {/* seccion de categoria */}
+                    { !flag && (<>
                     <FiltroItem title="Categoría" open={activo === "categoria"} onToggle={() => setActivo(activo === "categoria" ? null : "categoria")}>
 
                         <div key={id_categoria}>
@@ -233,7 +253,6 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                         </div>
                     </FiltroItem>
 
-                    {/* seccion de genero */}
                     <FiltroItem title="Género" open={activo === "género"} onToggle={() => setActivo(activo === "género" ? null : "género")}>
                         {generos?.map((c) => {
                             const cantidad = getCantidadPorSubcategoria(c, selectedSubcategoria);
@@ -274,7 +293,6 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                         })}
                     </FiltroItem>
 
-                    {/* seccion de Color */}
                     <FiltroItem title="Color" open={activo === "color"} onToggle={() => setActivo(activo === "color" ? null : "color")}>
                         <div className=" px-8 grid grid-cols-3 gap-x-1 gap-y-6 justify-items-center">
                         {colores?.map((color) => {
@@ -338,7 +356,7 @@ export default function FiltroV2({ data, title, count, titulos, params }: Props)
                                 </div>
                             );
                             })}
-                    </FiltroItem>
+                    </FiltroItem></>)}
 
                     <div className="mt-6 space-y-4">
                         <button className="text-sm hover:underline hover:cursor-pointer" onClick={limpiarFiltros}>

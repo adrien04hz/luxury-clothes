@@ -33,31 +33,6 @@ export default function DireccionesPage() {
     }
   };
 
-  // const loadDireccion = async () => {
-  //   try {
-  //     const res = await fetch("/api/direcciondeenvio", {
-  //       headers: {
-  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //       },
-  //     })
-      
-  //     const data   = await res.json();
-  //     setDirecciones(data.direcciones);
-  //   } catch (error) {
-  //     console.error(error);
-  //   } 
-  // }
-
-//   const loadDireccion = async () => {
-//   try {
-//     const token = localStorage.getItem("token")!;
-//     const dirs = await getDirecciones(token);
-//     setDirecciones(dirs);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
   const hasDirecciones = direcciones.length > 0;
 
   const handleSubmit = (data: any) => {
