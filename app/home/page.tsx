@@ -14,6 +14,7 @@ import ProductCard from "../components/ProductCard";
 import Link from "next/link"
 import { Producto } from "@/types/producto/Producto";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 
 export default function Home() {
@@ -94,7 +95,7 @@ export default function Home() {
       </div>
 
       {/* Contenedor principal para cuerpo de home */}
-      <div className="p-24 h-full w-full">
+      <div className="p-24 h-full w-full flex flex-col gap-32 justify-center items-center">
 
         {/* Productos destacados */}
         <div className="flex flex-col gap-4">
@@ -154,6 +155,20 @@ export default function Home() {
           </div>
         </div>
 
+        
+
+        {/* Marcas de la tienda */}
+
+        <div className="h-full w-full flex flex-col items-center justify-center gap-4">
+          <p className="text-3xl">Nuestras marcas</p>
+          <div className="flex items-center flex-wrap justify-center gap-12">
+            {marcas.map((marca) => (
+              <div className="h-30 w-30 relative" key={marca.id}>
+                <Image src={marca.imagen_url} alt={marca.nombre} fill className="object-contain scale-95" />
+              </div>
+            ))}
+          </div>
+        </div>
 
 
 
