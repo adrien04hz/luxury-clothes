@@ -11,9 +11,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Producto } from "@/types/producto/Producto";
+import Image from "next/image";
 
-export default function Carrusel({ productos }: { productos: any[] }) {
-  const [index, setIndex] = useState(0);
+export default function Carrusel({ productos }: { productos: Producto[] }) {
+  const [index, setIndex] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -45,10 +47,12 @@ export default function Carrusel({ productos }: { productos: any[] }) {
   const producto = productos[index];
 
   return (
-    <div className="absolute inset-0 cursor-pointer">
-      <img
-        src={producto.imagen_url}
+    <div className="absolute inset-0 w-full h-full overflow-hidden">
+      <Image
+        src={producto.imagen_url || "assets/images/bag.svg"}
+        alt={producto.nombre}
         className="w-full h-full object-cover"
+        fill
       />
 
       {/* difunimar la parte de la imagen */}
