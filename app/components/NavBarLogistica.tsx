@@ -6,7 +6,7 @@ export default function NavBarLogistica() {
   return (
     <>
     <div className="w-full h-28 bg-black text-white flex justify-between px-12">
-      <Link href="/" className="flex items-center justify-center">
+      <Link href="" className="flex items-center justify-center">
         <Image 
           src="/assets/logo/main-logo.svg" 
           alt="Logo" 

@@ -136,7 +136,7 @@ export default function EnviosPendientes(){
 };
 
   return (
-    <div className=" pl-8 bg-gray-50 font-sans pb-10">
+    <div className=" pl-8 bg-gray-50 font-sans pb-10 min-h-screen">
       <main className="p-6 ">
         <h2 className="text-2xl font-bold">
             Tus envíos pendientes
