@@ -14,8 +14,8 @@ export default function BreadCrumb({ categoria, subcategoria, genero, search = f
         <div className="flex items-center justify-start space-x-2 w-fit mt-3 text-md font-light">
             {
                 crumbs.categoria && !search && (
-                    <div className="hover:underline w-fit">
-                        <Link href={"#"}>{crumbs.categoria}</Link>
+                    <div className="w-fit hover:cursor-default">
+                        {crumbs.categoria}
                     </div>
                 )
             }
@@ -23,9 +23,9 @@ export default function BreadCrumb({ categoria, subcategoria, genero, search = f
             {
                 crumbs.subcategoria && !search && (
                     <>
-                        <span>/</span>
-                        <div className="hover:underline w-fit">
-                            <Link href={"#"}>{crumbs.subcategoria}</Link>
+                        <span className="hover:cursor-default">/</span>
+                        <div className="w-fit hover:cursor-default">
+                           {crumbs.subcategoria}
                         </div>
                     </>
                 )
@@ -33,9 +33,9 @@ export default function BreadCrumb({ categoria, subcategoria, genero, search = f
             {
                 crumbs.genero && !search && (
                     <>
-                        <span>/</span>
-                        <div className="hover:underline w-fit">
-                            <Link href={"#"}>{crumbs.genero}</Link>
+                        <span className="hover:cursor-default">/</span>
+                        <div className="w-fit hover:cursor-default">
+                            {crumbs.genero}
                         </div>
                     </>
                 )
@@ -44,9 +44,9 @@ export default function BreadCrumb({ categoria, subcategoria, genero, search = f
             {
                 crumbs.marca && !search && (
                     <>
-                        <span>/</span>
-                        <div className="hover:underline w-fit">
-                            <Link href={"#"}>{crumbs.marca}</Link>
+                        <span className="hover:cursor-default">/</span>
+                        <div className="w-fit hover:cursor-default">
+                            {crumbs.marca}
                         </div>
                     </>
                 )
@@ -55,10 +55,10 @@ export default function BreadCrumb({ categoria, subcategoria, genero, search = f
             {
                 search && (
                     <>
-                        <div className="hover:underline w-fit">
-                            <Link href={"#"}>Búsquedas</Link>
+                        <div className="w-fit hover:cursor-default">
+                            Búsquedas
                         </div>
-                        <span>/</span>
+                        <span className="hover:cursor-default">/</span>
                     </>
                 )
             }
