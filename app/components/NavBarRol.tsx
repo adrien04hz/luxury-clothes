@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import NavBar from "./NavBar";
 import NavBarLogistica from "./NavBarLogistica";
 import NavBarAdmin from "./NavBarAdmin";
+import NavBarLogisticaEmpacador from "./NavBarLogisticaEmpacador";
 
 export default function NavBarRol(props: any) {
   const [rol, setRol] = useState<number | null>(null);
@@ -31,7 +32,7 @@ export default function NavBarRol(props: any) {
   }
 
   if (rol === 4) {
-    return <NavBarLogistica />;
+    return <NavBarLogisticaEmpacador />;
   }
 
   return <NavBar {...props} />;
