@@ -10,7 +10,7 @@ interface ProductoInput {
   nombre: string;
   descripcion: string;
   precio: number;
-  id_color?: number; 
+  id_color?: number;
   id_genero?: number;
   id_subcategoria?: number;
   id_marca?: number;
@@ -20,7 +20,7 @@ interface ProductoInput {
 
 export class AdministradorRepository {
 
-    // ==================== LISTAR PRODUCTOS CON IMÁGENES ====================
+  // ==================== LISTAR PRODUCTOS CON IMÁGENES ====================
   static async obtenerProductos(): Promise<QueryResult> {
     return pool.query(`
       SELECT 
@@ -59,28 +59,36 @@ export class AdministradorRepository {
     );
   }
 
-static async crearProducto(data: ProductoInput): Promise<QueryResult> {
-  const {
-    nombre,
-    descripcion,
-    precio,
-    stock,
-    id_color = 1,
-    id_genero = 1,
-    id_subcategoria = 1,
-    id_marca = 1,
-    activo = true,
-  } = data;
+  static async crearProducto(data: ProductoInput): Promise<QueryResult> {
+    const {
+      nombre,
+      descripcion,
+      precio,
+      stock,
+      id_color = 1,
+      id_genero = 1,
+      id_subcategoria = 1,
+      id_marca = 1,
+      activo = true,
+    } = data;
 
-  return pool.query(
-    `INSERT INTO "Producto" (
-       nombre, descripcion, precio,
-       id_color, id_genero, id_subcategoria, id_marca, activo
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-     RETURNING id, nombre, descripcion, precio, activo`,
-    [nombre, descripcion, precio, id_color, id_genero, id_subcategoria, id_marca, activo]
-  );
-}
+    return pool.query(
+      `WITH nuevo_producto AS (
+        INSERT INTO "Producto" (
+          id, nombre, descripcion, precio,
+          id_color, id_genero, id_subcategoria, id_marca, activo
+        ) VALUES (
+          (SELECT COALESCE(MAX(id), 0) + 1 FROM "Producto"),
+          $1, $2, $3, $4, $5, $6, $7, $8
+        )
+        RETURNING id, nombre, descripcion, precio, activo
+      )
+      INSERT INTO "StockPorTalla" (id_producto, id_talla, stock)
+      SELECT id, 20, $9 FROM nuevo_producto
+      RETURNING id_producto, id_talla, stock`,
+      [nombre, descripcion, precio, id_color, id_genero, id_subcategoria, id_marca, activo, stock]
+    );
+  }
 
   static async actualizarProducto(id: number, data: Partial<ProductoInput>): Promise<QueryResult> {
     if (Object.keys(data).length === 0) {
